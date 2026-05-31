@@ -1,3 +1,5 @@
 *
-!/README.txt
+!README.txt
 !.gitignore
+!client_mods/
+!client_mods/**

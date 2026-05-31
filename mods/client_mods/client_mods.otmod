@@ -1,0 +1,10 @@
+Module
+  name: client_mods
+  description: Custom client modifications
+  author: JO Server
+  website:
+  reloadable: true
+  sandboxed: false
+  scripts: [ client_mods ]
+  @onLoad: init()
+  @onUnload: terminate()
