@@ -1,3 +1,6 @@
 @echo off
 cd /d "%~dp0"
-start "" "Release\otclient.exe"
+"Release\otclient.exe"
+echo.
+echo === Client exited ===
+pause
