@@ -11,31 +11,27 @@ g_game.loginWorld = function(account, password, worldName, worldHost, worldPort,
     g_logger.info("  worldPort: " .. tostring(worldPort))
     g_logger.info("  characterName: " .. tostring(characterName))
     g_logger.info("  sessionKey: " .. tostring(sessionKey and string.sub(sessionKey, 1, 30) .. "..." or "nil"))
+    g_logger.info("  account: " .. tostring(account))
     g_logger.info("  clientVersion: " .. tostring(g_game.getClientVersion()))
     g_logger.info("  protocolVersion: " .. tostring(g_game.getProtocolVersion()))
     g_logger.info("  currentRsa is OTSERV_RSA: " .. tostring(G.currentRsa == OTSERV_RSA))
+    g_logger.info("  GameChallengeOnLogin: " .. tostring(g_game.getFeature(GameChallengeOnLogin)))
+    g_logger.info("  GameSessionKey: " .. tostring(g_game.getFeature(GameSessionKey)))
+    g_logger.info("  GameLoginPacketEncryption: " .. tostring(g_game.getFeature(GameLoginPacketEncryption)))
+    g_logger.info("  GameProtocolChecksum: " .. tostring(g_game.getFeature(GameProtocolChecksum)))
     g_logger.info(" ================================")
     return originalLoginWorld(g_game, account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
 end
 
-local originalTryLogin = nil
-if modules.client_entergame then
-    local charList = modules.client_entergame.characterlist
-    if charList and charList.tryLogin then
-        originalTryLogin = charList.tryLogin
-        charList.tryLogin = function(charInfo, tries)
-            g_logger.info("== DEBUG tryLogin called ==")
-            g_logger.info("  charInfo.worldHost: " .. tostring(charInfo.worldHost))
-            g_logger.info("  charInfo.worldPort: " .. tostring(charInfo.worldPort))
-            g_logger.info("  charInfo.characterName: " .. tostring(charInfo.characterName))
-            g_logger.info("  G.sessionKey: " .. tostring(G.sessionKey and string.sub(G.sessionKey, 1, 30) .. "..." or "nil"))
-            g_logger.info("  G.account: " .. tostring(G.account))
-            g_logger.info("  G.password set: " .. tostring(G.password and #G.password > 0))
-            g_logger.info(" ================================")
-            return originalTryLogin(charInfo, tries)
-        end
-    end
+-- Hook into onGameConnectionError to log errors
+local originalOnGameConnectionError = onGameConnectionError
+function onGameConnectionError(message, code)
+    g_logger.info("== DEBUG onGameConnectionError ==")
+    g_logger.info("  message: " .. tostring(message))
+    g_logger.info("  code: " .. tostring(code))
+    g_logger.info(" ===================================")
+    return originalOnGameConnectionError(message, code)
 end
 
-g_logger.info("== DEBUG: Connection tracker loaded ==");
-print("== DEBUG: Connection tracker loaded ==")
+g_logger.info("== DEBUG: Connection tracker v2 loaded ==");
+print("== DEBUG: Connection tracker v2 loaded ==")
