@@ -73,7 +73,7 @@ if ENABLE_SERVERS then
         --
         ["http://127.0.0.1:3000/api/game/login"] = {
             port = 3000,
-            protocol = 1511,
+            protocol = 1316,
             httpLogin = true,
             useAuthenticator = false
         },
