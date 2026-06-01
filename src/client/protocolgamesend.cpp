@@ -47,8 +47,13 @@ void ProtocolGame::sendExtendedOpcode(const uint8_t opcode, const std::string& b
     }
 }
 
+// External declaration for the debug logger defined in protocolgame.cpp
+extern void loginDebugLog(const std::string& msg);
+
 void ProtocolGame::sendLoginPacket(const uint32_t challengeTimestamp, const uint8_t challengeRandom)
 {
+    loginDebugLog("sendLoginPacket() START challenge=" + std::to_string(challengeTimestamp) + "," + std::to_string(challengeRandom));
+
     const auto& msg = std::make_shared<OutputMessage>();
 
     msg->addU8(Proto::ClientPendingGame);
@@ -72,6 +77,7 @@ void ProtocolGame::sendLoginPacket(const uint32_t challengeTimestamp, const uint
         msg->addU8(0);
 
     const int offset = msg->getMessageSize();
+    loginDebugLog("  header offset=" + std::to_string(offset) + " rsaSize=" + std::to_string(g_crypt.rsaGetSize()));
 
     if (g_game.getFeature(Otc::GameLoginPacketEncryption)) {
         // first RSA byte must be 0
@@ -87,6 +93,7 @@ void ProtocolGame::sendLoginPacket(const uint32_t challengeTimestamp, const uint
     msg->addU8(0); // is gm set?
 
     if (g_game.getFeature(Otc::GameSessionKey)) {
+        loginDebugLog("  adding sessionKey len=" + std::to_string(m_sessionKey.length()) + " char=" + m_characterName);
         msg->addString(m_sessionKey);
         msg->addString(m_characterName);
 
@@ -109,28 +116,40 @@ void ProtocolGame::sendLoginPacket(const uint32_t challengeTimestamp, const uint
     }
 
     const auto& extended = callLuaField<std::string>("getLoginExtendedData");
-    if (!extended.empty())
+    if (!extended.empty()) {
+        loginDebugLog("  extended data len=" + std::to_string(extended.length()));
         msg->addString(extended);
+    }
 
     // complete the bytes for rsa encryption with zeros
     const int paddingBytes = g_crypt.rsaGetSize() - (msg->getMessageSize() - offset);
-    assert(paddingBytes >= 0);
+    loginDebugLog("  blockSize=" + std::to_string(msg->getMessageSize() - offset) + " paddingBytes=" + std::to_string(paddingBytes));
+    if (paddingBytes < 0) {
+        loginDebugLog("  ERROR: paddingBytes < 0! Aborting sendLoginPacket to prevent crash");
+        return;
+    }
     msg->addPaddingBytes(paddingBytes);
 
+    loginDebugLog("  encrypting RSA...");
     // encrypt with RSA
     if (g_game.getFeature(Otc::GameLoginPacketEncryption))
         msg->encryptRsa();
+    loginDebugLog("  RSA encrypt done, msgSize=" + std::to_string(msg->getMessageSize()));
 
     if (g_game.getFeature(Otc::GameProtocolChecksum))
         enableChecksum();
 
+    loginDebugLog("  calling send(msg)...");
     send(msg);
+    loginDebugLog("  send(msg) returned OK");
 
     if (g_game.getFeature(Otc::GameLoginPacketEncryption))
         enableXteaEncryption();
 
     if (g_game.getFeature(Otc::GameSequencedPackets))
         enabledSequencedPackets();
+
+    loginDebugLog("sendLoginPacket() END");
 }
 
 void ProtocolGame::sendEnterGame()

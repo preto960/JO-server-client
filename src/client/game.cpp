@@ -596,6 +596,13 @@ void Game::processWalkCancel(const Otc::Direction direction)
 
 void Game::loginWorld(const std::string_view account, const std::string_view password, const std::string_view worldName, const std::string_view worldHost, const int worldPort, const std::string_view characterName, const std::string_view authenticatorToken, const std::string_view sessionKey, const std::string_view& recordTo)
 {
+    // External debug logger
+    extern void loginDebugLog(const std::string& msg);
+    loginDebugLog("Game::loginWorld() START");
+    loginDebugLog("  host=" + std::string(worldHost) + " port=" + std::to_string(worldPort) + " char=" + std::string(characterName));
+    loginDebugLog("  sessionKey=" + std::string(sessionKey).substr(0, 20));
+    loginDebugLog("  worldName=" + std::string(worldName));
+
     if (m_protocolGame || isOnline())
         throw Exception("Unable to login into a world while already online or logging.");
 
@@ -603,19 +610,28 @@ void Game::loginWorld(const std::string_view account, const std::string_view pas
         throw Exception("Must set a valid game protocol version before logging.");
 
     // reset the new game state
+    loginDebugLog("  calling resetGameStates()...");
     resetGameStates();
+    loginDebugLog("  resetGameStates() done");
 
+    loginDebugLog("  creating LocalPlayer...");
     m_localPlayer = std::make_shared<LocalPlayer>();
     m_localPlayer->onCreate();
     m_localPlayer->setName(characterName);
+    loginDebugLog("  LocalPlayer created: " + std::string(characterName));
 
+    loginDebugLog("  creating ProtocolGame...");
     m_protocolGame = std::make_shared<ProtocolGame>();
     if (!recordTo.empty()) {
         m_protocolGame->setRecorder(std::make_shared<PacketRecorder>(recordTo));
     }
+    loginDebugLog("  calling ProtocolGame::login()...");
     m_protocolGame->login(account, password, worldHost, static_cast<uint16_t>(worldPort), characterName, authenticatorToken, sessionKey);
+    loginDebugLog("  ProtocolGame::login() returned");
+
     m_characterName = characterName;
     m_worldName = worldName;
+    loginDebugLog("Game::loginWorld() END - returning to Lua");
 }
 
 void Game::playRecord(const std::string_view& file)

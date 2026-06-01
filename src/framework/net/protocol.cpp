@@ -405,17 +405,24 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage) const
     }
 }
 
+// External debug logger from protocolgame.cpp
+extern void loginDebugLog(const std::string& msg);
+
 void Protocol::onConnect() {
+    loginDebugLog("Protocol::onConnect() START");
     if (g_game.getClientVersion() >= 1200) {
         std::string sendWorldName(g_game.getWorldName());
         sendWorldName += '\n';
+        loginDebugLog("  sending world name: \"" + sendWorldName + "\"");
         const auto& msg = std::make_shared<OutputMessage>();
         msg->addBytes(std::string_view(sendWorldName));
         send(msg, true);
-
+        loginDebugLog("  world name sent, enabling sequenced packets");
         enabledSequencedPackets();
     }
-    callLuaField("onConnect"); 
+    loginDebugLog("Protocol::onConnect() calling callLuaField(onConnect)");
+    callLuaField("onConnect");
+    loginDebugLog("Protocol::onConnect() END");
 }
 
 void Protocol::onRecv(const InputMessagePtr& inputMessage)

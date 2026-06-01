@@ -23,10 +23,25 @@
 #include "framework/net/inputmessage.h"
 #include "game.h"
 #include "protocolgame.h"
+#include <fstream>
+#include <chrono>
+#include <ctime>
+
+// Debug log helper for crash tracing (non-static so protocolgamesend.cpp can use it)
+void loginDebugLog(const std::string& msg) {
+    std::ofstream f("crash_debug.log", std::ios::app);
+    if (f.is_open()) {
+        auto now = std::chrono::system_clock::now();
+        auto time = std::chrono::system_clock::to_time_t(now);
+        f << std::put_time(std::localtime(&time), "[%Y-%m-%d %H:%M:%S] ") << "[C++] " << msg << std::endl;
+        f.flush();
+    }
+}
 
 void ProtocolGame::login(const std::string_view accountName, const std::string_view accountPassword, const std::string_view host, uint16_t port,
                          const std::string_view characterName, const std::string_view authenticatorToken, const std::string_view sessionKey)
 {
+    loginDebugLog("ProtocolGame::login() host=" + std::string(host) + " port=" + std::to_string(port));
     m_accountName = accountName;
     m_accountPassword = accountPassword;
     m_authenticatorToken = authenticatorToken;
@@ -34,7 +49,9 @@ void ProtocolGame::login(const std::string_view accountName, const std::string_v
     m_characterName = characterName;
 
 #ifndef __EMSCRIPTEN__
+    loginDebugLog("  calling Protocol::connect()...");
     connect(host, port);
+    loginDebugLog("  Protocol::connect() returned");
 #else
     if (port == 7172)
         port = 443;
@@ -44,18 +61,34 @@ void ProtocolGame::login(const std::string_view accountName, const std::string_v
 
 void ProtocolGame::onConnect()
 {
+    loginDebugLog("ProtocolGame::onConnect() START");
+
     m_firstRecv = true;
+
+    loginDebugLog("  calling Protocol::onConnect()...");
     Protocol::onConnect();
+    loginDebugLog("  Protocol::onConnect() returned OK");
 
+    loginDebugLog("  getting local player...");
     m_localPlayer = g_game.getLocalPlayer();
+    loginDebugLog("  local player obtained");
 
-    if (g_game.getFeature(Otc::GameProtocolChecksum))
+    if (g_game.getFeature(Otc::GameProtocolChecksum)) {
+        loginDebugLog("  enabling checksum");
         enableChecksum();
+    }
 
-    if (!g_game.getFeature(Otc::GameChallengeOnLogin))
+    if (!g_game.getFeature(Otc::GameChallengeOnLogin)) {
+        loginDebugLog("  calling sendLoginPacket(0,0)...");
         sendLoginPacket(0, 0);
+        loginDebugLog("  sendLoginPacket(0,0) returned OK");
+    } else {
+        loginDebugLog("  GameChallengeOnLogin=enabled, waiting for challenge");
+    }
 
+    loginDebugLog("  calling recv()...");
     recv();
+    loginDebugLog("ProtocolGame::onConnect() END");
 }
 
 void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)

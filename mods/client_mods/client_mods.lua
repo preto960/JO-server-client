@@ -1,5 +1,6 @@
--- client_mods.lua v6 - Lua-side sendLoginPacket bypass + diagnostic
--- Bypasses the C++ sendLoginPacket that causes heap corruption
+-- client_mods.lua v7 - Diagnostic with C++ logging companion
+-- C++ side now has detailed logging in protocolgame.cpp, protocolgamesend.cpp, game.cpp, protocol.cpp
+-- This Lua mod provides the Lua-side logging and feature management
 
 local DEBUG_FILE = "crash_debug.log"
 
@@ -7,16 +8,16 @@ local function debugLog(msg)
     local f = io.open(DEBUG_FILE, "a")
     if f then
         f:write(os.date("[%Y-%m-%d %H:%M:%S] ") .. msg .. "\n")
+        f:flush() -- force flush to OS
         f:close()
     end
-    print("[MOD] " .. msg)
 end
 
 function init()
     local ok, err = pcall(function()
-        debugLog("=== client_mods init (v6 - Lua bypass) ===")
+        debugLog("=== client_mods init (v7) ===")
 
-        -- Disable GameSequencedPackets
+        -- Disable GameSequencedPackets for protocol 1316+
         local origSetClientVersion = g_game.setClientVersion
         local versionSet = false
         g_game.setClientVersion = function(v)
@@ -36,68 +37,7 @@ function init()
             end
         end
 
-        -- ===== DIAGNOSTIC: Test RSA from Lua =====
-        debugLog("RSA diagnostic:")
-        debugLog("  rsaGetSize = " .. tostring(g_crypt.rsaGetSize()))
-        local testMsg = OutputMessage.create()
-        testMsg:addU8(0)
-        testMsg:addU32(1234)
-        testMsg:addU32(5678)
-        testMsg:addU32(9999)
-        testMsg:addU32(1111)
-        testMsg:addU8(0)
-        testMsg:addString("testkey")
-        testMsg:addString("testchar")
-        local testDataSize = testMsg:getMessageSize()
-        local rsaSize = g_crypt.rsaGetSize()
-        local padBytes = rsaSize - testDataSize
-        debugLog("  testDataSize=" .. testDataSize .. " rsaSize=" .. rsaSize .. " padBytes=" .. padBytes)
-        if padBytes > 0 then
-            testMsg:addPaddingBytes(padBytes)
-        end
-        local testOk, testErr = pcall(function()
-            testMsg:encryptRsa()
-        end)
-        debugLog("  RSA encrypt test: " .. tostring(testOk) .. (testErr and (" err=" .. tostring(testErr)) or ""))
-
-        -- ===== DIAGNOSTIC: Test full login packet build from Lua =====
-        debugLog("Login packet build test:")
-        local testPacket = OutputMessage.create()
-        testPacket:addU8(10) -- ClientPendingGame
-        testPacket:addU16(g_game.getOs())
-        testPacket:addU16(g_game.getProtocolVersion())
-        testPacket:addU32(g_game.getClientVersion())
-        testPacket:addString(tostring(g_game.getClientVersion()))
-        testPacket:addU16(g_things.getContentRevision())
-        testPacket:addU8(0) -- preview state
-        local offset = testPacket:getMessageSize()
-        debugLog("  header offset=" .. offset)
-
-        testPacket:addU8(0)
-        testPacket:addU32(0xDEADBEEF)
-        testPacket:addU32(0x12345678)
-        testPacket:addU32(0x9ABCDEF0)
-        testPacket:addU32(0x11111111)
-        testPacket:addU8(0)
-        testPacket:addString("@god\n123456")
-        testPacket:addString("GOD")
-        testPacket:addU32(0)
-        testPacket:addU8(0)
-        local blockSize = testPacket:getMessageSize() - offset
-        debugLog("  blockSize=" .. blockSize .. " (max=" .. rsaSize .. ")")
-        local pad2 = rsaSize - blockSize
-        debugLog("  padBytes=" .. pad2)
-        testPacket:addPaddingBytes(pad2)
-        local totalSize = testPacket:getMessageSize()
-        debugLog("  totalSize=" .. totalSize)
-
-        local encOk, encErr = pcall(function()
-            testPacket:encryptRsa()
-        end)
-        debugLog("  Full packet RSA encrypt: " .. tostring(encOk) .. (encErr and (" err=" .. tostring(encErr)) or ""))
-        debugLog("  Final message size: " .. testPacket:getMessageSize())
-
-        -- ===== MAIN FIX: Hook loginWorld with Lua bypass =====
+        -- Hook loginWorld with detailed logging
         local originalLoginWorld = g_game.loginWorld
         local loginAttemptInProgress = false
 
@@ -108,10 +48,16 @@ function init()
             end
             loginAttemptInProgress = true
 
-            debugLog("========== loginWorld v6 ==========")
-            debugLog("  host=" .. tostring(worldHost) .. " port=" .. tostring(worldPort) .. " char=" .. tostring(characterName))
-            debugLog("  sessionKey=" .. tostring(sessionKey))
-            debugLog("  GameSequencedPackets=" .. tostring(g_game.getFeature(GameSequencedPackets)))
+            debugLog("========== loginWorld v7 ==========")
+            debugLog("  [LUA] host=" .. tostring(worldHost) .. " port=" .. tostring(worldPort) .. " char=" .. tostring(characterName))
+            debugLog("  [LUA] worldName=" .. tostring(worldName))
+            debugLog("  [LUA] sessionKey=" .. tostring(sessionKey))
+            debugLog("  [LUA] authenticatorToken=" .. tostring(authenticatorToken))
+            debugLog("  [LUA] GameSequencedPackets=" .. tostring(g_game.getFeature(GameSequencedPackets)))
+            debugLog("  [LUA] GameChallengeOnLogin=" .. tostring(g_game.getFeature(GameChallengeOnLogin)))
+            debugLog("  [LUA] GameLoginPacketEncryption=" .. tostring(g_game.getFeature(GameLoginPacketEncryption)))
+            debugLog("  [LUA] GameSessionKey=" .. tostring(g_game.getFeature(GameSessionKey)))
+            debugLog("  [LUA] GameProtocolChecksum=" .. tostring(g_game.getFeature(GameProtocolChecksum)))
 
             local portNum = tonumber(worldPort)
             if not portNum or portNum < 1 or portNum > 65535 then
@@ -120,38 +66,29 @@ function init()
                 return
             end
 
-            -- Save params for potential Lua fallback
-            G._loginParams = {
-                account = account,
-                password = password,
-                worldName = worldName,
-                worldHost = worldHost,
-                worldPort = portNum,
-                characterName = characterName,
-                authenticatorToken = authenticatorToken,
-                sessionKey = sessionKey
-            }
+            debugLog("  [LUA] Calling original C++ loginWorld...")
+            debugLog("  [LUA] Flushing log before C++ call...")
+            io.flush()
 
-            debugLog("  Calling C++ loginWorld...")
             local ok2, err2 = pcall(function()
                 originalLoginWorld(self, account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
             end)
 
+            debugLog("  [LUA] pcall returned: ok=" .. tostring(ok2))
             if ok2 then
-                debugLog("  C++ loginWorld returned OK!")
-                -- Try to get the protocol game for Lua-side monitoring
+                debugLog("  [LUA] C++ loginWorld returned successfully!")
                 local pg = g_game.getProtocolGame()
                 if pg then
-                    debugLog("  ProtocolGame obtained: " .. tostring(pg))
+                    debugLog("  [LUA] ProtocolGame obtained: " .. tostring(pg))
                 else
-                    debugLog("  WARNING: ProtocolGame is nil after loginWorld")
+                    debugLog("  [LUA] WARNING: ProtocolGame is nil after loginWorld")
                 end
             else
-                debugLog("  !!! C++ loginWorld ERROR: " .. tostring(err2))
+                debugLog("  [LUA] C++ loginWorld ERROR: " .. tostring(err2))
             end
 
             loginAttemptInProgress = false
-            debugLog("========== loginWorld v6 END ==========")
+            debugLog("========== loginWorld v7 END ==========")
         end
 
         -- Hook connection events
@@ -178,6 +115,7 @@ function init()
         local f = io.open(DEBUG_FILE, "a")
         if f then
             f:write(os.date("[%Y-%m-%d %H:%M:%S] ") .. "!!! INIT ERROR: " .. tostring(err) .. "\n")
+            f:flush()
             f:close()
         end
     end
