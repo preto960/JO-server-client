@@ -736,6 +736,7 @@ function EnterGame.loginSuccess(requestId, jsonSession, jsonWorlds, jsonCharacte
         local world = worlds[character.worldid]
         characters[index] = {
             name = character.name,
+            characterName = character.name,
             level = character.level,
             main = character.ismaincharacter,
             dailyreward = character.dailyrewardstate,
@@ -749,6 +750,7 @@ function EnterGame.loginSuccess(requestId, jsonSession, jsonWorlds, jsonCharacte
             addonsflags = character.addonsflags,
             worldName = world.name,
             worldIp = world.ip,
+            worldHost = world.ip,
             worldPort = world.port,
             previewState = world.previewstate,
             pvptype = world.pvptype,
