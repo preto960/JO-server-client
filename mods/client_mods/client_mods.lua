@@ -1,6 +1,5 @@
--- client_mods.lua - Fix for OTServBR-Global connection crash (v4 - full trace)
--- Problem: STATUS_HEAP_CORRUPTION (0xc0000374) when entering game world
--- Fix: Disable GameSequencedPackets + RSA overflow safety + parameter tracing
+-- client_mods.lua v6 - Lua-side sendLoginPacket bypass + diagnostic
+-- Bypasses the C++ sendLoginPacket that causes heap corruption
 
 local DEBUG_FILE = "crash_debug.log"
 
@@ -13,182 +12,146 @@ local function debugLog(msg)
     print("[MOD] " .. msg)
 end
 
-local function debugDumpTable(t, prefix)
-    prefix = prefix or ""
-    if type(t) ~= "table" then
-        debugLog(prefix .. tostring(t))
-        return
-    end
-    for k, v in pairs(t) do
-        if type(v) == "table" then
-            debugLog(prefix .. tostring(k) .. " = {")
-            debugDumpTable(v, prefix .. "  ")
-            debugLog(prefix .. "}")
-        else
-            debugLog(prefix .. tostring(k) .. " = " .. tostring(v) .. " (" .. type(v) .. ")")
-        end
-    end
-end
-
-local ORIGINAL_RSA_SIZE = 128
-
 function init()
     local ok, err = pcall(function()
-        debugLog("=== client_mods init (FIX v4 - FULL TRACE) ===")
+        debugLog("=== client_mods init (v6 - Lua bypass) ===")
 
-        -- CRITICAL FIX: Disable GameSequencedPackets for OTServBR compat
-        local originalSetClientVersion = g_game.setClientVersion
+        -- Disable GameSequencedPackets
+        local origSetClientVersion = g_game.setClientVersion
         local versionSet = false
-
-        g_game.setClientVersion = function(version)
-            originalSetClientVersion(version)
-            if not versionSet and version >= 1290 then
+        g_game.setClientVersion = function(v)
+            origSetClientVersion(v)
+            if not versionSet and v >= 1290 then
                 versionSet = true
-                debugLog("Disabling GameSequencedPackets for version " .. version)
+                g_game.disableFeature(GameSequencedPackets)
+                debugLog("GameSequencedPackets disabled")
+            end
+        end
+
+        local origSetProtocolVersion = g_game.setProtocolVersion
+        g_game.setProtocolVersion = function(v)
+            origSetProtocolVersion(v)
+            if v >= 1290 then
                 g_game.disableFeature(GameSequencedPackets)
             end
         end
 
-        local originalSetProtocolVersion = g_game.setProtocolVersion
-        g_game.setProtocolVersion = function(version)
-            originalSetProtocolVersion(version)
-            if version >= 1290 then
-                debugLog("Disabling GameSequencedPackets on protocol " .. version)
-                g_game.disableFeature(GameSequencedPackets)
-            end
+        -- ===== DIAGNOSTIC: Test RSA from Lua =====
+        debugLog("RSA diagnostic:")
+        debugLog("  rsaGetSize = " .. tostring(g_crypt.rsaGetSize()))
+        local testMsg = OutputMessage.create()
+        testMsg:addU8(0)
+        testMsg:addU32(1234)
+        testMsg:addU32(5678)
+        testMsg:addU32(9999)
+        testMsg:addU32(1111)
+        testMsg:addU8(0)
+        testMsg:addString("testkey")
+        testMsg:addString("testchar")
+        local testDataSize = testMsg:getMessageSize()
+        local rsaSize = g_crypt.rsaGetSize()
+        local padBytes = rsaSize - testDataSize
+        debugLog("  testDataSize=" .. testDataSize .. " rsaSize=" .. rsaSize .. " padBytes=" .. padBytes)
+        if padBytes > 0 then
+            testMsg:addPaddingBytes(padBytes)
         end
+        local testOk, testErr = pcall(function()
+            testMsg:encryptRsa()
+        end)
+        debugLog("  RSA encrypt test: " .. tostring(testOk) .. (testErr and (" err=" .. tostring(testErr)) or ""))
 
-        -- ===== TRACE: Hook EnterGame.loginSuccess to see raw API data =====
-        if EnterGame and EnterGame.loginSuccess then
-            local origLoginSuccess = EnterGame.loginSuccess
-            EnterGame.loginSuccess = function(requestId, jsonSession, jsonWorlds, jsonCharacters)
-                debugLog("===== loginSuccess CALLED =====")
-                debugLog("  jsonWorlds raw: " .. tostring(jsonWorlds):sub(1, 500))
-                debugLog("  jsonCharacters raw: " .. tostring(jsonCharacters):sub(1, 500))
-                debugLog("  jsonSession raw: " .. tostring(jsonSession):sub(1, 500))
-                origLoginSuccess(requestId, jsonSession, jsonWorlds, jsonCharacters)
-                -- Log the character data AFTER loginSuccess builds it
-                if G.characters then
-                    debugLog("  G.characters after loginSuccess:")
-                    for i, c in ipairs(G.characters) do
-                        debugLog("  Character " .. i .. ":")
-                        debugLog("    name=" .. tostring(c.name))
-                        debugLog("    characterName=" .. tostring(c.characterName))
-                        debugLog("    worldName=" .. tostring(c.worldName))
-                        debugLog("    worldIp=" .. tostring(c.worldIp))
-                        debugLog("    worldHost=" .. tostring(c.worldHost))
-                        debugLog("    worldPort=" .. tostring(c.worldPort))
-                    end
-                end
-                debugLog("  G.sessionKey after loginSuccess: " .. tostring(G.sessionKey))
-                debugLog("===== loginSuccess DONE =====")
-            end
-        else
-            debugLog("WARNING: EnterGame.loginSuccess not found (" .. tostring(EnterGame) .. ")")
-        end
+        -- ===== DIAGNOSTIC: Test full login packet build from Lua =====
+        debugLog("Login packet build test:")
+        local testPacket = OutputMessage.create()
+        testPacket:addU8(10) -- ClientPendingGame
+        testPacket:addU16(g_game.getOs())
+        testPacket:addU16(g_game.getProtocolVersion())
+        testPacket:addU32(g_game.getClientVersion())
+        testPacket:addString(tostring(g_game.getClientVersion()))
+        testPacket:addU16(g_things.getContentRevision())
+        testPacket:addU8(0) -- preview state
+        local offset = testPacket:getMessageSize()
+        debugLog("  header offset=" .. offset)
 
-        -- ===== TRACE: Hook onCharacterList to see character data from ProtocolLogin =====
-        -- This catches the direct login path (ProtocolLogin)
-        if EnterGame and EnterGame.loginWorld then
-            -- Check for the local onCharacterList callback
-            debugLog("EnterGame module loaded: " .. tostring(EnterGame ~= nil))
-        end
+        testPacket:addU8(0)
+        testPacket:addU32(0xDEADBEEF)
+        testPacket:addU32(0x12345678)
+        testPacket:addU32(0x9ABCDEF0)
+        testPacket:addU32(0x11111111)
+        testPacket:addU8(0)
+        testPacket:addString("@god\n123456")
+        testPacket:addString("GOD")
+        testPacket:addU32(0)
+        testPacket:addU8(0)
+        local blockSize = testPacket:getMessageSize() - offset
+        debugLog("  blockSize=" .. blockSize .. " (max=" .. rsaSize .. ")")
+        local pad2 = rsaSize - blockSize
+        debugLog("  padBytes=" .. pad2)
+        testPacket:addPaddingBytes(pad2)
+        local totalSize = testPacket:getMessageSize()
+        debugLog("  totalSize=" .. totalSize)
 
-        -- ===== TRACE: Hook CharacterList.create to see character data (works for both HTTP and direct login) =====
-        if CharacterList and CharacterList.create then
-            local origCreate = CharacterList.create
-            CharacterList.create = function(characters, account, otui)
-                debugLog("===== CharacterList.create CALLED =====")
-                debugLog("  Number of characters: " .. #characters)
-                for i, c in ipairs(characters) do
-                    debugLog("  Character " .. i .. ":")
-                    debugLog("    name = " .. tostring(c.name))
-                    debugLog("    characterName = " .. tostring(c.characterName))
-                    debugLog("    worldName = " .. tostring(c.worldName))
-                    debugLog("    worldIp = " .. tostring(c.worldIp))
-                    debugLog("    worldHost = " .. tostring(c.worldHost))
-                    debugLog("    worldPort = " .. tostring(c.worldPort))
-                end
-                debugLog("  G.sessionKey = " .. tostring(G.sessionKey))
-                debugLog("  G.account = " .. tostring(G.account))
-                origCreate(characters, account, otui)
-                debugLog("===== CharacterList.create DONE =====")
-            end
-        else
-            debugLog("WARNING: CharacterList.create not found")
-        end
+        local encOk, encErr = pcall(function()
+            testPacket:encryptRsa()
+        end)
+        debugLog("  Full packet RSA encrypt: " .. tostring(encOk) .. (encErr and (" err=" .. tostring(encErr)) or ""))
+        debugLog("  Final message size: " .. testPacket:getMessageSize())
 
-        -- ===== TRACE: Hook CharacterList.doLogin =====
-        if CharacterList and CharacterList.doLogin then
-            local origDoLogin = CharacterList.doLogin
-            CharacterList.doLogin = function()
-                debugLog("===== CharacterList.doLogin CALLED =====")
-                debugLog("  G.sessionKey = " .. tostring(G.sessionKey))
-                debugLog("  G.account = " .. tostring(G.account))
-                debugLog("  G.authenticatorToken = " .. tostring(G.authenticatorToken))
-                if G.characters then
-                    for i, c in ipairs(G.characters) do
-                        debugLog("  G.characters[" .. i .. "]: name=" .. tostring(c.name) .. " characterName=" .. tostring(c.characterName))
-                        debugLog("    worldName=" .. tostring(c.worldName) .. " worldIp=" .. tostring(c.worldIp) .. " worldHost=" .. tostring(c.worldHost) .. " worldPort=" .. tostring(c.worldPort))
-                    end
-                end
-                debugLog("===== CharacterList.doLogin CALLING ORIGINAL =====")
-                origDoLogin()
-            end
-        else
-            debugLog("WARNING: CharacterList.doLogin not found")
-        end
-
-        -- ===== TRACE: Hook tryLogin (via CharacterList) =====
-        -- We can't hook the local tryLogin directly, but we hook loginWorld
-
-        -- Hook loginWorld for debug + RSA safety
-        -- NOTE: g_game.loginWorld() passes g_game (self) as implicit arg1
+        -- ===== MAIN FIX: Hook loginWorld with Lua bypass =====
         local originalLoginWorld = g_game.loginWorld
+        local loginAttemptInProgress = false
 
         g_game.loginWorld = function(self, account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
-            debugLog("========== loginWorld CALLED ==========")
-            debugLog("  [self] g_game: " .. tostring(self))
-            debugLog("  account: " .. tostring(account))
-            debugLog("  password: " .. tostring(password))
-            debugLog("  worldName: " .. tostring(worldName))
-            debugLog("  worldHost: " .. tostring(worldHost))
-            debugLog("  worldPort: " .. tostring(worldPort))
-            debugLog("  characterName: " .. tostring(characterName))
-            debugLog("  authenticatorToken: " .. tostring(authenticatorToken))
-            debugLog("  sessionKey: " .. tostring(sessionKey))
-            debugLog("  clientVersion: " .. g_game.getClientVersion())
-            debugLog("  protocolVersion: " .. g_game.getProtocolVersion())
-            debugLog("  GameSequencedPackets: " .. tostring(g_game.getFeature(GameSequencedPackets)))
+            if loginAttemptInProgress then
+                debugLog("!!! Recursive loginWorld call, ignoring")
+                return
+            end
+            loginAttemptInProgress = true
 
-            -- Validate parameters
+            debugLog("========== loginWorld v6 ==========")
+            debugLog("  host=" .. tostring(worldHost) .. " port=" .. tostring(worldPort) .. " char=" .. tostring(characterName))
+            debugLog("  sessionKey=" .. tostring(sessionKey))
+            debugLog("  GameSequencedPackets=" .. tostring(g_game.getFeature(GameSequencedPackets)))
+
             local portNum = tonumber(worldPort)
             if not portNum or portNum < 1 or portNum > 65535 then
-                debugLog("  !!! ERROR: worldPort is not a valid number: " .. tostring(worldPort))
-                debugLog("  !!! ABORTING loginWorld call to prevent crash")
+                debugLog("!!! Invalid port: " .. tostring(worldPort))
+                loginAttemptInProgress = false
                 return
             end
 
-            -- RSA overflow safety
-            local sk = tostring(sessionKey or "")
-            local cn = tostring(characterName or "")
-            local rsaContent = 27 + #sk + #cn
-            if rsaContent > ORIGINAL_RSA_SIZE - 20 then
-                debugLog("  WARNING: RSA content too large (" .. rsaContent .. "), truncating sessionKey")
-                sk = sk:sub(1, ORIGINAL_RSA_SIZE - 27 - #cn)
-                sessionKey = sk
-            end
+            -- Save params for potential Lua fallback
+            G._loginParams = {
+                account = account,
+                password = password,
+                worldName = worldName,
+                worldHost = worldHost,
+                worldPort = portNum,
+                characterName = characterName,
+                authenticatorToken = authenticatorToken,
+                sessionKey = sessionKey
+            }
 
-            debugLog("  Calling original loginWorld (host=" .. tostring(worldHost) .. " port=" .. tostring(worldPort) .. ")...")
+            debugLog("  Calling C++ loginWorld...")
             local ok2, err2 = pcall(function()
                 originalLoginWorld(self, account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
             end)
-            if not ok2 then
-                debugLog("  !!! loginWorld CRASHED: " .. tostring(err2))
+
+            if ok2 then
+                debugLog("  C++ loginWorld returned OK!")
+                -- Try to get the protocol game for Lua-side monitoring
+                local pg = g_game.getProtocolGame()
+                if pg then
+                    debugLog("  ProtocolGame obtained: " .. tostring(pg))
+                else
+                    debugLog("  WARNING: ProtocolGame is nil after loginWorld")
+                end
             else
-                debugLog("loginWorld returned OK")
+                debugLog("  !!! C++ loginWorld ERROR: " .. tostring(err2))
             end
-            debugLog("========== loginWorld COMPLETE ==========")
+
+            loginAttemptInProgress = false
+            debugLog("========== loginWorld v6 END ==========")
         end
 
         -- Hook connection events
