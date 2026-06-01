@@ -143,22 +143,31 @@ function init()
         -- We can't hook the local tryLogin directly, but we hook loginWorld
 
         -- Hook loginWorld for debug + RSA safety
+        -- NOTE: g_game.loginWorld() passes g_game (self) as implicit arg1
         local originalLoginWorld = g_game.loginWorld
 
-        g_game.loginWorld = function(account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey, recordTo)
+        g_game.loginWorld = function(self, account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
             debugLog("========== loginWorld CALLED ==========")
-            debugLog("  [arg1] account: " .. tostring(account))
-            debugLog("  [arg2] password: " .. tostring(password))
-            debugLog("  [arg3] worldName: " .. tostring(worldName))
-            debugLog("  [arg4] worldHost: " .. tostring(worldHost))
-            debugLog("  [arg5] worldPort: " .. tostring(worldPort))
-            debugLog("  [arg6] characterName: " .. tostring(characterName))
-            debugLog("  [arg7] authenticatorToken: " .. tostring(authenticatorToken))
-            debugLog("  [arg8] sessionKey: " .. tostring(sessionKey))
-            debugLog("  [arg9] recordTo: " .. tostring(recordTo))
+            debugLog("  [self] g_game: " .. tostring(self))
+            debugLog("  account: " .. tostring(account))
+            debugLog("  password: " .. tostring(password))
+            debugLog("  worldName: " .. tostring(worldName))
+            debugLog("  worldHost: " .. tostring(worldHost))
+            debugLog("  worldPort: " .. tostring(worldPort))
+            debugLog("  characterName: " .. tostring(characterName))
+            debugLog("  authenticatorToken: " .. tostring(authenticatorToken))
+            debugLog("  sessionKey: " .. tostring(sessionKey))
             debugLog("  clientVersion: " .. g_game.getClientVersion())
             debugLog("  protocolVersion: " .. g_game.getProtocolVersion())
             debugLog("  GameSequencedPackets: " .. tostring(g_game.getFeature(GameSequencedPackets)))
+
+            -- Validate parameters
+            local portNum = tonumber(worldPort)
+            if not portNum or portNum < 1 or portNum > 65535 then
+                debugLog("  !!! ERROR: worldPort is not a valid number: " .. tostring(worldPort))
+                debugLog("  !!! ABORTING loginWorld call to prevent crash")
+                return
+            end
 
             -- RSA overflow safety
             local sk = tostring(sessionKey or "")
@@ -170,22 +179,9 @@ function init()
                 sessionKey = sk
             end
 
-            -- Validate parameters before calling C++
-            local portNum = tonumber(worldPort)
-            if not portNum or portNum < 1 or portNum > 65535 then
-                debugLog("  !!! ERROR: worldPort is not a valid number: " .. tostring(worldPort))
-                debugLog("  !!! ABORTING loginWorld call to prevent crash")
-                return
-            end
-
-            -- Check if worldHost looks like an IP
-            if type(worldHost) == "string" and not worldHost:match("^%d+%.%d+%.%d+%.%d+$") and not worldHost:match("^[a-zA-Z") then
-                debugLog("  !!! WARNING: worldHost doesn't look like IP or hostname: " .. tostring(worldHost))
-            end
-
-            debugLog("  Calling original loginWorld...")
+            debugLog("  Calling original loginWorld (host=" .. tostring(worldHost) .. " port=" .. tostring(worldPort) .. ")...")
             local ok2, err2 = pcall(function()
-                originalLoginWorld(account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey, recordTo)
+                originalLoginWorld(self, account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
             end)
             if not ok2 then
                 debugLog("  !!! loginWorld CRASHED: " .. tostring(err2))
