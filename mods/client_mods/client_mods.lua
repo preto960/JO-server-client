@@ -109,25 +109,28 @@ function init()
     end
 
     -- Hook ProtocolLogin (direct login on port 7171) for debug
-    local originalProtocolLoginSend = ProtocolLogin.sendLoginPacket
-    if originalProtocolLoginSend then
-        ProtocolLogin.sendLoginPacket = function(self)
-            debugLog(">>> ProtocolLogin.sendLoginPacket called")
-            debugLog("  host: " .. tostring(self.accountName))
-            debugLog("  protocol: " .. g_game.getProtocolVersion())
-            debugLog("  GameLoginPacketEncryption: " .. tostring(g_game.getFeature(Otc.GameLoginPacketEncryption)))
+    -- ProtocolLogin may not be loaded yet, so use pcall
+    pcall(function()
+        local originalProtocolLoginSend = ProtocolLogin.sendLoginPacket
+        if originalProtocolLoginSend then
+            ProtocolLogin.sendLoginPacket = function(self)
+                debugLog(">>> ProtocolLogin.sendLoginPacket called")
+                debugLog("  host: " .. tostring(self.accountName))
+                debugLog("  protocol: " .. g_game.getProtocolVersion())
+                debugLog("  GameLoginPacketEncryption: " .. tostring(g_game.getFeature(Otc.GameLoginPacketEncryption)))
 
-            local ok, err = pcall(function()
-                originalProtocolLoginSend(self)
-            end)
+                local ok, err = pcall(function()
+                    originalProtocolLoginSend(self)
+                end)
 
-            if not ok then
-                debugLog("!!! ProtocolLogin.sendLoginPacket ERROR: " .. tostring(err))
-            else
-                debugLog("<<< ProtocolLogin.sendLoginPacket OK")
+                if not ok then
+                    debugLog("!!! ProtocolLogin.sendLoginPacket ERROR: " .. tostring(err))
+                else
+                    debugLog("<<< ProtocolLogin.sendLoginPacket OK")
+                end
             end
         end
-    end
+    end)
 
     -- Hook connection events
     connect(g_game, {
