@@ -417,8 +417,13 @@ void Protocol::onConnect() {
         const auto& msg = std::make_shared<OutputMessage>();
         msg->addBytes(std::string_view(sendWorldName));
         send(msg, true);
-        loginDebugLog("  world name sent, enabling sequenced packets");
-        enabledSequencedPackets();
+        loginDebugLog("  world name sent");
+        if (g_game.getFeature(Otc::GameSequencedPackets)) {
+            loginDebugLog("  enabling sequenced packets (feature enabled)");
+            enabledSequencedPackets();
+        } else {
+            loginDebugLog("  sequenced packets DISABLED (feature disabled), will use checksums");
+        }
     }
     loginDebugLog("Protocol::onConnect() calling callLuaField(onConnect)");
     callLuaField("onConnect");

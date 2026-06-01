@@ -1,6 +1,10 @@
--- client_mods.lua v7 - Diagnostic with C++ logging companion
--- C++ side now has detailed logging in protocolgame.cpp, protocolgamesend.cpp, game.cpp, protocol.cpp
--- This Lua mod provides the Lua-side logging and feature management
+-- client_mods.lua v8 - Sequenced Packets Fix
+-- ROOT CAUSE: Protocol::onConnect() called enabledSequencedPackets() unconditionally
+-- for client version >= 1200, without checking the GameSequencedPackets feature flag.
+-- This caused the login packet to use sequence numbers (0x00000000) instead of
+-- checksums (adler32), producing an incorrect packet format for OTServBR-Global 13.16.
+-- FIX: protocol.cpp now checks g_game.getFeature(GameSequencedPackets) before
+-- calling enabledSequencedPackets(). This Lua mod keeps GameSequencedPackets disabled.
 
 local DEBUG_FILE = "crash_debug.log"
 
@@ -8,16 +12,17 @@ local function debugLog(msg)
     local f = io.open(DEBUG_FILE, "a")
     if f then
         f:write(os.date("[%Y-%m-%d %H:%M:%S] ") .. msg .. "\n")
-        f:flush() -- force flush to OS
+        f:flush()
         f:close()
     end
 end
 
 function init()
     local ok, err = pcall(function()
-        debugLog("=== client_mods init (v7) ===")
+        debugLog("=== client_mods init (v8 - sequenced packets fix) ===")
 
-        -- Disable GameSequencedPackets for protocol 1316+
+        -- Disable GameSequencedPackets for protocol 1316
+        -- OTServBR-Global uses checksums, not sequence numbers
         local origSetClientVersion = g_game.setClientVersion
         local versionSet = false
         g_game.setClientVersion = function(v)
@@ -25,7 +30,7 @@ function init()
             if not versionSet and v >= 1290 then
                 versionSet = true
                 g_game.disableFeature(GameSequencedPackets)
-                debugLog("GameSequencedPackets disabled")
+                debugLog("GameSequencedPackets disabled (protocol " .. v .. ")")
             end
         end
 
@@ -37,7 +42,7 @@ function init()
             end
         end
 
-        -- Hook loginWorld with detailed logging
+        -- Hook loginWorld for logging
         local originalLoginWorld = g_game.loginWorld
         local loginAttemptInProgress = false
 
@@ -48,50 +53,30 @@ function init()
             end
             loginAttemptInProgress = true
 
-            debugLog("========== loginWorld v7 ==========")
-            debugLog("  [LUA] host=" .. tostring(worldHost) .. " port=" .. tostring(worldPort) .. " char=" .. tostring(characterName))
-            debugLog("  [LUA] worldName=" .. tostring(worldName))
-            debugLog("  [LUA] sessionKey=" .. tostring(sessionKey))
-            debugLog("  [LUA] authenticatorToken=" .. tostring(authenticatorToken))
-            debugLog("  [LUA] GameSequencedPackets=" .. tostring(g_game.getFeature(GameSequencedPackets)))
-            debugLog("  [LUA] GameChallengeOnLogin=" .. tostring(g_game.getFeature(GameChallengeOnLogin)))
-            debugLog("  [LUA] GameLoginPacketEncryption=" .. tostring(g_game.getFeature(GameLoginPacketEncryption)))
-            debugLog("  [LUA] GameSessionKey=" .. tostring(g_game.getFeature(GameSessionKey)))
-            debugLog("  [LUA] GameProtocolChecksum=" .. tostring(g_game.getFeature(GameProtocolChecksum)))
-
-            local portNum = tonumber(worldPort)
-            if not portNum or portNum < 1 or portNum > 65535 then
-                debugLog("!!! Invalid port: " .. tostring(worldPort))
-                loginAttemptInProgress = false
-                return
-            end
-
-            debugLog("  [LUA] Calling original C++ loginWorld...")
-            debugLog("  [LUA] Flushing log before C++ call...")
-            io.flush()
+            debugLog("========== loginWorld v8 ==========")
+            debugLog("  host=" .. tostring(worldHost) .. " port=" .. tostring(worldPort) .. " char=" .. tostring(characterName))
+            debugLog("  sessionKey=" .. tostring(sessionKey))
+            debugLog("  GameSequencedPackets=" .. tostring(g_game.getFeature(GameSequencedPackets)))
+            debugLog("  GameChallengeOnLogin=" .. tostring(g_game.getFeature(GameChallengeOnLogin)))
+            debugLog("  GameLoginPacketEncryption=" .. tostring(g_game.getFeature(GameLoginPacketEncryption)))
+            debugLog("  GameSessionKey=" .. tostring(g_game.getFeature(GameSessionKey)))
+            debugLog("  GameProtocolChecksum=" .. tostring(g_game.getFeature(GameProtocolChecksum)))
+            debugLog("  Calling C++ loginWorld...")
 
             local ok2, err2 = pcall(function()
                 originalLoginWorld(self, account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
             end)
 
-            debugLog("  [LUA] pcall returned: ok=" .. tostring(ok2))
-            if ok2 then
-                debugLog("  [LUA] C++ loginWorld returned successfully!")
-                local pg = g_game.getProtocolGame()
-                if pg then
-                    debugLog("  [LUA] ProtocolGame obtained: " .. tostring(pg))
-                else
-                    debugLog("  [LUA] WARNING: ProtocolGame is nil after loginWorld")
-                end
-            else
-                debugLog("  [LUA] C++ loginWorld ERROR: " .. tostring(err2))
+            debugLog("  pcall returned: ok=" .. tostring(ok2))
+            if not ok2 then
+                debugLog("  C++ loginWorld ERROR: " .. tostring(err2))
             end
 
             loginAttemptInProgress = false
-            debugLog("========== loginWorld v7 END ==========")
+            debugLog("========== loginWorld v8 END ==========")
         end
 
-        -- Hook connection events
+        -- Hook connection events for logging
         connect(g_game, {
             onConnectionError = function(self, message, code)
                 debugLog("!!! CONNECTION ERROR: " .. tostring(message) .. " (code: " .. tostring(code) .. ")")
