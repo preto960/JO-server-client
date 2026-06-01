@@ -78,20 +78,15 @@ if ENABLE_SERVERS then
             useAuthenticator = false
         },
 
-        -- External server
-        ---
-        -- Configuration for external server ip.net.
-        -- @class table
-        -- @name ip_net
-        -- @field port TCP port used for connection
-        -- @field protocol Protocol identifier used by the server
-        -- @field httpLogin Indicates if the server allows HTTP login
-        --
-        ["ip.net"] = {
+        -- Direct login to game server (port 7171 = loginProtocolPort)
+        -- This bypasses HTTP login and uses the binary login protocol
+        -- Use this if HTTP login causes crashes
+        ["127.0.0.1"] = {
             port = 7171,
-            protocol = 860,
-            httpLogin = false
-        }
+            protocol = 1316,
+            httpLogin = false,
+            useAuthenticator = false
+        },
     }
 end
 
