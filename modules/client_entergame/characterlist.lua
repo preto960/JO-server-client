@@ -377,10 +377,10 @@ local function tryLogin(charInfo, tries)
     if g_game.isOnline() then
         if tries == 1 then
             g_game.safeLogout()
-			if loginEvent then
-				removeEvent(loginEvent)
-				loginEvent = nil
-			end
+                        if loginEvent then
+                                removeEvent(loginEvent)
+                                loginEvent = nil
+                        end
         end
         loginEvent = scheduleEvent(function()
             tryLogin(charInfo, tries + 1)
@@ -390,8 +390,15 @@ local function tryLogin(charInfo, tries)
 
     CharacterList.hide()
 
-    g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort,
-                      charInfo.characterName, G.authenticatorToken, G.sessionKey)
+    local host = charInfo.worldHost or charInfo.worldIp or '127.0.0.1'
+    local port = charInfo.worldPort or 7172
+    local charName = charInfo.characterName or charInfo.name or 'Unknown'
+    local worldName = charInfo.worldName or 'OTServBR-Global'
+
+    print('[tryLogin] worldName=' .. tostring(worldName) .. ' host=' .. tostring(host) .. ' port=' .. tostring(port) .. ' charName=' .. tostring(charName) .. ' sessionKey=' .. tostring(G.sessionKey))
+
+    g_game.loginWorld(G.account, G.password, worldName, host, port,
+                      charName, G.authenticatorToken, G.sessionKey)
 
     loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to game server...'))
     connect(loadBox, {
@@ -403,7 +410,7 @@ local function tryLogin(charInfo, tries)
     })
 
     -- save last used character
-    g_settings.set('last-used-character', charInfo.characterName)
+    g_settings.set('last-used-character', charInfo.characterName or charInfo.name)
     g_settings.set('last-used-world', charInfo.worldName)
     removeAutoReconnectEvent()
 end
