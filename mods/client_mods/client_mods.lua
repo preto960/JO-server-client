@@ -15,7 +15,7 @@ end
 
 function init()
     local ok, err = pcall(function()
-        debugLog("=== client_mods init (v8 - sequenced packets fix) ===")
+        debugLog("=== client_mods init (v9) ===")
 
         -- Hook loginWorld for logging
         local originalLoginWorld = g_game.loginWorld
@@ -28,7 +28,7 @@ function init()
             end
             loginAttemptInProgress = true
 
-            debugLog("========== loginWorld v8 ==========")
+            debugLog("========== loginWorld v9 ==========")
             debugLog("  host=" .. tostring(worldHost) .. " port=" .. tostring(worldPort) .. " char=" .. tostring(characterName))
             debugLog("  sessionKey=" .. tostring(sessionKey))
             debugLog("  GameSequencedPackets=" .. tostring(g_game.getFeature(GameSequencedPackets)))
@@ -48,7 +48,7 @@ function init()
             end
 
             loginAttemptInProgress = false
-            debugLog("========== loginWorld v8 END ==========")
+            debugLog("========== loginWorld v9 END ==========")
         end
 
         -- Hook connection events for logging
@@ -64,11 +64,6 @@ function init()
             end,
             onGameStart = function(self)
                 debugLog("=== GAME STARTED SUCCESSFULLY ===")
-                scheduleEvent(1000, function()
-                    if g_game.isOnline() and modules.game_welcome then
-                        modules.game_welcome.showWelcome("Hola!")
-                    end
-                end)
             end,
         })
 
