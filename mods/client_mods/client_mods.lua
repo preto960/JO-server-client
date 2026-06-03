@@ -89,6 +89,7 @@ function init()
             end,
             onGameStart = function(self)
                 debugLog("=== GAME STARTED SUCCESSFULLY ===")
+                displayInfoBox("JO Server", "Hola!")
             end,
         })
 
