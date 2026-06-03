@@ -190,6 +190,7 @@ void Protocol::recv()
     } else if (m_xteaEncryptionEnabled) {
         headerSize += 2; // 2 bytes for XTEA encrypted message size
     }
+    loginDebugLog("recv() headerSize=" + std::to_string(headerSize) + " seq=" + std::to_string(m_sequencedPackets) + " chk=" + std::to_string(m_checksumEnabled) + " xtea=" + std::to_string(m_xteaEncryptionEnabled));
     m_inputMessage->setHeaderSize(headerSize);
 
     // read the first 2 bytes which contain the message size
@@ -205,6 +206,7 @@ void Protocol::internalRecvHeader(const uint8_t* buffer, const uint16_t size)
     // read message size
     m_inputMessage->fillBuffer(buffer, size);
     uint32_t remainingSize = m_inputMessage->readSize();
+    loginDebugLog("internalRecvHeader() msgSize=" + std::to_string(remainingSize) + " buf=" + std::to_string((int)buffer[0]) + "," + std::to_string((int)buffer[1]));
     if (g_game.getClientVersion() >= 1405) {
         remainingSize = remainingSize * 8U + 4U;
     }
@@ -232,10 +234,13 @@ void Protocol::internalRecvData(const uint8_t* buffer, const uint16_t size)
     }
 
     m_inputMessage->fillBuffer(buffer, size);
+    loginDebugLog("internalRecvData() size=" + std::to_string(size) + " unread=" + std::to_string(m_inputMessage->getUnreadSize()) + " seq=" + std::to_string(m_sequencedPackets) + " xtea=" + std::to_string(m_xteaEncryptionEnabled));
 
     bool decompress = false;
     if (m_sequencedPackets) {
-        decompress = (m_inputMessage->getU32() & 1 << 31);
+        uint32_t seqVal = m_inputMessage->getU32();
+        decompress = (seqVal & (1 << 31));
+        loginDebugLog("  seqVal=0x" + fmt::format("{:08X}", seqVal) + " decompress=" + std::to_string(decompress) + " unread_after_seq=" + std::to_string(m_inputMessage->getUnreadSize()));
     } else if (m_checksumEnabled && !m_inputMessage->readChecksum()) {
         std::string headerHex;
         headerHex.reserve(m_inputMessage->getHeaderSize() * 3); // 2 chars + space por byte
@@ -249,6 +254,7 @@ void Protocol::internalRecvData(const uint8_t* buffer, const uint16_t size)
     }
 
     if (m_xteaEncryptionEnabled) {
+        loginDebugLog("  xteaDecrypt: unread=" + std::to_string(m_inputMessage->getUnreadSize()) + " %8=" + std::to_string(m_inputMessage->getUnreadSize() % 8));
         if (!xteaDecrypt(m_inputMessage)) {
             g_logger.traceError("failed to decrypt message");
             return;
