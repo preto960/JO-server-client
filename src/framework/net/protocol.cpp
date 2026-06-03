@@ -37,6 +37,9 @@
 
 extern asio::io_service g_ioService;
 
+// External debug logger from protocolgame.cpp
+extern void loginDebugLog(const std::string& msg);
+
 Protocol::Protocol() :m_inputMessage(std::make_shared<InputMessage>()) {
     inflateInit2(&m_zstream, -15);
 }
@@ -410,9 +413,6 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage) const
         });
     }
 }
-
-// External debug logger from protocolgame.cpp
-extern void loginDebugLog(const std::string& msg);
 
 void Protocol::onConnect() {
     loginDebugLog("Protocol::onConnect() START");
