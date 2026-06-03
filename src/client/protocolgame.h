@@ -26,6 +26,9 @@
 #include "framework/net/protocol.h"
 #include "staticdata.h"
 
+// Debug log helper (defined in protocolgame.cpp)
+void loginDebugLog(const std::string& msg);
+
 class ProtocolGame final : public Protocol
 {
 public:

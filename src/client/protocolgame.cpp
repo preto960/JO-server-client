@@ -93,6 +93,8 @@ void ProtocolGame::onConnect()
 
 void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
 {
+    loginDebugLog(">> onRecv() msgSize=" + std::to_string(inputMessage->getMessageSize()) + " firstRecv=" + std::to_string(m_firstRecv));
+
     m_recivedPackeds += 1;
     m_recivedPackedsSize += inputMessage->getMessageSize();
 
@@ -103,6 +105,7 @@ void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
             inputMessage->getU8(); // padding
         } else if (g_game.getFeature(Otc::GameMessageSizeCheck)) {
             const int size = inputMessage->getU16();
+            loginDebugLog("  onRecv: GameMessageSizeCheck size=" + std::to_string(size) + " unread=" + std::to_string(inputMessage->getUnreadSize()));
             if (size != inputMessage->getUnreadSize()) {
                 g_logger.traceError("invalid message size");
                 return;
@@ -110,7 +113,9 @@ void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
         }
     }
 
+    loginDebugLog("  onRecv: calling parseMessage...");
     parseMessage(inputMessage);
+    loginDebugLog("  onRecv: parseMessage returned OK");
     recv();
 }
 

@@ -52,6 +52,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
     try {
         while (!msg->eof()) {
             opcode = msg->getU8();
+            loginDebugLog("    parseMessage opcode=0x" + fmt::format("{:02X}", opcode) + " (" + std::to_string(opcode) + ") unread=" + std::to_string(msg->getUnreadSize()));
             AutoStat s(STATS_PACKETS, fmt::format("{} (0x{:02X})", opcode, opcode));
 
             // must be > so extended will be enabled before GameStart.
