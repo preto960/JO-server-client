@@ -3,6 +3,8 @@ Module
   description: Welcome dialog on game start
   author: JO Server
   sandboxed: true
+  autoload: true
+  autoload-priority: 1000
   scripts: [ welcome ]
   @onLoad: init()
   @onUnload: terminate()
