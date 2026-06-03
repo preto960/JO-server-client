@@ -260,8 +260,11 @@ function onGameStart()
     updateSidePanelButtons()
     applyMobileMargins()
     scheduleEvent(3000, function()
+        print("[WELCOME] scheduleEvent fired, online=" .. tostring(g_game.isOnline()))
         if g_game.isOnline() then
-            displayInfoBox('JO Server', 'Hola!')
+            print("[WELCOME] calling displayInfoBox...")
+            local ok, err = pcall(displayInfoBox, 'JO Server', 'Hola!')
+            print("[WELCOME] pcall result: ok=" .. tostring(ok) .. " err=" .. tostring(err))
         end
     end)
 end
