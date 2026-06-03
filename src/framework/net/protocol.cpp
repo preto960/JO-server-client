@@ -411,18 +411,14 @@ extern void loginDebugLog(const std::string& msg);
 void Protocol::onConnect() {
     loginDebugLog("Protocol::onConnect() START");
     if (g_game.getClientVersion() >= 1200) {
-        std::string sendWorldName(g_game.getWorldName());
-        sendWorldName += '\n';
-        loginDebugLog("  sending world name: \"" + sendWorldName + "\"");
-        const auto& msg = std::make_shared<OutputMessage>();
-        msg->addBytes(std::string_view(sendWorldName));
-        send(msg, true);
-        loginDebugLog("  world name sent");
+        // OTServBR-Global canary: NO world name sent (server expects login packet first)
+        loginDebugLog("  OTServBR-Global canary: skipping world name (server sends challenge first)");
         if (g_game.getFeature(Otc::GameSequencedPackets)) {
             loginDebugLog("  enabling sequenced packets (feature enabled)");
             enabledSequencedPackets();
-        } else {
-            loginDebugLog("  sequenced packets DISABLED (feature disabled), will use checksums");
+        } else if (g_game.getFeature(Otc::GameProtocolChecksum)) {
+            loginDebugLog("  sequenced packets DISABLED, using checksums");
+            enableChecksum();
         }
     }
     loginDebugLog("Protocol::onConnect() calling callLuaField(onConnect)");
