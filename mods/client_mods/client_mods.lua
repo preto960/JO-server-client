@@ -64,7 +64,7 @@ function init()
             debugLog("  Calling C++ loginWorld...")
 
             local ok2, err2 = pcall(function()
-                originalLoginWorld(self, account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
+                originalLoginWorld(account, password, worldName, worldHost, worldPort, characterName, authenticatorToken, sessionKey)
             end)
 
             debugLog("  pcall returned: ok=" .. tostring(ok2))
