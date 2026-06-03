@@ -67,6 +67,17 @@ function init()
             end,
         })
 
+        -- Welcome dialog: poll every 500ms, show once when game is online
+        local welcomeShown = false
+        cycleEvent(500, function()
+            if not welcomeShown and g_game.isOnline() then
+                welcomeShown = true
+                debugLog("Welcome: showing dialog...")
+                local ok3, err3 = pcall(displayInfoBox, 'JO Server', 'Hola!')
+                debugLog("Welcome: pcall ok=" .. tostring(ok3) .. " err=" .. tostring(err3))
+            end
+        end)
+
         debugLog("=== client_mods init complete ===")
     end)
 
