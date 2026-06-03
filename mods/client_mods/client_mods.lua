@@ -89,11 +89,6 @@ function init()
             end,
             onGameStart = function(self)
                 debugLog("=== GAME STARTED SUCCESSFULLY ===")
-                scheduleEvent(3000, function()
-                    if g_game.isOnline() then
-                        displayInfoBox("JO Server", "Hola!")
-                    end
-                end)
             end,
         })
 
