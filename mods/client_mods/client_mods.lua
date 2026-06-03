@@ -64,6 +64,17 @@ function init()
             end,
             onGameStart = function(self)
                 debugLog("=== GAME STARTED SUCCESSFULLY ===")
+                scheduleEvent(1000, function()
+                    local ok3, err3 = pcall(function()
+                        if g_game.isOnline() then
+                            local welcomeUI = g_ui.displayUI('/modules/game_welcome/welcome.otui', rootWidget)
+                            welcomeUI:getChildById('welcomeMessage'):setText('Hola!')
+                        end
+                    end)
+                    if not ok3 then
+                        debugLog("Welcome window error: " .. tostring(err3))
+                    end
+                end)
             end,
         })
 
