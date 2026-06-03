@@ -64,6 +64,11 @@ function init()
             end,
             onGameStart = function(self)
                 debugLog("=== GAME STARTED SUCCESSFULLY ===")
+                scheduleEvent(1000, function()
+                    if g_game.isOnline() and modules.game_welcome then
+                        modules.game_welcome.showWelcome("Hola!")
+                    end
+                end)
             end,
         })
 

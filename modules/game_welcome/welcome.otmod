@@ -1,0 +1,8 @@
+Module
+  name: game_welcome
+  description: Welcome dialog on game start
+  author: JO Server
+  sandboxed: true
+  scripts: [ welcome ]
+  @onLoad: init()
+  @onUnload: terminate()
