@@ -64,11 +64,6 @@ function init()
             end,
             onGameStart = function(self)
                 debugLog("=== GAME STARTED SUCCESSFULLY ===")
-                addEvent(function()
-                    debugLog("Welcome: addEvent fired")
-                    local ok3, err3 = pcall(displayInfoBox, 'JO Server', 'Hola!')
-                    debugLog("Welcome: result=" .. tostring(ok3) .. " err=" .. tostring(err3))
-                end)
             end,
         })
 
