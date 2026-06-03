@@ -2,6 +2,15 @@ welcomeWindow = nil
 
 function init()
     g_ui.importStyle('welcome')
+    connect(g_game, {
+        onGameStart = function()
+            scheduleEvent(1000, function()
+                if g_game.isOnline() then
+                    showWelcome("Hola!")
+                end
+            end)
+        end,
+    })
 end
 
 function terminate()
