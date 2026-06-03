@@ -1,10 +1,6 @@
--- client_mods.lua v8 - Sequenced Packets Fix
--- ROOT CAUSE: Protocol::onConnect() called enabledSequencedPackets() unconditionally
--- for client version >= 1200, without checking the GameSequencedPackets feature flag.
--- This caused the login packet to use sequence numbers (0x00000000) instead of
--- checksums (adler32), producing an incorrect packet format for OTServBR-Global 13.16.
--- FIX: protocol.cpp now checks g_game.getFeature(GameSequencedPackets) before
--- calling enabledSequencedPackets(). This Lua mod keeps GameSequencedPackets disabled.
+-- client_mods.lua v9 - Debug logging only
+-- Sequenced packets are now handled correctly by protocol.cpp
+-- (checks g_game.getFeature(GameSequencedPackets) before enabling).
 
 local DEBUG_FILE = "crash_debug.log"
 
@@ -20,27 +16,6 @@ end
 function init()
     local ok, err = pcall(function()
         debugLog("=== client_mods init (v8 - sequenced packets fix) ===")
-
-        -- Disable GameSequencedPackets for protocol 1316
-        -- OTServBR-Global uses checksums, not sequence numbers
-        local origSetClientVersion = g_game.setClientVersion
-        local versionSet = false
-        g_game.setClientVersion = function(v)
-            origSetClientVersion(v)
-            if not versionSet and v >= 1290 then
-                versionSet = true
-                g_game.disableFeature(GameSequencedPackets)
-                debugLog("GameSequencedPackets disabled (protocol " .. v .. ")")
-            end
-        end
-
-        local origSetProtocolVersion = g_game.setProtocolVersion
-        g_game.setProtocolVersion = function(v)
-            origSetProtocolVersion(v)
-            if v >= 1290 then
-                g_game.disableFeature(GameSequencedPackets)
-            end
-        end
 
         -- Hook loginWorld for logging
         local originalLoginWorld = g_game.loginWorld
