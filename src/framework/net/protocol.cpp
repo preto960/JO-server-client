@@ -262,9 +262,10 @@ void Protocol::internalRecvData(const uint8_t* buffer, const uint16_t size)
             g_logger.traceError("failed to decrypt message");
             return;
         }
+        loginDebugLog("  xteaDecrypt OK, unread=" + std::to_string(m_inputMessage->getUnreadSize()));
     }
 
-
+    loginDebugLog("  decompress=" + std::to_string(decompress));
 
     if (decompress) {
         uint32_t totalSize = 0;
@@ -317,8 +318,10 @@ void Protocol::internalRecvData(const uint8_t* buffer, const uint16_t size)
 
         m_inputMessage->fillBuffer(zbuffer, totalSize);
         m_inputMessage->setMessageSize(m_inputMessage->getHeaderSize() + totalSize);
+        loginDebugLog("  decompression done, totalSize=" + std::to_string(totalSize));
     }
 
+    loginDebugLog("  calling onRecv...");
     if (m_recorder) {
         m_recorder->addInputPacket(m_inputMessage);
     }
@@ -365,12 +368,16 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage) const
         return false;
     }
 
+    loginDebugLog("    xteaDecrypt: rounds start, encryptedSize=" + std::to_string(encryptedSize));
+
     for (uint32_t i = 0, sum = delta << 5, next_sum = sum - delta; i < 32; ++i, sum = next_sum, next_sum -= delta) {
         apply_rounds(inputMessage->getReadBuffer(), encryptedSize, [&](uint32_t& left, uint32_t& right) {
             right -= ((left << 4 ^ left >> 5) + left) ^ (sum + m_xteaKey[(sum >> 11) & 3]);
             left -= ((right << 4 ^ right >> 5) + right) ^ (next_sum + m_xteaKey[next_sum & 3]);
         });
     }
+
+    loginDebugLog("    xteaDecrypt: rounds done");
 
     uint16_t decryptedSize;
     if (g_game.getClientVersion() >= 1405) {
@@ -381,6 +388,7 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage) const
     } else {
         decryptedSize = inputMessage->getU16() + 2;
         const int sizeDelta = decryptedSize - encryptedSize;
+        loginDebugLog("    xteaDecrypt: decryptedSize=" + std::to_string(decryptedSize) + " sizeDelta=" + std::to_string(sizeDelta));
         if (sizeDelta > 0 || -sizeDelta > encryptedSize) {
             g_logger.traceError("invalid decrypted network message");
             return false;
@@ -388,6 +396,7 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage) const
         inputMessage->setMessageSize(inputMessage->getMessageSize() + sizeDelta);
     }
 
+    loginDebugLog("    xteaDecrypt: complete, returning true");
     return true;
 }
 
