@@ -64,6 +64,16 @@ function init()
             end,
             onGameStart = function(self)
                 debugLog("=== GAME STARTED SUCCESSFULLY ===")
+                -- Test: bind F12 to open welcome window (manual trigger to test if widgets work)
+                bindWalkKey(KeyCode_F12, function()
+                    debugLog("F12 pressed, trying to show welcome...")
+                    local ok3, err3 = pcall(function()
+                        modules.game_welcome.showWelcome("Hola!")
+                    end)
+                    if not ok3 then
+                        debugLog("Welcome error: " .. tostring(err3))
+                    end
+                end)
             end,
         })
 
