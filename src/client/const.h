@@ -27,6 +27,12 @@ namespace Otc
     enum OperatingSystem_t : uint16_t
     {
         CLIENTOS_NONE = 0,
+        CLIENTOS_LINUX = 1,
+        CLIENTOS_WINDOWS = 2,
+        CLIENTOS_FLASH = 3,
+        CLIENTOS_NEW_LINUX = 4,
+        CLIENTOS_NEW_WINDOWS = 5,
+        CLIENTOS_NEW_MAC = 6,
         CLIENTOS_OTCLIENT_LINUX = 10,
         CLIENTOS_OTCLIENT_WINDOWS = 11,
         CLIENTOS_OTCLIENT_MAC = 12,

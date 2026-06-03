@@ -1775,12 +1775,12 @@ Otc::OperatingSystem_t Game::getOs()
         return m_clientCustomOs;
 
     if (g_app.getOs() == "windows")
-        return Otc::CLIENTOS_OTCLIENT_WINDOWS;
+        return Otc::CLIENTOS_NEW_WINDOWS;
 
     if (g_app.getOs() == "mac")
-        return Otc::CLIENTOS_OTCLIENT_MAC;
+        return Otc::CLIENTOS_NEW_MAC;
 
-    return Otc::CLIENTOS_OTCLIENT_LINUX;
+    return Otc::CLIENTOS_NEW_LINUX;
 }
 
 void Game::leaveMarket()
