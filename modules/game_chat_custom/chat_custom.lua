@@ -100,21 +100,14 @@ function openChatPopup()
         consolePanel = consolePanel,
     }
 
-    -- Hide original console elements
-    if textEdit then textEdit:hide() end
+    -- Hide the entire original console panel (frame, empty space, etc.)
+    consolePanel:hide()
+    -- Keep textEdit reference for restore
+    if textEdit then savedWidgets.textEdit = textEdit end
     local toggleChat = consolePanel:getChildById('toggleChat')
-    if toggleChat then toggleChat:hide() end
+    if toggleChat then savedWidgets.toggleChat = toggleChat end
 
-    local hideIds = {
-        'prevChannelButton', 'nextChannelButton', 'closeChannelButton',
-        'channelsButton', 'ignoreButton', 'exivaOption',
-        'readOnlyButton', 'sayModeButton', 'extendedViewDraggable',
-        'extendedViewHide'
-    }
-    for _, id in ipairs(hideIds) do
-        local w = consolePanel:getChildById(id)
-        if w then w:hide() end
-    end
+    -- No need to individually hide buttons since we hide the whole consolePanel
 
     -- Reparent and restyle tab bar
     if tabBar then
@@ -380,22 +373,8 @@ function restoreWidgets()
         contentPanel:setBackgroundColor('transparent')
     end
 
-    -- Restore original elements visibility
-    local textEdit = consolePanel:getChildById('consoleTextEdit')
-    if textEdit then textEdit:show() end
-    local toggleChat = consolePanel:getChildById('toggleChat')
-    if toggleChat then toggleChat:show() end
-
-    local showIds = {
-        'prevChannelButton', 'nextChannelButton', 'closeChannelButton',
-        'channelsButton', 'ignoreButton', 'exivaOption',
-        'readOnlyButton', 'sayModeButton', 'extendedViewDraggable',
-        'extendedViewHide'
-    }
-    for _, id in ipairs(showIds) do
-        local w = consolePanel:getChildById(id)
-        if w then w:show() end
-    end
+    -- Show the entire console panel back (restores all children visibility)
+    consolePanel:show()
 
     savedWidgets = {}
 end
