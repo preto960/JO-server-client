@@ -1,0 +1,8 @@
+Module
+  name: game_chat_custom
+  description: Custom chat popup window for JO Server
+  author: JO Server
+  sandboxed: true
+  scripts: [ chat_custom ]
+  @onLoad: init()
+  @onUnload: terminate()

@@ -20,6 +20,7 @@ Module
     - game_questlog
     - game_textmessage
     - game_console
+    - game_chat_custom
     - game_actionbar
     - game_outfit
     - game_skills

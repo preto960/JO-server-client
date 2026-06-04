@@ -18,12 +18,11 @@ UIWidget
     margin-bottom: 1
 
     Label
-      !text: 'JO Server - Habilidades'
+      !text: 'Habilidades'
       font: verdana-11px-rounded
       color: #DFE4E8
       anchors.verticalCenter: parent.verticalCenter
-      anchors.left: parent.left
-      margin-left: 10
+      anchors.horizontalCenter: parent.horizontalCenter
 
     UIButton
       id: closeButton

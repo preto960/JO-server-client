@@ -1,0 +1,88 @@
+UIWidget
+  id: chatCustomWindow
+  visible: false
+  focusable: true
+  size: 500 350
+  background-color: #1E1E2E
+  border-width: 1
+  border-color: #5A5A7A
+  @onEscape: modules.game_chat_custom.closeChatPopup()
+
+  UIWidget
+    id: chatTitleBar
+    height: 28
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #151525
+    margin-bottom: 1
+
+    Label
+      !text: 'Chat'
+      font: verdana-11px-rounded
+      color: #DFE4E8
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.horizontalCenter: parent.horizontalCenter
+
+    UIButton
+      id: chatCloseButton
+      !text: 'X'
+      font: verdana-11px-rounded
+      color: #AAAAAA
+      anchors.right: parent.right
+      anchors.top: parent.top
+      width: 25
+      height: 25
+      margin-right: 5
+      @onClick: modules.game_chat_custom.closeChatPopup()
+      $hover:
+        color: #FF5555
+
+  UIWidget
+    id: chatContentPanel
+    layout: verticalBox
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-top: 5
+    margin-right: 5
+    margin-bottom: 5
+    margin-left: 5
+
+    MoveableTabBar
+      id: chatCustomTabBar
+      height: 24
+      anchors.left: parent.left
+      anchors.right: parent.right
+      tab-spacing: 2
+
+    Panel
+      id: chatCustomTabContent
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: chatInputPanel.top
+      margin-top: 5
+      margin-bottom: 5
+      background-color: #12121E
+
+    UIWidget
+      id: chatInputPanel
+      height: 25
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+
+      TextEdit
+        id: chatInput
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin-left: 5
+        margin-right: 5
+        shift-navigation: true
+        max-length: 255
+        height: 18
+        placeholder: "Escribe aqui para chatear..."
+        placeholder-color: #707070
