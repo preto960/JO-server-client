@@ -1,6 +1,3 @@
--- skills_custom.otui - Custom skills popup for JO Server
--- A floating popup that replaces the docked MiniWindow skills panel
-
 UIWidget
   id: skillsCustomWindow
   visible: false
@@ -11,7 +8,6 @@ UIWidget
   border-color: #5A5A7A
   @onEscape: modules.game_skills_custom.close()
 
-  // ===== Title Bar =====
   UIWidget
     id: titleBar
     height: 28
@@ -43,7 +39,6 @@ UIWidget
       $hover:
         color: #FF5555
 
-  // ===== Content Area =====
   UIWidget
     id: contentPanel
     layout: verticalBox
@@ -56,7 +51,6 @@ UIWidget
     margin-bottom: 10
     margin-left: 10
 
-    // --- Section: Personaje ---
     Label
       !text: '-- Personaje --'
       font: verdana-11px-rounded
@@ -85,7 +79,6 @@ UIWidget
       margin-top: 4
       margin-bottom: 4
 
-    // --- Section: Vitals ---
     Label
       !text: '-- Vida --'
       font: verdana-11px-rounded
@@ -132,7 +125,6 @@ UIWidget
       margin-top: 4
       margin-bottom: 4
 
-    // --- Section: Habilidades de Combate ---
     Label
       !text: '-- Habilidades --'
       font: verdana-11px-rounded
