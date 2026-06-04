@@ -1,10 +1,11 @@
 -- chat_custom.lua - Custom chat popup for JO Server
--- Opens a floating chat window on Enter with real tabs and messages
+-- Opens a floating chat window on Enter with restyled tabs and messages
 -- Loaded via interface.otmod load-later (after game_console)
 
 local chatPopup = nil
 local isOpen = false
 local savedWidgets = {}
+local originalOnTabChange = nil
 
 function init()
     local ok = pcall(function()
@@ -93,19 +94,17 @@ function openChatPopup()
     local contentPanel = consolePanel:getChildById('consoleContentPanel')
     local textEdit = consolePanel:getChildById('consoleTextEdit')
 
-    -- Save original parent for later restore
     savedWidgets = {
         tabBar = tabBar,
         contentPanel = contentPanel,
         consolePanel = consolePanel,
     }
 
-    -- Hide original console elements we don't want visible
+    -- Hide original console elements
     if textEdit then textEdit:hide() end
     local toggleChat = consolePanel:getChildById('toggleChat')
     if toggleChat then toggleChat:hide() end
 
-    -- Hide original console buttons
     local hideIds = {
         'prevChannelButton', 'nextChannelButton', 'closeChannelButton',
         'channelsButton', 'ignoreButton', 'exivaOption',
@@ -117,19 +116,52 @@ function openChatPopup()
         if w then w:hide() end
     end
 
-    -- Reparent consoleTabBar into our popup's slot
+    -- Reparent and restyle tab bar
     if tabBar then
         tabBar:breakAnchors()
         local slot = chatPopup:recursiveGetChildById('chatTabBarSlot')
         if slot then
             slot:addChild(tabBar)
         end
-        tabBar:setMarginTop(2)
-        tabBar:setMarginLeft(18)
-        tabBar:setMarginRight(20)
+        tabBar:setMarginTop(0)
+        tabBar:setMarginLeft(4)
+        tabBar:setMarginRight(4)
+        tabBar:setMarginBottom(0)
+
+        pcall(function()
+            tabBar:setBackgroundColor('#181830')
+        end)
+
+        -- Restyle every tab button (including preTabs and postTabs)
+        local allTabs = {}
+        if tabBar.tabs then
+            for _, t in ipairs(tabBar.tabs) do table.insert(allTabs, t) end
+        end
+        if tabBar.preTabs then
+            for _, t in ipairs(tabBar.preTabs) do table.insert(allTabs, t) end
+        end
+        if tabBar.postTabs then
+            for _, t in ipairs(tabBar.postTabs) do table.insert(allTabs, t) end
+        end
+
+        for _, tab in ipairs(allTabs) do
+            pcall(function()
+                tab:setImageSource('')
+                tab:setBackgroundColor('#252540')
+                tab:setBorderWidth(1)
+                tab:setBorderColor('#2E2E48')
+                tab:setBorderRadius(4)
+                tab:setColor('#8888A0')
+                tab:setFont('verdana-11px-rounded')
+                tab:setMarginTop(3)
+                tab:setMarginBottom(3)
+                tab:setMarginLeft(2)
+                tab:setMarginRight(2)
+            end)
+        end
     end
 
-    -- Reparent consoleContentPanel into our popup's content slot
+    -- Reparent and restyle content panel
     if contentPanel then
         contentPanel:breakAnchors()
         local slot = chatPopup:recursiveGetChildById('chatContentSlot')
@@ -137,7 +169,48 @@ function openChatPopup()
             slot:addChild(contentPanel)
         end
         contentPanel:setMargin(0)
-        contentPanel:setPadding(4)
+        contentPanel:setPadding(0)
+        contentPanel:setMarginTop(0)
+        contentPanel:setMarginBottom(0)
+        contentPanel:setMarginLeft(0)
+        contentPanel:setMarginRight(0)
+
+        pcall(function()
+            contentPanel:setBackgroundColor('#14142A')
+            contentPanel:setBorderWidth(0)
+            contentPanel:setBorderColor('transparent')
+        end)
+    end
+
+    -- Restyle ALL tab panels (each tab has a tabPanel with consoleBuffer)
+    restyleAllTabPanels(tabBar)
+
+    -- Hook tab change to restyle new tab panels automatically
+    if tabBar then
+        originalOnTabChange = tabBar.onTabChange
+        tabBar.onTabChange = function(self, tab)
+            if tab.tabPanel then
+                restyleTabPanelBuffer(tab.tabPanel)
+            end
+            -- Restyle the new tab button itself
+            pcall(function()
+                tab:setImageSource('')
+                tab:setBackgroundColor('#252540')
+                tab:setBorderWidth(1)
+                tab:setBorderColor('#2E2E48')
+                tab:setBorderRadius(4)
+                tab:setColor('#8888A0')
+                tab:setFont('verdana-11px-rounded')
+                tab:setMarginTop(3)
+                tab:setMarginBottom(3)
+                tab:setMarginLeft(2)
+                tab:setMarginRight(2)
+            end)
+            -- Call original handler if exists
+            if originalOnTabChange then
+                originalOnTabChange(self, tab)
+            end
+        end
     end
 
     -- Show popup
@@ -156,7 +229,80 @@ function openChatPopup()
     isOpen = true
 end
 
+function restyleAllTabPanels(tabBar)
+    if not tabBar then return end
+
+    local allTabs = {}
+    if tabBar.tabs then
+        for _, t in ipairs(tabBar.tabs) do table.insert(allTabs, t) end
+    end
+    if tabBar.preTabs then
+        for _, t in ipairs(tabBar.preTabs) do table.insert(allTabs, t) end
+    end
+    if tabBar.postTabs then
+        for _, t in ipairs(tabBar.postTabs) do table.insert(allTabs, t) end
+    end
+
+    for _, tab in ipairs(allTabs) do
+        if tab.tabPanel then
+            restyleTabPanelBuffer(tab.tabPanel)
+        end
+    end
+end
+
+function restyleTabPanelBuffer(panel)
+    pcall(function()
+        -- Restyle the panel background
+        panel:setBackgroundColor('#14142A')
+        panel:setBorderWidth(0)
+        panel:setBorderColor('transparent')
+        panel:setPadding(0)
+    end)
+
+    -- Restyle the ScrollablePanel (consoleBuffer) inside this tab panel
+    local buffer = panel:getChildById('consoleBuffer')
+    if buffer then
+        pcall(function()
+            buffer:setImageSource('')
+            buffer:setBackgroundColor('#14142A')
+            buffer:setBorderWidth(0)
+            buffer:setBorderColor('transparent')
+            buffer:setPadding(6)
+            buffer:setPaddingRight(14)
+            buffer:setPaddingLeft(6)
+            buffer:setPaddingTop(6)
+            buffer:setPaddingBottom(6)
+        end)
+
+        -- Restyle existing console labels (message lines)
+        local labels = buffer:getChildren()
+        for _, label in ipairs(labels) do
+            pcall(function()
+                -- Keep original message colors, just ensure background is transparent
+                label:setBackgroundColor('transparent')
+                label:setBorderWidth(0)
+            end)
+        end
+    end
+
+    -- Restyle the scrollbar
+    local scrollBar = panel:getChildById('consoleScrollBar')
+    if scrollBar then
+        pcall(function()
+            scrollBar:setMarginRight(2)
+            scrollBar:setMarginTop(2)
+            scrollBar:setMarginBottom(2)
+        end)
+    end
+end
+
 function closeChatPopup()
+    -- Restore original onTabChange handler
+    local tabBar = savedWidgets.tabBar
+    if tabBar then
+        tabBar.onTabChange = originalOnTabChange
+        originalOnTabChange = nil
+    end
     restoreWidgets()
     chatPopup:hide()
     isOpen = false
@@ -171,7 +317,7 @@ function restoreWidgets()
     local consolePanel = savedWidgets.consolePanel
     if not consolePanel then return end
 
-    -- Restore tabBar to consolePanel
+    -- Restore tabBar
     if tabBar and tabBar:getParent() ~= consolePanel then
         tabBar:breakAnchors()
         consolePanel:addChild(tabBar)
@@ -182,9 +328,43 @@ function restoreWidgets()
         tabBar:addAnchor(AnchorLeft, 'parent', AnchorLeft)
         tabBar:addAnchor(AnchorBottom, 'consoleContentPanel', AnchorTop)
         tabBar:addAnchor(AnchorRight, 'closeChannelButton', AnchorLeft)
+        tabBar:setBackgroundColor('transparent')
     end
 
-    -- Restore contentPanel to consolePanel
+    -- Restore tab button styles
+    local allTabs = {}
+    if tabBar and tabBar.tabs then
+        for _, t in ipairs(tabBar.tabs) do table.insert(allTabs, t) end
+    end
+    if tabBar and tabBar.preTabs then
+        for _, t in ipairs(tabBar.preTabs) do table.insert(allTabs, t) end
+    end
+    if tabBar and tabBar.postTabs then
+        for _, t in ipairs(tabBar.postTabs) do table.insert(allTabs, t) end
+    end
+
+    for _, tab in ipairs(allTabs) do
+        pcall(function()
+            tab:setImageSource('/images/ui/console_button')
+            tab:setBackgroundColor('transparent')
+            tab:setBorderWidth(0)
+            tab:setBorderColor('transparent')
+            tab:setBorderRadius(0)
+            tab:setColor('#7f7f7fff')
+            tab:setFont('verdana-11px-rounded')
+            tab:setMarginTop(0)
+            tab:setMarginBottom(0)
+            tab:setMarginLeft(0)
+            tab:setMarginRight(0)
+        end)
+
+        -- Restore tab panel buffer styles
+        if tab.tabPanel then
+            restoreTabPanelBuffer(tab.tabPanel)
+        end
+    end
+
+    -- Restore contentPanel
     if contentPanel and contentPanel:getParent() ~= consolePanel then
         contentPanel:breakAnchors()
         consolePanel:addChild(contentPanel)
@@ -197,6 +377,7 @@ function restoreWidgets()
         contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
         contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
         contentPanel:addAnchor(AnchorBottom, 'consoleTextEdit', AnchorTop)
+        contentPanel:setBackgroundColor('transparent')
     end
 
     -- Restore original elements visibility
@@ -217,6 +398,35 @@ function restoreWidgets()
     end
 
     savedWidgets = {}
+end
+
+function restoreTabPanelBuffer(panel)
+    pcall(function()
+        panel:setBackgroundColor('transparent')
+        panel:setPadding(0)
+    end)
+
+    local buffer = panel:getChildById('consoleBuffer')
+    if buffer then
+        pcall(function()
+            buffer:setImageSource('/images/ui/3pixel_frame_borderimage')
+            buffer:setBackgroundColor('transparent')
+            buffer:setPadding(1)
+            buffer:setPaddingRight(12)
+            buffer:setPaddingLeft(4)
+            buffer:setPaddingTop(4)
+            buffer:setPaddingBottom(4)
+        end)
+    end
+
+    local scrollBar = panel:getChildById('consoleScrollBar')
+    if scrollBar then
+        pcall(function()
+            scrollBar:setMarginTop(4)
+            scrollBar:setMarginBottom(4)
+            scrollBar:setMarginRight(4)
+        end)
+    end
 end
 
 function centerWindow()
