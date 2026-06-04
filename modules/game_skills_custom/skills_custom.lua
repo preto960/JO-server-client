@@ -53,12 +53,15 @@ function init()
         local btn = root:recursiveGetChildById('skillsButton')
         if not btn then return end
 
-        -- Save original onClick to restore on terminate
-        originalToggle = btn.onClick
+        -- Save original onMouseRelease (this is what createButton uses, NOT onClick)
+        originalToggle = btn.onMouseRelease
 
-        -- Override the button's onClick with our custom toggle
-        btn.onClick = function()
-            customToggle()
+        -- Override the button's onMouseRelease with our custom toggle
+        btn.onMouseRelease = function(widget, mousePos, mouseButton)
+            if widget:containsPoint(mousePos) and mouseButton ~= MouseMidButton then
+                customToggle()
+                return true
+            end
         end
 
         -- Re-bind Alt+S keybind to our custom toggle
@@ -79,13 +82,13 @@ function init()
 end
 
 function terminate()
-    -- Restore original button onClick
+    -- Restore original button onMouseRelease
     if originalToggle then
         local root = g_ui.getRootWidget()
         if root then
             local btn = root:recursiveGetChildById('skillsButton')
             if btn and originalToggle then
-                btn.onClick = originalToggle
+                btn.onMouseRelease = originalToggle
             end
         end
 
