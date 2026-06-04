@@ -68,10 +68,15 @@ function onEnterPressed()
     if not g_game.isOnline() then return end
 
     if isOpen then
-        -- If popup is open, focus the input box
+        -- If popup is open and input has text, send the message
         local input = chatPopup:recursiveGetChildById('chatInput')
         if input then
-            input:focus()
+            local text = input:getText()
+            if text and #text > 0 then
+                sendChatMessage()
+            else
+                input:focus()
+            end
         end
     else
         -- Open chat popup
@@ -139,4 +144,19 @@ function centerWindow()
         local y = (gw.getHeight() - chatPopup:getHeight()) / 2
         chatPopup:setPosition({ x = x, y = y })
     end
+end
+
+function sendChatMessage()
+    local input = chatPopup:recursiveGetChildById('chatInput')
+    if not input then return end
+
+    local message = input:getText()
+    if not message or #message == 0 then return end
+
+    -- Send via the original console module's sendMessage function
+    pcall(function()
+        modules.game_console.sendMessage(message)
+    end)
+
+    input:clearText()
 end
