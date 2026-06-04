@@ -41,31 +41,27 @@ function init()
         customWindow = g_ui.loadUI('skills_custom')
     end)
     if not ok then
-        -- UI load failed, cannot continue
         return
     end
-    -- Override the skills toggle function after game_skills is ready
+
+    -- Wait for UI to be ready, then find and override the skills button
     addEvent(function()
-        if not modules.game_skills or not modules.game_skills.toggle then
-            -- game_skills.toggle not found, skip
-            return
+        -- Find the skills button by ID directly from the UI tree
+        -- (modules.game_skills.skillsButton may not be accessible from sandboxed modules)
+        local root = g_ui.getRootWidget()
+        if not root then return end
+        local btn = root:recursiveGetChildById('skillsButton')
+        if not btn then return end
+
+        -- Save original onClick to restore on terminate
+        originalToggle = btn.onClick
+
+        -- Override the button's onClick with our custom toggle
+        btn.onClick = function()
+            customToggle()
         end
 
-        -- Save original toggle
-        originalToggle = modules.game_skills.toggle
-
-        -- Replace with our custom toggle
-        modules.game_skills.toggle = customToggle
-
-        -- Also override the button's onClick directly (in case keybind uses old reference)
-        local btn = modules.game_skills.skillsButton
-        if btn then
-            btn.onClick = function()
-                customToggle()
-            end
-        end
-
-        -- Re-bind the keybind to use our custom toggle
+        -- Re-bind Alt+S keybind to our custom toggle
         pcall(function()
             Keybind.delete("Windows", "Show/hide skills windows")
             Keybind.new("Windows", "Show/hide skills windows", "Alt+S", "")
@@ -75,7 +71,7 @@ function init()
         end)
 
         -- Close the original skills MiniWindow if it was open
-        local sw = modules.game_skills.skillsWindow
+        local sw = root:recursiveGetChildById('skillWindow')
         if sw and sw:isVisible() then
             sw:close()
         end
@@ -83,15 +79,13 @@ function init()
 end
 
 function terminate()
-    -- Restore original toggle
-    if originalToggle and modules.game_skills then
-        modules.game_skills.toggle = originalToggle
-
-        -- Restore button onClick
-        local btn = modules.game_skills.skillsButton
-        if btn then
-            btn.onClick = function()
-                originalToggle()
+    -- Restore original button onClick
+    if originalToggle then
+        local root = g_ui.getRootWidget()
+        if root then
+            local btn = root:recursiveGetChildById('skillsButton')
+            if btn and originalToggle then
+                btn.onClick = originalToggle
             end
         end
 
@@ -114,16 +108,16 @@ function terminate()
 end
 
 function customToggle()
-    local btn = modules.game_skills and modules.game_skills.skillsButton
+    local root = g_ui.getRootWidget()
+    local btn = root and root:recursiveGetChildById('skillsButton')
 
     if isOpen then
-        -- Close our custom window
         customWindow:hide()
         isOpen = false
         if btn then btn:setOn(false) end
     else
         -- Make sure original MiniWindow is closed
-        local sw = modules.game_skills and modules.game_skills.skillsWindow
+        local sw = root and root:recursiveGetChildById('skillWindow')
         if sw and sw:isVisible() then
             sw:close()
         end
