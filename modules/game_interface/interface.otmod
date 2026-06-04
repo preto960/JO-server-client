@@ -23,6 +23,7 @@ Module
     - game_actionbar
     - game_outfit
     - game_skills
+    - game_skills_custom
     - game_containers
     - game_viplist
     - game_battle

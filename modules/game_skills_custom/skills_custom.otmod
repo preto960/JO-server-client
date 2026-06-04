@@ -1,0 +1,8 @@
+Module
+  name: game_skills_custom
+  description: Custom skills popup window for JO Server
+  author: JO Server
+  sandboxed: true
+  scripts: [ skills_custom ]
+  @onLoad: init()
+  @onUnload: terminate()

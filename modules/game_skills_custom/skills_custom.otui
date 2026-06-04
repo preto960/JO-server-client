@@ -1,0 +1,182 @@
+-- skills_custom.otui - Custom skills popup for JO Server
+-- A floating popup that replaces the docked MiniWindow skills panel
+
+UIWidget
+  id: skillsCustomWindow
+  visible: false
+  focusable: true
+  size: 250 400
+  background-color: #1E1E2E
+  border-width: 1
+  border-color: #5A5A7A
+  @onEscape: modules.game_skills_custom.close()
+
+  // ===== Title Bar =====
+  UIWidget
+    id: titleBar
+    height: 28
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #151525
+    margin-bottom: 1
+
+    Label
+      !text: 'JO Server - Habilidades'
+      font: verdana-11px-rounded
+      color: #DFE4E8
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.left: parent.left
+      margin-left: 10
+
+    UIButton
+      id: closeButton
+      !text: 'X'
+      font: verdana-11px-rounded
+      color: #AAAAAA
+      anchors.right: parent.right
+      anchors.top: parent.top
+      width: 25
+      height: 25
+      margin-right: 5
+      @onClick: modules.game_skills_custom.close()
+      $hover:
+        color: #FF5555
+
+  // ===== Content Area =====
+  UIWidget
+    id: contentPanel
+    layout: verticalBox
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-top: 8
+    margin-right: 10
+    margin-bottom: 10
+    margin-left: 10
+
+    // --- Section: Personaje ---
+    Label
+      !text: '-- Personaje --'
+      font: verdana-11px-rounded
+      color: #7777AA
+      height: 18
+
+    Label
+      id: lblLevel
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblXP
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblMagic
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    HorizontalSeparator
+      margin-top: 4
+      margin-bottom: 4
+
+    // --- Section: Vitals ---
+    Label
+      !text: '-- Vida --'
+      font: verdana-11px-rounded
+      color: #7777AA
+      height: 18
+
+    Label
+      id: lblHP
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblMP
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblCap
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblSpeed
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblSoul
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblStamina
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    HorizontalSeparator
+      margin-top: 4
+      margin-bottom: 4
+
+    // --- Section: Habilidades de Combate ---
+    Label
+      !text: '-- Habilidades --'
+      font: verdana-11px-rounded
+      color: #7777AA
+      height: 18
+
+    Label
+      id: lblFist
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblClub
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblSword
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblAxe
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblDistance
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblShielding
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
+
+    Label
+      id: lblFishing
+      font: verdana-11px-monochrome
+      color: #C0C0C0
+      height: 16
