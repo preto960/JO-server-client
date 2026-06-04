@@ -1,9 +1,12 @@
 -- entergame_custom.lua - Custom login screen for JO Server
 -- Creates a completely new login window, hides the original
--- Loaded via interface.otmod load-later (after client_entergame)
+-- Also hides top menu, bottom menu, and version label during login
 
 local customWindow = nil
 local originalWindow = nil
+local topMenuWidget = nil
+local bottomMenuWidget = nil
+local versionLabelWidget = nil
 
 function init()
     addEvent(function()
@@ -11,11 +14,26 @@ function init()
         if not root then return end
 
         originalWindow = root:recursiveGetChildById('enterGame')
+        topMenuWidget = root:recursiveGetChildById('topMenu')
+        bottomMenuWidget = root:recursiveGetChildById('bottomMenu')
+        versionLabelWidget = root:recursiveGetChildById('clientVersionLabel')
+
         if not originalWindow then
             scheduleEvent(function()
                 local r = g_ui.getRootWidget()
                 if r then
-                    originalWindow = r:recursiveGetChildById('enterGame')
+                    if not originalWindow then
+                        originalWindow = r:recursiveGetChildById('enterGame')
+                    end
+                    if not topMenuWidget then
+                        topMenuWidget = r:recursiveGetChildById('topMenu')
+                    end
+                    if not bottomMenuWidget then
+                        bottomMenuWidget = r:recursiveGetChildById('bottomMenu')
+                    end
+                    if not versionLabelWidget then
+                        versionLabelWidget = r:recursiveGetChildById('clientVersionLabel')
+                    end
                     if originalWindow then
                         setup()
                     end
@@ -34,6 +52,21 @@ function setup()
     -- Hide the original window completely
     originalWindow:hide()
 
+    -- Hide top menu bar during login
+    if topMenuWidget then
+        topMenuWidget:hide()
+    end
+
+    -- Hide bottom menu bar during login
+    if bottomMenuWidget then
+        bottomMenuWidget:hide()
+    end
+
+    -- Hide version label during login
+    if versionLabelWidget then
+        versionLabelWidget:hide()
+    end
+
     -- Load our custom window
     local ok = pcall(function()
         customWindow = g_ui.loadUI('entergame_custom')
@@ -41,6 +74,7 @@ function setup()
     if not ok or not customWindow then
         -- If custom UI fails to load, show original as fallback
         originalWindow:show()
+        showOriginalUI()
         return
     end
 
@@ -86,17 +120,76 @@ function setup()
         local y = (gw.getHeight() - customWindow:getHeight()) / 2
         customWindow:setPosition({ x = x, y = y })
     end
+
+    -- Connect game events to show/hide original UI elements
+    pcall(function()
+        connect(g_game, {
+            onGameStart = onGameStart,
+            onGameEnd = onGameEnd
+        })
+    end)
 end
 
 function terminate()
+    -- Disconnect game events
+    pcall(function()
+        disconnect(g_game, {
+            onGameStart = onGameStart,
+            onGameEnd = onGameEnd
+        })
+    end)
+
     if customWindow then
         customWindow:destroy()
         customWindow = nil
     end
 
+    -- Restore original UI elements
+    showOriginalUI()
+
     if originalWindow then
         originalWindow:show()
     end
+end
+
+function showOriginalUI()
+    -- Show top menu bar
+    if topMenuWidget then
+        topMenuWidget:show()
+    end
+    -- Show bottom menu bar
+    if bottomMenuWidget then
+        bottomMenuWidget:show()
+    end
+    -- Show version label
+    if versionLabelWidget then
+        versionLabelWidget:show()
+    end
+end
+
+function hideOriginalUI()
+    -- Hide top menu bar
+    if topMenuWidget then
+        topMenuWidget:hide()
+    end
+    -- Hide bottom menu bar
+    if bottomMenuWidget then
+        bottomMenuWidget:hide()
+    end
+    -- Hide version label
+    if versionLabelWidget then
+        versionLabelWidget:hide()
+    end
+end
+
+function onGameStart()
+    -- Player entered the game world, show original UI elements
+    showOriginalUI()
+end
+
+function onGameEnd()
+    -- Player left the game (logout/disconnect), hide original UI elements
+    hideOriginalUI()
 end
 
 function doCustomLogin()
@@ -166,15 +259,12 @@ function togglePasswordVisibility()
     end
 end
 
--- Intercept original show/hide to keep in sync
-local origEnterGameShow = EnterGame and EnterGame.show
-local origEnterGameHide = EnterGame and EnterGame.hide
-
--- Override EnterGame.show to show our custom window instead
+-- Override EnterGame.show to show our custom window and hide original UI
 if EnterGame then
     EnterGame.show = function()
         if g_game.isOnline() then return end
         if customWindow then
+            hideOriginalUI()
             customWindow:show()
             customWindow:raise()
             customWindow:focus()
