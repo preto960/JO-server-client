@@ -2,7 +2,7 @@ UIWidget
   id: chatCustomWindow
   visible: false
   focusable: true
-  size: 520 380
+  size: 540 400
   background-color: #1E1E2E
   border-width: 1
   border-color: #2A2A3E
@@ -38,80 +38,72 @@ UIWidget
       $hover:
         color: #CCCCCC
 
-  MoveableTabBar
-    id: chatCustomTabBar
+  UIWidget
+    id: chatTabBarSlot
     height: 30
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    background-color: #16161E
-    margin-top: 1
 
   Panel
-    id: chatCustomTabContent
+    id: chatContentSlot
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: chatInputPanel.top
     margin-top: 2
     background-color: #1A1A28
+    padding: 4
 
   UIWidget
     id: chatInputPanel
-    height: 44
+    height: 36
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    background-color: #1E1E2E
     margin-top: 2
 
-    UIWidget
-      id: inputWrapper
+    TextEdit
+      id: chatInput
+      anchors.left: parent.left
+      anchors.right: chatSendBtn.left
       anchors.top: parent.top
       anchors.bottom: parent.bottom
-      anchors.left: parent.left
+      margin-left: 6
+      margin-right: 4
+      margin-top: 4
+      margin-bottom: 4
+      shift-navigation: true
+      max-length: 255
+      background-color: #28283A
+      border-width: 1
+      border-color: #333348
+      border-radius: 6
+      color: #E0E0E0
+      font: verdana-11px-monochrome
+      text-align: left
+      text-vertical-alignment: center
+      placeholder: "Escribe un mensaje..."
+      placeholder-color: #555568
+      padding-left: 8
+      padding-right: 8
+
+    UIButton
+      id: chatSendBtn
+      !text: 'Enviar'
+      font: verdana-11px-rounded
+      color: #BBBBBB
+      background-color: #28283A
       anchors.right: parent.right
-      margin-top: 7
-      margin-bottom: 7
-      margin-left: 10
-      margin-right: 10
-
-      TextEdit
-        id: chatInput
-        anchors.left: parent.left
-        anchors.right: chatSendButton.left
-        anchors.verticalCenter: parent.verticalCenter
-        margin-right: 8
-        shift-navigation: true
-        max-length: 255
-        height: 28
-        background-color: #28283A
-        border-width: 1
-        border-color: #333348
-        border-radius: 8
+      anchors.verticalCenter: parent.verticalCenter
+      width: 58
+      height: 28
+      border-width: 1
+      border-color: #333348
+      border-radius: 6
+      @onClick: modules.game_chat_custom.sendChatMessage()
+      $hover:
+        background-color: #333348
         color: #E0E0E0
-        font: verdana-11px-monochrome
-        placeholder: "Escribe un mensaje..."
-        placeholder-color: #555568
-        padding-left: 10
-        padding-right: 10
-
-      UIButton
-        id: chatSendButton
-        !text: '>'
-        font: verdana-11px-rounded
-        color: #E0E0E0
-        background-color: #28283A
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        width: 36
-        height: 28
-        border-width: 1
-        border-color: #333348
-        border-radius: 8
-        @onClick: modules.game_chat_custom.sendChatMessage()
-        $hover:
-          background-color: #333348
-          color: #FFFFFF
-        $pressed:
-          background-color: #3A3A50
+      $pressed:
+        background-color: #3A3A50
