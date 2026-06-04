@@ -2,200 +2,172 @@ UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 340 440
+  size: 320 400
   background-color: #1A1A2E
   border-width: 1
   border-color: #2A2A42
   border-radius: 12
+  padding: 20
 
   UIWidget
     id: headerArea
-    height: 80
+    height: 70
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
     background-color: #141428
-    border-radius: 12
-
-    UIWidget
-      id: logoCircle
-      size: 48 48
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.verticalCenter: parent.verticalCenter
-      background-color: #22223A
-      border-width: 2
-      border-color: #3A3A58
-      border-radius: 24
-
-      Label
-        !text: 'JO'
-        font: verdana-14px-rounded
-        color: #A0A0C0
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+    border-radius: 10
 
   UIWidget
-    id: formArea
+    id: logoCircle
+    size: 44 44
+    anchors.horizontalCenter: headerArea.horizontalCenter
+    anchors.verticalCenter: headerArea.verticalCenter
+    background-color: #22223A
+    border-width: 2
+    border-color: #3A3A58
+    border-radius: 22
+
+  Label
+    id: logoLabel
+    !text: 'JO'
+    font: verdana-11px-rounded
+    color: #A0A0C0
+    anchors.horizontalCenter: logoCircle.horizontalCenter
+    anchors.verticalCenter: logoCircle.verticalCenter
+
+  Label
+    id: nameLabel
+    !text: 'Email'
+    font: verdana-11px-rounded
+    color: #8888A0
+    anchors.left: parent.left
     anchors.top: headerArea.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
     margin-top: 20
-    margin-left: 24
-    margin-right: 24
-
-    Label
-      id: nameLabel
-      !text: 'Email'
-      font: verdana-11px-rounded
-      color: #8888A0
-      anchors.left: parent.left
-      anchors.top: parent.top
-      margin-bottom: 4
-
-    UIWidget
-      id: nameInputBox
-      height: 36
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: nameLabel.bottom
-      background-color: #22223A
-      border-width: 1
-      border-color: #2E2E48
-      border-radius: 6
-
-      TextEdit
-        id: customAccountName
-        anchors.fill: parent
-        margin: 4 6 4 6
-        background-color: transparent
-        color: #E0E0E0
-        font: verdana-11px-antialised
-        text-vertical-alignment: center
-        placeholder: "tu email aqui..."
-        placeholder-color: #555570
-        image-source: none
-        selection-color: #E0E0E0FF
-        selection-background-color: #3A3A58
-        border-width: 0
-
-    Label
-      id: passLabel
-      !text: 'Password'
-      font: verdana-11px-rounded
-      color: #8888A0
-      anchors.left: parent.left
-      anchors.top: nameInputBox.bottom
-      margin-top: 14
-      margin-bottom: 4
-
-    UIWidget
-      id: passInputBox
-      height: 36
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: passLabel.bottom
-      background-color: #22223A
-      border-width: 1
-      border-color: #2E2E48
-      border-radius: 6
-
-      TextEdit
-        id: customPassword
-        anchors.left: parent.left
-        anchors.right: togglePassBtn.left
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        margin: 4 0 4 6
-        background-color: transparent
-        color: #E0E0E0
-        font: verdana-11px-antialised
-        text-vertical-alignment: center
-        placeholder: "tu password..."
-        placeholder-color: #555570
-        image-source: none
-        selection-color: #E0E0E0FF
-        selection-background-color: #3A3A58
-        border-width: 0
-        text-hidden: true
-
-      UIButton
-        id: togglePassBtn
-        !text: '...'
-        font: verdana-11px-rounded
-        color: #666680
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        size: 30 26
-        margin-right: 8
-        @onClick: modules.game_entergame_custom.togglePasswordVisibility()
-        $hover:
-          color: #9999BB
-
-    UIWidget
-      id: rememberArea
-      height: 20
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: passInputBox.bottom
-      margin-top: 12
-
-      QtCheckBox
-        id: customRememberBox
-        !text: 'Recordar sesion'
-        font: verdana-11px-rounded
-        color: #777790
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        @onCheckChange: modules.game_entergame_custom.onRememberChange(self:isChecked())
+    margin-left: 4
 
   UIWidget
-    id: footerArea
+    id: nameInputBox
+    height: 34
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    margin-bottom: 20
+    anchors.top: nameLabel.bottom
+    margin-top: 4
+    background-color: #22223A
+    border-width: 1
+    border-color: #2E2E48
+    border-radius: 6
 
-    UIButton
-      id: loginButton
-      !text: 'Iniciar Sesion'
-      font: verdana-12px-rounded
-      color: #D0D0E0
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: parent.top
-      height: 40
-      background-color: #2E2E4A
-      border-width: 1
-      border-color: #3E3E5A
-      border-radius: 8
-      @onClick: modules.game_entergame_custom.doCustomLogin()
-      $hover:
-        background-color: #3A3A56
-        border-color: #4A4A68
-      $pressed:
-        background-color: #444462
-        border-color: #5A5A78
+  TextEdit
+    id: customAccountName
+    anchors.left: nameInputBox.left
+    anchors.right: nameInputBox.right
+    anchors.top: nameInputBox.top
+    anchors.bottom: nameInputBox.bottom
+    margin: 4 6 4 6
+    background-color: transparent
+    color: #E0E0E0
+    font: verdana-11px-antialised
+    text-vertical-alignment: center
+    placeholder: "tu email aqui..."
+    placeholder-color: #555570
+    image-source: none
+    selection-color: #E0E0E0FF
+    selection-background-color: #3A3A58
+    border-width: 0
 
-    UIButton
-      id: forgotPassBtn
-      !text: 'Olvide mi password'
-      font: verdana-10px-rounded
-      color: #666680
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: loginButton.bottom
-      margin-top: 10
-      @onClick: modules.game_entergame_custom.onForgotPassword()
-      $hover:
-        color: #9999BB
+  Label
+    id: passLabel
+    !text: 'Password'
+    font: verdana-11px-rounded
+    color: #8888A0
+    anchors.left: parent.left
+    anchors.top: nameInputBox.bottom
+    margin-top: 14
+    margin-left: 4
 
-    UIButton
-      id: createAccountBtn
-      !text: 'Crear cuenta nueva'
-      font: verdana-10px-rounded
-      color: #666680
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: forgotPassBtn.bottom
-      margin-top: 4
-      @onClick: modules.game_entergame_custom.onCreateAccount()
-      $hover:
-        color: #9999BB
+  UIWidget
+    id: passInputBox
+    height: 34
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: passLabel.bottom
+    margin-top: 4
+    background-color: #22223A
+    border-width: 1
+    border-color: #2E2E48
+    border-radius: 6
+
+  TextEdit
+    id: customPassword
+    anchors.left: passInputBox.left
+    anchors.right: passInputBox.right
+    anchors.top: passInputBox.top
+    anchors.bottom: passInputBox.bottom
+    margin: 4 6 4 6
+    background-color: transparent
+    color: #E0E0E0
+    font: verdana-11px-antialised
+    text-vertical-alignment: center
+    placeholder: "tu password..."
+    placeholder-color: #555570
+    image-source: none
+    selection-color: #E0E0E0FF
+    selection-background-color: #3A3A58
+    border-width: 0
+    text-hidden: true
+
+  QtCheckBox
+    id: customRememberBox
+    !text: 'Recordar sesion'
+    font: verdana-11px-rounded
+    color: #777790
+    anchors.left: parent.left
+    anchors.top: passInputBox.bottom
+    margin-top: 12
+    @onCheckChange: modules.game_entergame_custom.onRememberChange(self:isChecked())
+
+  UIButton
+    id: loginButton
+    !text: 'Iniciar Sesion'
+    font: verdana-11px-rounded
+    color: #D0D0E0
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: customRememberBox.bottom
+    margin-top: 18
+    height: 38
+    background-color: #2E2E4A
+    border-width: 1
+    border-color: #3E3E5A
+    border-radius: 8
+    @onClick: modules.game_entergame_custom.doCustomLogin()
+    $hover:
+      background-color: #3A3A56
+      border-color: #4A4A68
+    $pressed:
+      background-color: #444462
+
+  UIButton
+    id: forgotPassBtn
+    !text: 'Olvide mi password'
+    font: verdana-9px-rounded
+    color: #666680
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: loginButton.bottom
+    margin-top: 10
+    @onClick: modules.game_entergame_custom.onForgotPassword()
+    $hover:
+      color: #9999BB
+
+  UIButton
+    id: createAccountBtn
+    !text: 'Crear cuenta nueva'
+    font: verdana-9px-rounded
+    color: #666680
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: forgotPassBtn.bottom
+    margin-top: 4
+    @onClick: modules.game_entergame_custom.onCreateAccount()
+    $hover:
+      color: #9999BB
