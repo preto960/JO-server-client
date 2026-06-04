@@ -33,8 +33,6 @@ local function initSkillTables()
 end
 
 function init()
-    debugLog("[game_skills_custom] init() called")
-
     -- Initialize skill tables (needs Skill enum which is available at runtime)
     initSkillTables()
 
@@ -43,15 +41,13 @@ function init()
         customWindow = g_ui.loadUI('skills_custom')
     end)
     if not ok then
-        debugLog("[game_skills_custom] ERROR loading UI: " .. tostring(err))
+        -- UI load failed, cannot continue
         return
     end
-    debugLog("[game_skills_custom] UI loaded successfully")
-
     -- Override the skills toggle function after game_skills is ready
     addEvent(function()
         if not modules.game_skills or not modules.game_skills.toggle then
-            debugLog("[game_skills_custom] WARNING: game_skills.toggle not found")
+            -- game_skills.toggle not found, skip
             return
         end
 
@@ -78,8 +74,6 @@ function init()
             })
         end)
 
-        debugLog("[game_skills_custom] toggle overridden, keybind rebound")
-
         -- Close the original skills MiniWindow if it was open
         local sw = modules.game_skills.skillsWindow
         if sw and sw:isVisible() then
@@ -89,8 +83,6 @@ function init()
 end
 
 function terminate()
-    debugLog("[game_skills_custom] terminate() called")
-
     -- Restore original toggle
     if originalToggle and modules.game_skills then
         modules.game_skills.toggle = originalToggle
@@ -165,7 +157,7 @@ end
 function populateSkills()
     local player = g_game.getLocalPlayer()
     if not player then
-        debugLog("[game_skills_custom] No local player, cannot populate")
+        -- no local player, cannot populate
         return
     end
 
