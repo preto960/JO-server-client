@@ -6,8 +6,6 @@ local customWindow = nil
 local originalToggle = nil
 local isOpen = false
 
--- Skill name mapping (standard OTClient Skill enum)
--- Initialized inside init() for safety (enums may not be available at parse time)
 local skillNames = nil
 local skillLabels = nil
 
@@ -33,30 +31,33 @@ local function initSkillTables()
 end
 
 function init()
-    -- Initialize skill tables (needs Skill enum which is available at runtime)
     initSkillTables()
 
-    -- Load custom UI
-    local ok, err = pcall(function()
+    local ok = pcall(function()
         customWindow = g_ui.loadUI('skills_custom')
     end)
-    if not ok then
+    if not ok or not customWindow then
         return
     end
 
-    -- Wait for UI to be ready, then find and override the skills button
     addEvent(function()
-        -- Find the skills button by ID directly from the UI tree
-        -- (modules.game_skills.skillsButton may not be accessible from sandboxed modules)
         local root = g_ui.getRootWidget()
         if not root then return end
+
+        -- Parent custom window to root so it displays in the UI tree
+        if not customWindow:getParent() then
+            root:addChild(customWindow)
+        end
+        customWindow:hide()
+
+        -- Find skills button by ID and override its onMouseRelease
         local btn = root:recursiveGetChildById('skillsButton')
         if not btn then return end
 
-        -- Save original onMouseRelease (this is what createButton uses, NOT onClick)
+        -- Save original handler
         originalToggle = btn.onMouseRelease
 
-        -- Override the button's onMouseRelease with our custom toggle
+        -- Replace with our custom handler
         btn.onMouseRelease = function(widget, mousePos, mouseButton)
             if widget:containsPoint(mousePos) and mouseButton ~= MouseMidButton then
                 customToggle()
@@ -64,7 +65,7 @@ function init()
             end
         end
 
-        -- Re-bind Alt+S keybind to our custom toggle
+        -- Re-bind Alt+S to our toggle
         pcall(function()
             Keybind.delete("Windows", "Show/hide skills windows")
             Keybind.new("Windows", "Show/hide skills windows", "Alt+S", "")
@@ -72,27 +73,18 @@ function init()
                 { type = KEY_DOWN, callback = customToggle }
             })
         end)
-
-        -- Close the original skills MiniWindow if it was open
-        local sw = root:recursiveGetChildById('skillWindow')
-        if sw and sw:isVisible() then
-            sw:close()
-        end
     end)
 end
 
 function terminate()
-    -- Restore original button onMouseRelease
     if originalToggle then
         local root = g_ui.getRootWidget()
         if root then
             local btn = root:recursiveGetChildById('skillsButton')
-            if btn and originalToggle then
+            if btn then
                 btn.onMouseRelease = originalToggle
             end
         end
-
-        -- Restore keybind
         pcall(function()
             Keybind.delete("Windows", "Show/hide skills windows")
             Keybind.new("Windows", "Show/hide skills windows", "Alt+S", "")
@@ -106,7 +98,6 @@ function terminate()
         customWindow:destroy()
         customWindow = nil
     end
-
     isOpen = false
 end
 
@@ -119,16 +110,19 @@ function customToggle()
         isOpen = false
         if btn then btn:setOn(false) end
     else
-        -- Make sure original MiniWindow is closed
+        -- Close original skills MiniWindow if visible
         local sw = root and root:recursiveGetChildById('skillWindow')
         if sw and sw:isVisible() then
             sw:close()
         end
 
-        -- Populate and show custom window
+        -- Make sure custom window is in the UI tree
+        if not customWindow:getParent() and root then
+            root:addChild(customWindow)
+        end
+
         populateSkills()
         customWindow:show()
-        customWindow:focus()
         customWindow:raise()
         centerWindow()
         isOpen = true
@@ -154,42 +148,24 @@ end
 function populateSkills()
     local player = g_game.getLocalPlayer()
     if not player then
-        -- no local player, cannot populate
         return
     end
 
-    -- Level
     setLabel('lblLevel', string.format('Level: %d (%d%%)', player:getLevel(), player:getLevelPercent()))
-
-    -- XP
     setLabel('lblXP', string.format('Experience: %s', comma_value(player:getExperience())))
-
-    -- Magic Level
     setLabel('lblMagic', string.format('Magic Level: %d (%d%%)', player:getMagicLevel(), player:getMagicLevelPercent()))
-
-    -- HP
     setLabel('lblHP', string.format('Hit Points: %s / %s', comma_value(player:getHealth()), comma_value(player:getMaxHealth())))
-
-    -- MP
     setLabel('lblMP', string.format('Mana: %s / %s', comma_value(player:getMana()), comma_value(player:getMaxMana())))
-
-    -- Capacity
     setLabel('lblCap', string.format('Capacity: %s', comma_value(player:getFreeCapacity())))
-
-    -- Speed
     setLabel('lblSpeed', string.format('Speed: %d', player:getSpeed()))
-
-    -- Soul
     setLabel('lblSoul', string.format('Soul Points: %d', player:getSoul()))
 
-    -- Stamina
     local stamina = player:getStamina()
     local hours = math.floor(stamina / 60)
     local mins = stamina % 60
     if mins < 10 then mins = '0' .. mins end
     setLabel('lblStamina', string.format('Stamina: %s:%s', hours, mins))
 
-    -- Combat Skills
     for skillId, labelId in pairs(skillLabels) do
         local name = skillNames[skillId] or ('Skill ' .. skillId)
         local level = player:getSkillLevel(skillId)
