@@ -1,0 +1,8 @@
+Module
+  name: game_entergame_custom
+  description: Custom login screen redesign for JO Server
+  author: JO Server
+  sandboxed: true
+  scripts: [ entergame_custom ]
+  @onLoad: init()
+  @onUnload: terminate()
