@@ -1,22 +1,21 @@
 -- chat_custom.lua - Custom chat popup for JO Server
--- Modern dark-themed floating chat, press Enter to open/send
+-- Modern dark-themed floating chat with vertical sidebar tabs
 
 local chatPopup = nil
 local isOpen = false
 local savedWidgets = {}
 local originalOnTabChange = nil
+local sidebarButtons = {}
 
 local THEME = {
-    tabBarBg = '#14142C',
     tabBg = '#1C1C38',
     tabSelectedBg = '#282848',
+    tabSelectedBorder = '#3A3A60',
     tabText = '#686880',
     tabSelectedText = '#C0C0D0',
-    tabBorder = '#282844',
-    tabBorderSelected = '#343460',
     contentBg = '#101024',
     bufferBg = '#0E0E20',
-    bufferPadding = 6,
+    scrollThumb = '#3A3A5888',
 }
 
 function init()
@@ -69,18 +68,13 @@ end
 
 function onEnterPressed()
     if not g_game.isOnline() then return end
-    if isOpen then
+    if not isOpen then
+        openChatPopup()
+    else
         local input = chatPopup:recursiveGetChildById('chatInput')
         if input then
-            local text = input:getText()
-            if text and #text > 0 then
-                sendChatMessage()
-            else
-                input:focus()
-            end
+            input:focus()
         end
-    else
-        openChatPopup()
     end
 end
 
@@ -100,32 +94,14 @@ function openChatPopup()
 
     local tabBar = consolePanel:getChildById('consoleTabBar')
     local contentPanel = consolePanel:getChildById('consoleContentPanel')
-    local textEdit = consolePanel:getChildById('consoleTextEdit')
 
     savedWidgets = {
         tabBar = tabBar,
         contentPanel = contentPanel,
         consolePanel = consolePanel,
     }
-    if textEdit then savedWidgets.textEdit = textEdit end
 
     consolePanel:hide()
-
-    if tabBar then
-        tabBar:breakAnchors()
-        local slot = chatPopup:recursiveGetChildById('chatTabBarSlot')
-        if slot then
-            slot:addChild(tabBar)
-            tabBar:addAnchor(AnchorTop, 'parent', AnchorTop)
-            tabBar:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-            tabBar:addAnchor(AnchorRight, 'parent', AnchorRight)
-            tabBar:setMargin(0)
-        end
-        pcall(function()
-            tabBar:setBackgroundColor(THEME.tabBarBg)
-        end)
-        restyleAllTabs(tabBar)
-    end
 
     if contentPanel then
         contentPanel:breakAnchors()
@@ -148,11 +124,12 @@ function openChatPopup()
     end
 
     restyleAllTabPanels(tabBar)
+    buildSidebar()
 
     if tabBar then
         originalOnTabChange = tabBar.onTabChange
         tabBar.onTabChange = function(self, tab)
-            restyleAllTabs(tabBar)
+            buildSidebar()
             if tab.tabPanel then
                 restyleTabPanelBuffer(tab.tabPanel)
             end
@@ -192,34 +169,85 @@ function getAllTabs(tabBar)
     return all
 end
 
-function restyleTab(tab, isSelected)
-    pcall(function()
-        tab:setImageSource('')
-        tab:setBorderWidth(1)
-        tab:setBorderColor(isSelected and THEME.tabBorderSelected or THEME.tabBorder)
-        tab:setBorderRadius(4)
-        tab:setFont('verdana-11px-rounded')
-        tab:setMarginTop(2)
-        tab:setMarginBottom(2)
-        tab:setMarginLeft(1)
-        tab:setMarginRight(1)
-        if isSelected then
-            tab:setBackgroundColor(THEME.tabSelectedBg)
-            tab:setColor(THEME.tabSelectedText)
-        else
-            tab:setBackgroundColor(THEME.tabBg)
-            tab:setColor(THEME.tabText)
+function buildSidebar()
+    local sidebar = chatPopup:recursiveGetChildById('chatTabSidebar')
+    if not sidebar then return end
+    local tabBar = savedWidgets.tabBar
+    if not tabBar then return end
+
+    for _, btn in pairs(sidebarButtons) do
+        pcall(function() btn:destroy() end)
+    end
+    sidebarButtons = {}
+
+    local allTabs = getAllTabs(tabBar)
+    for i, tab in ipairs(allTabs) do
+        local ok, btn = pcall(function()
+            return g_ui.createWidget('UIButton', sidebar)
+        end)
+        if ok and btn then
+            local text = ''
+            pcall(function() text = tab:getText() end)
+
+            btn:setHeight(28)
+            btn:setText(text)
+            btn:setFont('verdana-11px-rounded')
+            btn:setImageSource('')
+            btn:setBorderWidth(0)
+            btn:setBorderColor('transparent')
+            btn:setBorderRadius(0)
+            btn:setPaddingLeft(8)
+            btn:setPaddingRight(6)
+
+            if i == 1 then
+                btn:addAnchor(AnchorTop, 'parent', AnchorTop)
+            else
+                btn:addAnchor(AnchorTop, 'prev', AnchorBottom)
+            end
+            btn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+            btn:addAnchor(AnchorRight, 'parent', AnchorRight)
+            btn:setMarginTop(1)
+
+            sidebarButtons[tab] = btn
+
+            local tabRef = tab
+            btn.onMouseRelease = function(self, mousePos, mouseButton)
+                if mouseButton == MouseLeftButton then
+                    pcall(function()
+                        tabBar:selectTab(tabRef)
+                        updateSidebarHighlight(tabRef)
+                    end)
+                end
+            end
         end
-    end)
+    end
+
+    updateSidebarHighlight(nil)
 end
 
-function restyleAllTabs(tabBar)
-    if not tabBar then return end
-    local allTabs = getAllTabs(tabBar)
-    for _, tab in ipairs(allTabs) do
-        local selected = false
-        pcall(function() selected = tab:isChecked() end)
-        restyleTab(tab, selected)
+function updateSidebarHighlight(selectedTab)
+    if not selectedTab then
+        local tabBar = savedWidgets.tabBar
+        pcall(function()
+            selectedTab = tabBar:getCurrentTab()
+        end)
+    end
+
+    for tab, btn in pairs(sidebarButtons) do
+        pcall(function()
+            local isSel = (tab == selectedTab)
+            if isSel then
+                btn:setBackgroundColor(THEME.tabSelectedBg)
+                btn:setBorderColor(THEME.tabSelectedBorder)
+                btn:setBorderWidth(1)
+                btn:setColor(THEME.tabSelectedText)
+            else
+                btn:setBackgroundColor(THEME.tabBg)
+                btn:setBorderWidth(0)
+                btn:setBorderColor('transparent')
+                btn:setColor(THEME.tabText)
+            end
+        end)
     end
 end
 
@@ -248,8 +276,8 @@ function restyleTabPanelBuffer(panel)
             buffer:setBackgroundColor(THEME.bufferBg)
             buffer:setBorderWidth(0)
             buffer:setBorderColor('transparent')
-            buffer:setPadding(THEME.bufferPadding)
-            buffer:setPaddingRight(THEME.bufferPadding + 8)
+            buffer:setPadding(6)
+            buffer:setPaddingRight(14)
         end)
 
         local labels = buffer:getChildren()
@@ -261,12 +289,26 @@ function restyleTabPanelBuffer(panel)
         end
     end
 
-    local scrollBar = panel:getChildById('consoleScrollBar')
-    if scrollBar then
+    restyleScrollbar(panel:getChildById('consoleScrollBar'))
+end
+
+function restyleScrollbar(scrollBar)
+    if not scrollBar then return end
+    pcall(function()
+        scrollBar:setWidth(8)
+        scrollBar:setMarginRight(2)
+        scrollBar:setMarginTop(2)
+        scrollBar:setMarginBottom(2)
+        scrollBar:setBackgroundColor('transparent')
+    end)
+
+    local children = scrollBar:getChildren()
+    for _, child in ipairs(children) do
         pcall(function()
-            scrollBar:setMarginRight(2)
-            scrollBar:setMarginTop(2)
-            scrollBar:setMarginBottom(2)
+            child:setImageSource('')
+            child:setBackgroundColor(THEME.scrollThumb)
+            child:setBorderRadius(3)
+            child:setBorderWidth(0)
         end)
     end
 end
@@ -291,17 +333,19 @@ function restoreWidgets()
     local consolePanel = savedWidgets.consolePanel
     if not consolePanel then return end
 
-    if tabBar and tabBar:getParent() ~= consolePanel then
-        tabBar:breakAnchors()
-        consolePanel:addChild(tabBar)
-        tabBar:setMarginTop(0)
-        tabBar:setMarginBottom(-7)
-        tabBar:setMarginLeft(18)
-        tabBar:setMarginRight(20)
-        tabBar:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        tabBar:addAnchor(AnchorBottom, 'consoleContentPanel', AnchorTop)
-        tabBar:addAnchor(AnchorRight, 'closeChannelButton', AnchorLeft)
-        tabBar:setBackgroundColor('transparent')
+    if contentPanel and contentPanel:getParent() ~= consolePanel then
+        contentPanel:breakAnchors()
+        consolePanel:addChild(contentPanel)
+        contentPanel:setMarginLeft(3)
+        contentPanel:setMarginRight(2)
+        contentPanel:setMarginBottom(4)
+        contentPanel:setMarginTop(20)
+        contentPanel:setPadding(1)
+        contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
+        contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+        contentPanel:addAnchor(AnchorBottom, 'consoleTextEdit', AnchorTop)
+        contentPanel:setBackgroundColor('transparent')
     end
 
     local allTabs = getAllTabs(tabBar)
@@ -324,20 +368,10 @@ function restoreWidgets()
         end
     end
 
-    if contentPanel and contentPanel:getParent() ~= consolePanel then
-        contentPanel:breakAnchors()
-        consolePanel:addChild(contentPanel)
-        contentPanel:setMarginLeft(3)
-        contentPanel:setMarginRight(2)
-        contentPanel:setMarginBottom(4)
-        contentPanel:setMarginTop(20)
-        contentPanel:setPadding(1)
-        contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
-        contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-        contentPanel:addAnchor(AnchorBottom, 'consoleTextEdit', AnchorTop)
-        contentPanel:setBackgroundColor('transparent')
+    for _, btn in pairs(sidebarButtons) do
+        pcall(function() btn:destroy() end)
     end
+    sidebarButtons = {}
 
     consolePanel:show()
     savedWidgets = {}
@@ -369,6 +403,13 @@ function restoreTabPanelBuffer(panel)
             scrollBar:setMarginBottom(4)
             scrollBar:setMarginRight(4)
         end)
+        local children = scrollBar:getChildren()
+        for _, child in ipairs(children) do
+            pcall(function()
+                child:setBackgroundColor('')
+                child:setBorderRadius(0)
+            end)
+        end
     end
 end
 
