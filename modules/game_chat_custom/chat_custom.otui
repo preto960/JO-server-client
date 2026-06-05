@@ -6,7 +6,6 @@ UIWidget
   background-color: #16162EBB
   border-width: 1
   border-color: #2A2A4066
-  @onEscape: modules.game_chat_custom.closeChatPopup()
 
   UIWidget
     id: chatHeader

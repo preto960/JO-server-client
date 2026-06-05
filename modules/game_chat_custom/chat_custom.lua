@@ -340,6 +340,9 @@ function restyleScrollbar(scrollBar)
 end
 
 function closeChatPopup()
+    if not isOpen then return end
+    isOpen = false
+
     local tabBar = savedWidgets.tabBar
     if tabBar then
         pcall(function()
@@ -350,12 +353,18 @@ function closeChatPopup()
 
     local consolePanel = savedWidgets.consolePanel
 
-    g_keyboard.unbindKeyDown('Enter', chatPopup)
-    g_keyboard.unbindKeyDown('Escape', chatPopup)
+    pcall(function()
+        g_keyboard.unbindKeyDown('Enter', chatPopup)
+    end)
+    pcall(function()
+        g_keyboard.unbindKeyDown('Escape', chatPopup)
+    end)
 
     restoreWidgets()
-    chatPopup:hide()
-    isOpen = false
+
+    pcall(function()
+        chatPopup:hide()
+    end)
 
     if consolePanel then
         g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
@@ -413,7 +422,9 @@ function restoreWidgets()
     end
     sidebarButtons = {}
 
-    consolePanel:show()
+    pcall(function()
+        consolePanel:show()
+    end)
     savedWidgets = {}
 end
 
