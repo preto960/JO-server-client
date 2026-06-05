@@ -1,13 +1,14 @@
 -- chat_custom.lua - Custom chat popup for JO Server
--- Modern dark-themed floating chat with vertical sidebar tabs
--- Uses addEvent deferral to avoid segfaults from C++ event dispatch
+-- Styles consolePanel AS the popup (zero reparenting approach)
+-- contentPanel stays inside consolePanel at ALL times - no crashes
 
-local chatPopup = nil
 local isOpen = false
 local savedWidgets = {}
 local originalOnTabChange = nil
+local sidebarWidget = nil
 local sidebarButtons = {}
-local closingInProgress = false
+local closeButton = nil
+local headerWidget = nil
 
 local THEME = {
     tabBg = '#1C1C38',
@@ -18,37 +19,23 @@ local THEME = {
     contentBg = '#101024',
     bufferBg = '#0E0E20',
     scrollThumb = '#3A3A5888',
+    headerBg = '#13132ACC',
+    popupBg = '#16162EBB',
+    popupBorder = '#2A2A4066',
+    sidebarBg = '#13132CCC',
+    inputFieldBg = '#1C1C3EEE',
+    inputFieldBorder = '#282840AA',
+    inputText = '#D0D0DC',
+    placeholderColor = '#505068',
+    headerText = '#7878A0',
+    closeText = '#505068',
+    closeHoverText = '#A0A0B8',
 }
 
 function init()
-    local ok = pcall(function()
-        chatPopup = g_ui.loadUI('chat_custom')
-    end)
-    if not ok or not chatPopup then return end
-
     addEvent(function()
         local root = g_ui.getRootWidget()
         if not root then return end
-        if not chatPopup:getParent() then
-            root:addChild(chatPopup)
-        end
-        chatPopup:hide()
-
-        -- Set up close button via Lua (NOT @onClick in OTUI)
-        -- to avoid C++ event dispatch segfaults
-        local closeBtn = chatPopup:recursiveGetChildById('chatCloseButton')
-        if closeBtn then
-            closeBtn.onMouseRelease = function(self, mousePos, mouseButton)
-                if mouseButton == MouseLeftButton then
-                    -- Double-defer: addEvent ensures we are outside
-                    -- both onMouseRelease AND the C++ click dispatch
-                    addEvent(function()
-                        performClose()
-                    end)
-                end
-            end
-        end
-
         local consolePanel = root:recursiveGetChildById('consolePanel')
         if not consolePanel then return end
 
@@ -58,14 +45,16 @@ function init()
         g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
 
         pcall(function()
-            connect(g_game, {
-                onGameEnd = onGameEnd
-            })
+            connect(g_game, { onGameEnd = onGameEnd })
         end)
     end)
 end
 
 function terminate()
+    if isOpen then
+        closeChatPopup()
+    end
+
     local root = g_ui.getRootWidget()
     if root then
         local consolePanel = root:recursiveGetChildById('consolePanel')
@@ -80,92 +69,150 @@ function terminate()
     end
 
     pcall(function()
-        disconnect(g_game, {
-            onGameEnd = onGameEnd
-        })
+        disconnect(g_game, { onGameEnd = onGameEnd })
     end)
-
-    if isOpen then
-        forceRestore()
-    end
-
-    if chatPopup then
-        chatPopup:destroy()
-        chatPopup = nil
-    end
 end
 
 function onEnterPressed()
     if not g_game.isOnline() then return end
-    if closingInProgress then return end
     if not isOpen then
         openChatPopup()
     else
-        local input = chatPopup:recursiveGetChildById('chatInput')
-        if input then
-            local text = input:getText()
-            if text and #text > 0 then
-                sendChatMessage()
-            else
-                input:focus()
-            end
-        end
+        -- Popup is open, Enter should send message (via game's sendCurrentMessage)
+        sendChatMessage()
     end
 end
 
 function onEscapePressed()
     if not g_game.isOnline() then return end
-    if closingInProgress then return end
     if isOpen then
-        -- Defer like the close button does
-        addEvent(function()
-            performClose()
-        end)
+        closeChatPopup()
     end
 end
 
 function onGameEnd()
     if isOpen then
-        forceRestore()
+        closeChatPopup()
     end
 end
 
 function openChatPopup()
     local root = g_ui.getRootWidget()
-    if not root then return end
-
     local consolePanel = root:recursiveGetChildById('consolePanel')
-    if not consolePanel then return end
+    if not consolePanel or isOpen then return end
 
     local tabBar = consolePanel:getChildById('consoleTabBar')
     local contentPanel = consolePanel:getChildById('consoleContentPanel')
+    local textEdit = consolePanel:getChildById('consoleTextEdit')
+    local readOnlyPanel = consolePanel:getChildById('readOnlyPanel')
 
     savedWidgets = {
+        consolePanel = consolePanel,
         tabBar = tabBar,
         contentPanel = contentPanel,
-        consolePanel = consolePanel,
+        textEdit = textEdit,
+        readOnlyPanel = readOnlyPanel,
     }
 
-    consolePanel:hide()
+    -- 1. Make consolePanel a fixed-size floating panel
+    pcall(function() consolePanel:breakAnchors() end)
+    pcall(function()
+        consolePanel:setSize(560, 400)
+        local x = (g_window.getWidth() - 560) / 2
+        local y = (g_window.getHeight() - 400) / 2
+        consolePanel:setPosition({ x = x, y = y })
+        consolePanel:setMargin(0)
+        consolePanel:setBackgroundColor(THEME.popupBg)
+        consolePanel:setBorderWidth(1)
+        consolePanel:setBorderColor(THEME.popupBorder)
+        consolePanel:raise()
+    end)
 
-    g_keyboard.unbindKeyDown('Enter', consolePanel)
-    g_keyboard.unbindKeyDown('Escape', consolePanel)
-    g_keyboard.bindKeyDown('Enter', onEnterPressed, chatPopup)
-    g_keyboard.bindKeyDown('Escape', onEscapePressed, chatPopup)
+    -- 2. Hide all original chrome elements
+    local idsToHide = {
+        'consoleTabBar', 'sayModeButton', 'channelsButton', 'closeChannelButton',
+        'ignoreButton', 'prevChannelButton', 'nextChannelButton', 'toggleChat',
+        'extendedViewDraggable', 'extendedViewHide', 'readOnlyButton',
+    }
+    for _, id in ipairs(idsToHide) do
+        local w = consolePanel:getChildById(id)
+        if w then pcall(function() w:hide() end) end
+    end
+    if readOnlyPanel then pcall(function() readOnlyPanel:hide() end) end
 
+    -- Hide the anonymous background frame UIWidget (first child, no id)
+    local children = consolePanel:getChildren()
+    for _, child in ipairs(children) do
+        local cid = ''
+        pcall(function() cid = child:getId() end)
+        if cid == '' then
+            pcall(function() child:hide() end)
+        end
+    end
+
+    -- 3. Create header with label and close button
+    headerWidget = g_ui.createWidget('UIWidget', consolePanel)
+    pcall(function()
+        headerWidget:setId('customChatHeader')
+        headerWidget:setHeight(28)
+        headerWidget:addAnchor(AnchorTop, 'parent', AnchorTop)
+        headerWidget:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        headerWidget:addAnchor(AnchorRight, 'parent', AnchorRight)
+        headerWidget:setBackgroundColor(THEME.headerBg)
+    end)
+
+    local label = g_ui.createWidget('Label', headerWidget)
+    pcall(function()
+        label:setText('Chat')
+        label:setFont('verdana-11px-rounded')
+        label:setColor(THEME.headerText)
+        label:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+        label:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        label:setMarginLeft(12)
+    end)
+
+    closeButton = g_ui.createWidget('UIButton', headerWidget)
+    pcall(function()
+        closeButton:setText('x')
+        closeButton:setFont('verdana-11px-rounded')
+        closeButton:setColor(THEME.closeText)
+        closeButton:setWidth(28)
+        closeButton:setHeight(28)
+        closeButton:addAnchor(AnchorTop, 'parent', AnchorTop)
+        closeButton:addAnchor(AnchorRight, 'parent', AnchorRight)
+        closeButton:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+        closeButton:setMarginRight(6)
+        closeButton:setImageSource('')
+        closeButton:setBorderWidth(0)
+        closeButton:setBorderColor('transparent')
+    end)
+    closeButton.onMouseRelease = function(self, mousePos, mouseButton)
+        if mouseButton == MouseLeftButton then
+            addEvent(closeChatPopup)
+        end
+    end
+
+    -- 4. Create sidebar widget
+    sidebarWidget = g_ui.createWidget('UIWidget', consolePanel)
+    pcall(function()
+        sidebarWidget:setId('customChatSidebar')
+        sidebarWidget:setWidth(96)
+        sidebarWidget:addAnchor(AnchorTop, 'customChatHeader', AnchorBottom)
+        sidebarWidget:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        sidebarWidget:addAnchor(AnchorBottom, 'customChatInputArea', AnchorTop)
+        sidebarWidget:setBackgroundColor(THEME.sidebarBg)
+    end)
+
+    -- 5. Re-anchor contentPanel to sit between header, sidebar, and input
     if contentPanel then
-        contentPanel:breakAnchors()
-        local slot = chatPopup:recursiveGetChildById('chatContentSlot')
-        if slot then
-            slot:addChild(contentPanel)
-            contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
-            contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        pcall(function()
+            contentPanel:breakAnchors()
+            contentPanel:addAnchor(AnchorTop, 'customChatHeader', AnchorBottom)
+            contentPanel:addAnchor(AnchorLeft, 'customChatSidebar', AnchorRight)
             contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-            contentPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+            contentPanel:addAnchor(AnchorBottom, 'customChatInputArea', AnchorTop)
             contentPanel:setMargin(0)
             contentPanel:setPadding(0)
-        end
-        pcall(function()
             contentPanel:setBackgroundColor(THEME.contentBg)
             contentPanel:setBorderWidth(0)
             contentPanel:setBorderColor('transparent')
@@ -173,9 +220,31 @@ function openChatPopup()
         end)
     end
 
+    -- 6. Re-anchor textEdit to bottom (acts as popup input field)
+    if textEdit then
+        pcall(function()
+            textEdit:breakAnchors()
+            textEdit:setHeight(36)
+            textEdit:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+            textEdit:addAnchor(AnchorRight, 'parent', AnchorRight)
+            textEdit:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+            textEdit:setMargin(4)
+            textEdit:setBackgroundColor(THEME.inputFieldBg)
+            textEdit:setColor(THEME.inputText)
+            textEdit:setBorderColor(THEME.inputFieldBorder)
+            textEdit:setBorderWidth(1)
+            textEdit:setFont('verdana-11px-antialised')
+            textEdit:focus()
+        end)
+    end
+
+    -- 7. Restyle all tab panel buffers
     restyleAllTabPanels(tabBar)
+
+    -- 8. Build sidebar tab buttons
     buildSidebar()
 
+    -- 9. Hook tab change for sidebar refresh
     if tabBar then
         originalOnTabChange = tabBar.onTabChange
         tabBar.onTabChange = function(self, tab)
@@ -189,19 +258,133 @@ function openChatPopup()
         end
     end
 
-    if not chatPopup:getParent() then
-        root:addChild(chatPopup)
-    end
-    chatPopup:show()
-    chatPopup:raise()
-
-    local input = chatPopup:recursiveGetChildById('chatInput')
-    if input then
-        input:focus()
-    end
-
-    centerWindow()
     isOpen = true
+end
+
+function closeChatPopup()
+    if not isOpen then return end
+    isOpen = false
+
+    local consolePanel = savedWidgets.consolePanel
+    local tabBar = savedWidgets.tabBar
+    local contentPanel = savedWidgets.contentPanel
+    local textEdit = savedWidgets.textEdit
+    local readOnlyPanel = savedWidgets.readOnlyPanel
+
+    -- STEP 1: Destroy sidebar buttons (break anchors first)
+    safeDestroySidebarButtons()
+
+    -- STEP 2: Re-anchor contentPanel back to original position
+    -- (remove references to custom widgets BEFORE destroying them)
+    if contentPanel then
+        pcall(function()
+            contentPanel:breakAnchors()
+            contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
+            contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+            contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+            contentPanel:addAnchor(AnchorBottom, 'consoleTextEdit', AnchorTop)
+            contentPanel:setMarginLeft(3)
+            contentPanel:setMarginRight(2)
+            contentPanel:setMarginBottom(4)
+            contentPanel:setMarginTop(20)
+            contentPanel:setPadding(1)
+            contentPanel:setBackgroundColor('transparent')
+        end)
+    end
+
+    -- STEP 3: Re-anchor textEdit back to original position
+    if textEdit then
+        pcall(function()
+            textEdit:breakAnchors()
+            textEdit:setHeight(18)
+            textEdit:addAnchor(AnchorLeft, 'sayModeButton', AnchorRight)
+            textEdit:addAnchor(AnchorRight, 'toggleChat', AnchorLeft)
+            textEdit:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+            textEdit:setMarginRight(5)
+            textEdit:setMarginLeft(5)
+            textEdit:setMarginBottom(3)
+            textEdit:setBackgroundColor('')
+            textEdit:setColor('')
+            textEdit:setBorderColor('')
+            textEdit:setBorderWidth(0)
+            textEdit:clearText()
+        end)
+    end
+
+    -- STEP 4: Re-anchor readOnlyPanel back
+    if readOnlyPanel then
+        pcall(function()
+            readOnlyPanel:breakAnchors()
+            readOnlyPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
+            readOnlyPanel:addAnchor(AnchorLeft, 'parent', AnchorHorizontalCenter)
+            readOnlyPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+            readOnlyPanel:addAnchor(AnchorBottom, 'consoleTextEdit', AnchorTop)
+            readOnlyPanel:setMarginLeft(2)
+            readOnlyPanel:setMarginRight(6)
+            readOnlyPanel:setMarginBottom(4)
+            readOnlyPanel:setMarginTop(20)
+            readOnlyPanel:setPadding(1)
+        end)
+    end
+
+    -- STEP 5: NOW safe to destroy dynamically created widgets
+    -- (all references to them removed in steps 2-4)
+    if headerWidget then
+        pcall(function() headerWidget:destroy() end)
+        headerWidget = nil
+    end
+    if sidebarWidget then
+        pcall(function() sidebarWidget:destroy() end)
+        sidebarWidget = nil
+    end
+    closeButton = nil
+
+    -- STEP 6: Restore consolePanel to fill parent
+    pcall(function()
+        consolePanel:breakAnchors()
+        consolePanel:addAnchor(AnchorTop, 'parent', AnchorTop)
+        consolePanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        consolePanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+        consolePanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+        consolePanel:setMargin(0)
+        consolePanel:setBackgroundColor('transparent')
+        consolePanel:setBorderWidth(0)
+    end)
+
+    -- STEP 7: Show all hidden original chrome
+    local idsToShow = {
+        'consoleTabBar', 'sayModeButton', 'channelsButton', 'closeChannelButton',
+        'ignoreButton', 'prevChannelButton', 'nextChannelButton', 'toggleChat',
+        'extendedViewDraggable', 'extendedViewHide', 'readOnlyButton',
+    }
+    for _, id in ipairs(idsToShow) do
+        local w = consolePanel:getChildById(id)
+        if w then pcall(function() w:show() end) end
+    end
+    if readOnlyPanel then pcall(function() readOnlyPanel:show() end) end
+
+    -- Show the anonymous background frame
+    local children = consolePanel:getChildren()
+    for _, child in ipairs(children) do
+        local cid = ''
+        pcall(function() cid = child:getId() end)
+        if cid == '' then
+            pcall(function() child:show() end)
+        end
+    end
+
+    -- STEP 8: Restore original tab styles
+    restoreTabStyles(tabBar)
+
+    -- STEP 9: Restore tab change handler
+    if tabBar then
+        pcall(function()
+            tabBar.onTabChange = originalOnTabChange
+        end)
+        originalOnTabChange = nil
+    end
+
+    savedWidgets = {}
 end
 
 function getAllTabs(tabBar)
@@ -220,43 +403,37 @@ function getAllTabs(tabBar)
 end
 
 function buildSidebar()
-    local sidebar = chatPopup:recursiveGetChildById('chatTabSidebar')
-    if not sidebar then return end
+    if not sidebarWidget then return end
     local tabBar = savedWidgets.tabBar
     if not tabBar then return end
 
-    -- Destroy old buttons safely: break anchors FIRST to avoid
-    -- dangling 'prev' references causing C++ segfault during layout
     safeDestroySidebarButtons()
 
     local allTabs = getAllTabs(tabBar)
     for i, tab in ipairs(allTabs) do
         local ok, btn = pcall(function()
-            return g_ui.createWidget('UIButton', sidebar)
+            return g_ui.createWidget('UIButton', sidebarWidget)
         end)
         if ok and btn then
             local text = ''
             pcall(function() text = tab:getText() end)
 
-            btn:setHeight(28)
-            btn:setText(text)
-            btn:setFont('verdana-11px-rounded')
-            btn:setImageSource('')
-            btn:setBorderWidth(0)
-            btn:setBorderColor('transparent')
-            btn:setPaddingLeft(8)
-            btn:setPaddingRight(6)
-
-            -- Use only 'parent' anchors, avoid 'prev' which causes
-            -- dangling references when buttons are destroyed
-            if i == 1 then
+            pcall(function()
+                btn:setHeight(28)
+                btn:setText(text)
+                btn:setFont('verdana-11px-rounded')
+                btn:setImageSource('')
+                btn:setBorderWidth(0)
+                btn:setBorderColor('transparent')
+                btn:setPaddingLeft(8)
+                btn:setPaddingRight(6)
+                -- All buttons anchor to parent top with marginTop offset
+                -- (no 'prev' reference that could dangle on destroy)
                 btn:addAnchor(AnchorTop, 'parent', AnchorTop)
-            else
-                btn:addAnchor(AnchorTop, 'parent', AnchorTop)
-                btn:setMarginTop(i * 29)
-            end
-            btn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-            btn:addAnchor(AnchorRight, 'parent', AnchorRight)
+                btn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                btn:addAnchor(AnchorRight, 'parent', AnchorRight)
+                btn:setMarginTop(1 + (i - 1) * 29)
+            end)
 
             sidebarButtons[tab] = btn
 
@@ -276,13 +453,11 @@ function buildSidebar()
 end
 
 function safeDestroySidebarButtons()
-    -- Step 1: Break ALL anchors on ALL buttons first
-    -- This prevents dangling 'prev' references that cause C++ segfault
-    -- during layout recalculation when a button is destroyed
+    -- Break ALL anchors on ALL buttons first to prevent
+    -- dangling parent references during C++ layout recalc
     for _, btn in pairs(sidebarButtons) do
         pcall(function() btn:breakAnchors() end)
     end
-    -- Step 2: Now safe to destroy
     for _, btn in pairs(sidebarButtons) do
         pcall(function() btn:destroy() end)
     end
@@ -376,172 +551,6 @@ function restyleScrollbar(scrollBar)
     end
 end
 
--- Called from deferred addEvent (outside C++ click dispatch)
-function performClose()
-    if not isOpen or closingInProgress then return end
-    closingInProgress = true
-    isOpen = false
-
-    local tabBar = savedWidgets.tabBar
-    local contentPanel = savedWidgets.contentPanel
-    local consolePanel = savedWidgets.consolePanel
-
-    -- Restore tab change handler
-    if tabBar then
-        pcall(function()
-            tabBar.onTabChange = originalOnTabChange
-        end)
-        originalOnTabChange = nil
-    end
-
-    -- Unbind keys from popup
-    pcall(function()
-        g_keyboard.unbindKeyDown('Enter', chatPopup)
-    end)
-    pcall(function()
-        g_keyboard.unbindKeyDown('Escape', chatPopup)
-    end)
-
-    -- Step 1: Destroy sidebar buttons safely (break anchors first)
-    safeDestroySidebarButtons()
-
-    -- Step 2: Move contentPanel to rootWidget as safe intermediate
-    if contentPanel then
-        local root = g_ui.getRootWidget()
-        if root then
-            pcall(function() contentPanel:breakAnchors() end)
-            pcall(function() root:addChild(contentPanel) end)
-            -- Make it invisible while we reorganize
-            pcall(function() contentPanel:hide() end)
-        end
-    end
-
-    -- Step 3: Destroy the popup (contentPanel is already safely in root)
-    if chatPopup then
-        pcall(function() chatPopup:destroy() end)
-        chatPopup = nil
-    end
-
-    -- Step 4: Recreate popup fresh for next use
-    pcall(function()
-        chatPopup = g_ui.loadUI('chat_custom')
-    end)
-
-    if chatPopup then
-        local root = g_ui.getRootWidget()
-        if root then
-            pcall(function() root:addChild(chatPopup) end)
-            pcall(function() chatPopup:hide() end)
-
-            -- Re-set close button callback on fresh popup
-            local closeBtn = chatPopup:recursiveGetChildById('chatCloseButton')
-            if closeBtn then
-                closeBtn.onMouseRelease = function(self, mousePos, mouseButton)
-                    if mouseButton == MouseLeftButton then
-                        addEvent(function()
-                            performClose()
-                        end)
-                    end
-                end
-            end
-        end
-    end
-
-    -- Step 5: Move contentPanel from root to consolePanel (deferred again)
-    addEvent(function()
-        if contentPanel and consolePanel then
-            pcall(function() contentPanel:breakAnchors() end)
-            pcall(function() contentPanel:show() end)
-            pcall(function() consolePanel:addChild(contentPanel) end)
-            pcall(function() contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop) end)
-            pcall(function() contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft) end)
-            pcall(function() contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight) end)
-            pcall(function() contentPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom) end)
-            pcall(function()
-                contentPanel:setMarginLeft(3)
-                contentPanel:setMarginRight(2)
-                contentPanel:setMarginBottom(26)
-                contentPanel:setMarginTop(20)
-                contentPanel:setPadding(1)
-                contentPanel:setBackgroundColor('transparent')
-            end)
-        end
-
-        -- Restore tab styles
-        restoreTabStyles(tabBar)
-
-        -- Show consolePanel
-        pcall(function()
-            consolePanel:show()
-        end)
-
-        -- Rebind keys to consolePanel
-        if consolePanel then
-            pcall(function()
-                g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
-            end)
-            pcall(function()
-                g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
-            end)
-        end
-
-        savedWidgets = {}
-        closingInProgress = false
-    end)
-end
-
--- Emergency restore for onGameEnd / terminate (no deferral)
-function forceRestore()
-    if not isOpen then return end
-    isOpen = false
-
-    local tabBar = savedWidgets.tabBar
-    local contentPanel = savedWidgets.contentPanel
-    local consolePanel = savedWidgets.consolePanel
-
-    if tabBar then
-        pcall(function()
-            tabBar.onTabChange = originalOnTabChange
-        end)
-        originalOnTabChange = nil
-    end
-
-    safeDestroySidebarButtons()
-
-    -- Move contentPanel back directly (best effort)
-    if contentPanel and consolePanel then
-        local parent = contentPanel:getParent()
-        if parent and parent ~= consolePanel then
-            pcall(function() contentPanel:breakAnchors() end)
-            pcall(function() consolePanel:addChild(contentPanel) end)
-            pcall(function() contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop) end)
-            pcall(function() contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft) end)
-            pcall(function() contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight) end)
-            pcall(function() contentPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom) end)
-            pcall(function()
-                contentPanel:setMarginLeft(3)
-                contentPanel:setMarginRight(2)
-                contentPanel:setMarginBottom(26)
-                contentPanel:setMarginTop(20)
-                contentPanel:setPadding(1)
-                contentPanel:setBackgroundColor('transparent')
-            end)
-        end
-    end
-
-    restoreTabStyles(tabBar)
-
-    pcall(function()
-        consolePanel:show()
-    end)
-
-    if chatPopup then
-        pcall(function() chatPopup:hide() end)
-    end
-
-    savedWidgets = {}
-end
-
 function restoreTabStyles(tabBar)
     if not tabBar then return end
     local allTabs = getAllTabs(tabBar)
@@ -599,25 +608,16 @@ function restoreTabPanelBuffer(panel)
     end
 end
 
-function centerWindow()
-    local gw = g_window
-    if gw and chatPopup then
-        local x = (gw.getWidth() - chatPopup:getWidth()) / 2
-        local y = (gw.getHeight() - chatPopup:getHeight()) / 2
-        chatPopup:setPosition({ x = x, y = y })
-    end
-end
-
 function sendChatMessage()
-    local input = chatPopup:recursiveGetChildById('chatInput')
-    if not input then return end
+    local consolePanel = savedWidgets.consolePanel
+    if not consolePanel then return end
+    local textEdit = consolePanel:getChildById('consoleTextEdit')
+    if not textEdit then return end
 
-    local message = input:getText()
+    local message = textEdit:getText()
     if not message or #message == 0 then return end
 
     pcall(function()
-        modules.game_console.sendMessage(message)
+        modules.game_console.sendCurrentMessage()
     end)
-
-    input:clearText()
 end
