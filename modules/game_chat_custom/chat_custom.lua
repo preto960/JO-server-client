@@ -76,9 +76,11 @@ end
 function onEnterPressed()
     if not g_game.isOnline() then return end
     if not isOpen then
-        openChatPopup()
+        -- Defer open to next event loop tick to avoid segfault
+        -- from breakAnchors during C++ keyboard event dispatch
+        addEvent(openChatPopup)
     else
-        -- Popup is open, Enter should send message (via game's sendCurrentMessage)
+        -- Popup is open, Enter should send message
         sendChatMessage()
     end
 end
@@ -86,7 +88,8 @@ end
 function onEscapePressed()
     if not g_game.isOnline() then return end
     if isOpen then
-        closeChatPopup()
+        -- Defer close like the close button does
+        addEvent(closeChatPopup)
     end
 end
 
