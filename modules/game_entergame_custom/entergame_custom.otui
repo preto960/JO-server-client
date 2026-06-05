@@ -32,22 +32,16 @@ UIWidget
     margin-top: 20
     margin-left: 4
 
-  UIWidget
-    id: nameInputBox
+  TextEdit
+    id: customAccountName
     height: 28
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: nameLabel.bottom
     margin-top: 3
+    margin-left: 0
+    margin-right: 0
     background-color: #22223ACC
-    border-width: 1
-    border-color: #2E2E48AA
-
-  TextEdit
-    id: customAccountName
-    anchors.fill: parent
-    margin: 0 6 0 6
-    background-color: transparent
     color: #E0E0E0
     font: verdana-12px-antialised
     text-vertical-alignment: center
@@ -56,7 +50,10 @@ UIWidget
     image-source: none
     selection-color: #E0E0E0FF
     selection-background-color: #3A3A58
-    border-width: 0
+    border-width: 1
+    border-color: #2E2E48AA
+    padding-left: 8
+    padding-right: 8
 
   Label
     id: passLabel
@@ -64,26 +61,20 @@ UIWidget
     font: verdana-11px-rounded
     color: #8888A0
     anchors.left: parent.left
-    anchors.top: nameInputBox.bottom
+    anchors.top: customAccountName.bottom
     margin-top: 12
     margin-left: 4
 
-  UIWidget
-    id: passInputBox
+  TextEdit
+    id: customPassword
     height: 28
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: passLabel.bottom
     margin-top: 3
+    margin-left: 0
+    margin-right: 0
     background-color: #22223ACC
-    border-width: 1
-    border-color: #2E2E48AA
-
-  TextEdit
-    id: customPassword
-    anchors.fill: parent
-    margin: 0 6 0 6
-    background-color: transparent
     color: #E0E0E0
     font: verdana-12px-antialised
     text-vertical-alignment: center
@@ -92,14 +83,17 @@ UIWidget
     image-source: none
     selection-color: #E0E0E0FF
     selection-background-color: #3A3A58
-    border-width: 0
+    border-width: 1
+    border-color: #2E2E48AA
+    padding-left: 8
+    padding-right: 8
     text-hidden: true
 
   UIButton
     id: customRememberBox
     size: 14 14
     anchors.left: parent.left
-    anchors.top: passInputBox.bottom
+    anchors.top: customPassword.bottom
     margin-top: 12
     background-color: #22223ACC
     border-width: 1
