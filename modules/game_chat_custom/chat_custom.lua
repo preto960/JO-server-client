@@ -35,7 +35,6 @@ function init()
         chatPopup:hide()
 
         -- Close button via Lua (not @onClick in OTUI)
-        -- Deferred with addEvent to avoid C++ mouse event dispatch segfault
         local closeBtn = chatPopup:recursiveGetChildById('chatCloseButton')
         if closeBtn then
             closeBtn.onMouseRelease = function(self, mousePos, mouseButton)
@@ -77,10 +76,8 @@ function terminate()
         disconnect(g_game, { onGameEnd = onGameEnd })
     end)
 
-    -- If open, reparent back before destroying
-    if isOpen then
-        forceRestoreAndClose()
-    end
+    -- Always restore on terminate (handles both open and closed states)
+    forceRestoreAndClose()
 
     if chatPopup then
         chatPopup:destroy()
@@ -108,14 +105,12 @@ end
 function onEscapePressed()
     if not g_game.isOnline() then return end
     if isOpen then
-        closeChatPopup()
+        addEvent(closeChatPopup)
     end
 end
 
 function onGameEnd()
-    if isOpen then
-        forceRestoreAndClose()
-    end
+    forceRestoreAndClose()
 end
 
 function openChatPopup()
@@ -141,8 +136,9 @@ function openChatPopup()
     g_keyboard.bindKeyDown('Enter', onEnterPressed, chatPopup)
     g_keyboard.bindKeyDown('Escape', onEscapePressed, chatPopup)
 
-    -- Move contentPanel into popup (this worked before, no crash)
-    if contentPanel then
+    -- Move contentPanel into popup only on first open
+    -- On subsequent opens, contentPanel is already inside popup
+    if contentPanel and contentPanel:getParent() ~= chatPopup then
         contentPanel:breakAnchors()
         local slot = chatPopup:recursiveGetChildById('chatContentSlot')
         if slot then
@@ -197,50 +193,40 @@ function closeChatPopup()
     if not isOpen then return end
     isOpen = false
 
-    local consolePanel = savedWidgets.consolePanel
-
-    if savedWidgets.tabBar then
-        pcall(function()
-            savedWidgets.tabBar.onTabChange = originalOnTabChange
-        end)
-        originalOnTabChange = nil
-    end
-
-    pcall(function()
-        g_keyboard.unbindKeyDown('Enter', chatPopup)
-    end)
-    pcall(function()
-        g_keyboard.unbindKeyDown('Escape', chatPopup)
-    end)
-
-    -- Destroy sidebar buttons safely (break anchors first)
-    destroySidebarButtons()
-
-    -- Just hide popup and show consolePanel
-    -- contentPanel stays inside popup - NO reparenting, NO crash
-    pcall(function()
-        chatPopup:hide()
-    end)
-
-    -- Restore tab styles while they're still in the popup
-    restoreTabStyles(savedWidgets.tabBar)
-
-    pcall(function()
-        consolePanel:show()
-    end)
-
-    -- Rebind keys
-    if consolePanel then
-        g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
-        g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
-    end
-
-    savedWidgets = {}
+    -- Just hide the popup. That's it. Same pattern as skills_custom.
+    -- NO widget manipulation, NO style restoration, NO consolePanel show.
+    -- All heavy cleanup deferred to terminate()/onGameEnd().
+    chatPopup:hide()
 end
 
--- Only used by terminate() and onGameEnd() when we MUST restore contentPanel
+-- Restore everything and clean up. Called by terminate() and onGameEnd().
 function forceRestoreAndClose()
-    if not isOpen then return end
+    if not isOpen then
+        -- Also handle case where popup was closed but contentPanel
+        -- is still inside popup and consolePanel is hidden
+        if chatPopup and savedWidgets.contentPanel and savedWidgets.consolePanel then
+            local contentPanel = savedWidgets.contentPanel
+            local consolePanel = savedWidgets.consolePanel
+            if contentPanel:getParent() ~= consolePanel then
+                pcall(function() contentPanel:breakAnchors() end)
+                pcall(function() consolePanel:addChild(contentPanel) end)
+                pcall(function() contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop) end)
+                pcall(function() contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft) end)
+                pcall(function() contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight) end)
+                pcall(function() contentPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom) end)
+                pcall(function()
+                    contentPanel:setMarginLeft(3)
+                    contentPanel:setMarginRight(2)
+                    contentPanel:setMarginBottom(26)
+                    contentPanel:setMarginTop(20)
+                    contentPanel:setPadding(1)
+                    contentPanel:setBackgroundColor('transparent')
+                end)
+            end
+            pcall(function() consolePanel:show() end)
+        end
+        return
+    end
     isOpen = false
 
     local tabBar = savedWidgets.tabBar
@@ -254,17 +240,15 @@ function forceRestoreAndClose()
         originalOnTabChange = nil
     end
 
-    pcall(function()
-        g_keyboard.unbindKeyDown('Enter', chatPopup)
-    end)
-    pcall(function()
-        g_keyboard.unbindKeyDown('Escape', chatPopup)
-    end)
+    pcall(function() g_keyboard.unbindKeyDown('Enter', chatPopup) end)
+    pcall(function() g_keyboard.unbindKeyDown('Escape', chatPopup) end)
 
     destroySidebarButtons()
     restoreTabStyles(tabBar)
 
-    -- Reparent contentPanel back (only on terminate/gameEnd)
+    chatPopup:hide()
+
+    -- Reparent contentPanel back
     if contentPanel and consolePanel then
         pcall(function() contentPanel:breakAnchors() end)
         pcall(function() consolePanel:addChild(contentPanel) end)
@@ -282,21 +266,7 @@ function forceRestoreAndClose()
         end)
     end
 
-    pcall(function()
-        chatPopup:hide()
-    end)
-    pcall(function()
-        consolePanel:show()
-    end)
-
-    if consolePanel then
-        pcall(function()
-            g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
-        end)
-        pcall(function()
-            g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
-        end)
-    end
+    pcall(function() consolePanel:show() end)
 
     savedWidgets = {}
 end
