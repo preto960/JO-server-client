@@ -342,9 +342,13 @@ end
 function closeChatPopup()
     local tabBar = savedWidgets.tabBar
     if tabBar then
-        tabBar.onTabChange = originalOnTabChange
+        pcall(function()
+            tabBar.onTabChange = originalOnTabChange
+        end)
         originalOnTabChange = nil
     end
+
+    local consolePanel = savedWidgets.consolePanel
 
     g_keyboard.unbindKeyDown('Enter', chatPopup)
     g_keyboard.unbindKeyDown('Escape', chatPopup)
@@ -353,7 +357,6 @@ function closeChatPopup()
     chatPopup:hide()
     isOpen = false
 
-    local consolePanel = savedWidgets.consolePanel
     if consolePanel then
         g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
         g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
@@ -370,18 +373,20 @@ function restoreWidgets()
     if not consolePanel then return end
 
     if contentPanel and contentPanel:getParent() ~= consolePanel then
-        contentPanel:breakAnchors()
-        consolePanel:addChild(contentPanel)
-        contentPanel:setMarginLeft(3)
-        contentPanel:setMarginRight(2)
-        contentPanel:setMarginBottom(4)
-        contentPanel:setMarginTop(20)
-        contentPanel:setPadding(1)
-        contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
-        contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-        contentPanel:addAnchor(AnchorBottom, 'consoleTextEdit', AnchorTop)
-        contentPanel:setBackgroundColor('transparent')
+        pcall(function()
+            contentPanel:breakAnchors()
+            consolePanel:addChild(contentPanel)
+            contentPanel:setMarginLeft(3)
+            contentPanel:setMarginRight(2)
+            contentPanel:setMarginBottom(4)
+            contentPanel:setMarginTop(20)
+            contentPanel:setPadding(1)
+            contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
+            contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+            contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+            contentPanel:addAnchor(AnchorBottom, 'consoleTextEdit', AnchorTop)
+            contentPanel:setBackgroundColor('transparent')
+        end)
     end
 
     local allTabs = getAllTabs(tabBar)
