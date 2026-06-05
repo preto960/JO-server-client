@@ -2,14 +2,14 @@ UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 320 340
+  size: 320 330
 
   UIWidget
     id: logoCircle
     size: 48 48
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    margin-top: 20
+    margin-top: 16
     background-color: #22223AEE
     border-width: 2
     border-color: #3A3A58AA
@@ -29,30 +29,27 @@ UIWidget
     color: #8888A0
     anchors.left: parent.left
     anchors.top: logoCircle.bottom
-    margin-top: 24
+    margin-top: 20
     margin-left: 4
 
   UIWidget
     id: nameInputBox
-    height: 34
+    height: 28
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: nameLabel.bottom
-    margin-top: 4
+    margin-top: 3
     background-color: #22223ACC
     border-width: 1
     border-color: #2E2E48AA
 
   TextEdit
     id: customAccountName
-    anchors.left: nameInputBox.left
-    anchors.right: nameInputBox.right
-    anchors.top: nameInputBox.top
-    anchors.bottom: nameInputBox.bottom
-    margin: 4 6 4 6
+    anchors.fill: parent
+    margin: 0 6 0 6
     background-color: transparent
     color: #E0E0E0
-    font: verdana-11px-antialised
+    font: verdana-12px-antialised
     text-vertical-alignment: center
     placeholder: "tu email aqui..."
     placeholder-color: #555570
@@ -68,30 +65,27 @@ UIWidget
     color: #8888A0
     anchors.left: parent.left
     anchors.top: nameInputBox.bottom
-    margin-top: 14
+    margin-top: 12
     margin-left: 4
 
   UIWidget
     id: passInputBox
-    height: 34
+    height: 28
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: passLabel.bottom
-    margin-top: 4
+    margin-top: 3
     background-color: #22223ACC
     border-width: 1
     border-color: #2E2E48AA
 
   TextEdit
     id: customPassword
-    anchors.left: passInputBox.left
-    anchors.right: passInputBox.right
-    anchors.top: passInputBox.top
-    anchors.bottom: passInputBox.bottom
-    margin: 4 6 4 6
+    anchors.fill: parent
+    margin: 0 6 0 6
     background-color: transparent
     color: #E0E0E0
-    font: verdana-11px-antialised
+    font: verdana-12px-antialised
     text-vertical-alignment: center
     placeholder: "tu password..."
     placeholder-color: #555570
@@ -101,33 +95,25 @@ UIWidget
     border-width: 0
     text-hidden: true
 
-  UIWidget
-    id: rememberRow
-    height: 18
+  UIButton
+    id: customRememberBox
+    size: 14 14
     anchors.left: parent.left
     anchors.top: passInputBox.bottom
-    margin-top: 14
+    margin-top: 12
+    background-color: #22223ACC
+    border-width: 1
+    border-color: #3A3A58AA
+    @onClick: modules.game_entergame_custom.toggleRemember()
 
-    UIButton
-      id: customRememberBox
-      size: 14 14
-      anchors.left: parent.left
-      anchors.verticalCenter: parent.verticalCenter
-      background-color: #22223ACC
-      border-width: 1
-      border-color: #3A3A58AA
-      @onClick: modules.game_entergame_custom.toggleRemember()
-      $hover:
-        border-color: #5A5A78AA
-
-    Label
-      id: rememberText
-      !text: 'Recordar sesion'
-      font: verdana-11px-rounded
-      color: #777790
-      anchors.left: customRememberBox.right
-      anchors.verticalCenter: parent.verticalCenter
-      margin-left: 6
+  Label
+    id: rememberText
+    !text: 'Recordar sesion'
+    font: verdana-11px-rounded
+    color: #777790
+    anchors.left: customRememberBox.right
+    anchors.top: customRememberBox.top
+    margin-left: 6
 
   UIButton
     id: loginButton
@@ -136,9 +122,9 @@ UIWidget
     color: #D0D0E0
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: rememberRow.bottom
-    margin-top: 20
-    height: 38
+    anchors.top: customRememberBox.bottom
+    margin-top: 18
+    height: 36
     background-color: #2E2E4ADD
     border-width: 1
     border-color: #3E3E5AAA

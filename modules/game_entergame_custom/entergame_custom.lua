@@ -71,7 +71,6 @@ function setup()
         end
     end
 
-    -- Mirror saved values from original to custom inputs
     local nameEdit = originalWindow:getChildById('accountNameTextEdit')
     local passEdit = originalWindow:getChildById('accountPasswordTextEdit')
     local rememberBox = originalWindow:getChildById('rememberEmailBox')
@@ -86,28 +85,18 @@ function setup()
         customPass:setText(passEdit:getText())
     end
 
-    -- Sync remember state from original
     if rememberBox then
         rememberChecked = rememberBox:isChecked()
     end
     updateRememberVisual()
 
-    -- Bind Enter key to login
-    customWindow.onEnter = function()
-        doCustomLogin()
-    end
-    customWindow.onEscape = function()
-    end
-
-    -- Bind Tab key for field navigation
+    g_keyboard.bindKeyDown('Enter', onEnterPressed, customWindow)
     g_keyboard.bindKeyDown('Tab', onTabPressed, customWindow)
 
-    -- Focus the name field
     if customName then
         customName:focus()
     end
 
-    -- Center window on screen
     local gw = g_window
     if gw and customWindow then
         local x = (gw.getWidth() - customWindow:getWidth()) / 2
@@ -115,7 +104,6 @@ function setup()
         customWindow:setPosition({ x = x, y = y })
     end
 
-    -- Connect game events
     pcall(function()
         connect(g_game, {
             onGameStart = onGameStart,
@@ -125,7 +113,10 @@ function setup()
 end
 
 function terminate()
-    g_keyboard.unbindKeyDown('Tab', customWindow)
+    if customWindow then
+        g_keyboard.unbindKeyDown('Enter', customWindow)
+        g_keyboard.unbindKeyDown('Tab', customWindow)
+    end
 
     pcall(function()
         disconnect(g_game, {
@@ -164,6 +155,14 @@ end
 
 function onGameEnd()
     hideOriginalUI()
+    if customWindow then
+        customWindow:show()
+        customWindow:raise()
+    end
+end
+
+function onEnterPressed()
+    doCustomLogin()
 end
 
 function onTabPressed()
@@ -174,8 +173,6 @@ function onTabPressed()
 
     if customName:isFocused() then
         customPass:focus()
-    elseif customPass:isFocused() then
-        customName:focus()
     else
         customName:focus()
     end
@@ -262,7 +259,6 @@ function togglePasswordVisibility()
     end
 end
 
--- Override EnterGame.show
 if EnterGame then
     EnterGame.show = function()
         if g_game.isOnline() then return end

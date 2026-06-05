@@ -73,10 +73,22 @@ function init()
                 { type = KEY_DOWN, callback = customToggle }
             })
         end)
+
+        pcall(function()
+            connect(g_game, {
+                onGameEnd = onGameEnd
+            })
+        end)
     end)
 end
 
 function terminate()
+    pcall(function()
+        disconnect(g_game, {
+            onGameEnd = onGameEnd
+        })
+    end)
+
     if originalToggle then
         local root = g_ui.getRootWidget()
         if root then
@@ -133,6 +145,16 @@ end
 function close()
     if isOpen then
         customToggle()
+    end
+end
+
+function onGameEnd()
+    if isOpen then
+        customWindow:hide()
+        local root = g_ui.getRootWidget()
+        local btn = root and root:recursiveGetChildById('skillsButton')
+        if btn then btn:setOn(false) end
+        isOpen = false
     end
 end
 

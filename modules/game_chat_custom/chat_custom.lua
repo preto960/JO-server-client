@@ -39,6 +39,12 @@ function init()
         g_keyboard.unbindKeyDown('Escape', consolePanel)
         g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
         g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
+
+        pcall(function()
+            connect(g_game, {
+                onGameEnd = onGameEnd
+            })
+        end)
     end)
 end
 
@@ -55,6 +61,12 @@ function terminate()
             end)
         end
     end
+
+    pcall(function()
+        disconnect(g_game, {
+            onGameEnd = onGameEnd
+        })
+    end)
 
     if isOpen then
         restoreWidgets()
@@ -85,6 +97,12 @@ end
 
 function onEscapePressed()
     if not g_game.isOnline() then return end
+    if isOpen then
+        closeChatPopup()
+    end
+end
+
+function onGameEnd()
     if isOpen then
         closeChatPopup()
     end
