@@ -33,7 +33,6 @@ UIWidget
       width: 28
       height: 28
       margin-right: 6
-      @onClick: modules.game_chat_custom.closeChatPopup()
       $hover:
         color: #A0A0B8
 
