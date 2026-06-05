@@ -3,9 +3,9 @@ UIWidget
   visible: false
   focusable: true
   size: 320 400
-  background-color: #1A1A2E
+  background-color: #1A1A2EDD
   border-width: 1
-  border-color: #2A2A42
+  border-color: #2A2A42AA
   border-radius: 12
   padding: 20
 
@@ -15,7 +15,7 @@ UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    background-color: #141428
+    background-color: #141428EE
     border-radius: 10
 
   UIWidget
@@ -23,9 +23,9 @@ UIWidget
     size: 44 44
     anchors.horizontalCenter: headerArea.horizontalCenter
     anchors.verticalCenter: headerArea.verticalCenter
-    background-color: #22223A
+    background-color: #22223AEE
     border-width: 2
-    border-color: #3A3A58
+    border-color: #3A3A58AA
     border-radius: 22
 
   Label
@@ -53,9 +53,9 @@ UIWidget
     anchors.right: parent.right
     anchors.top: nameLabel.bottom
     margin-top: 4
-    background-color: #22223A
+    background-color: #22223ACC
     border-width: 1
-    border-color: #2E2E48
+    border-color: #2E2E48AA
     border-radius: 6
 
   TextEdit
@@ -93,9 +93,9 @@ UIWidget
     anchors.right: parent.right
     anchors.top: passLabel.bottom
     margin-top: 4
-    background-color: #22223A
+    background-color: #22223ACC
     border-width: 1
-    border-color: #2E2E48
+    border-color: #2E2E48AA
     border-radius: 6
 
   TextEdit
@@ -137,16 +137,16 @@ UIWidget
     anchors.top: customRememberBox.bottom
     margin-top: 18
     height: 38
-    background-color: #2E2E4A
+    background-color: #2E2E4ADD
     border-width: 1
-    border-color: #3E3E5A
+    border-color: #3E3E5AAA
     border-radius: 8
     @onClick: modules.game_entergame_custom.doCustomLogin()
     $hover:
-      background-color: #3A3A56
-      border-color: #4A4A68
+      background-color: #3A3A56DD
+      border-color: #4A4A68AA
     $pressed:
-      background-color: #444462
+      background-color: #444462DD
 
   UIButton
     id: forgotPassBtn

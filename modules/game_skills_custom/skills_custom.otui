@@ -3,9 +3,9 @@ UIWidget
   visible: false
   focusable: true
   size: 250 400
-  background-color: #1E1E2E
+  background-color: #1E1E2EDD
   border-width: 1
-  border-color: #5A5A7A
+  border-color: #5A5A7AAA
   @onEscape: modules.game_skills_custom.close()
 
   UIWidget
@@ -14,7 +14,7 @@ UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    background-color: #151525
+    background-color: #151525EE
     margin-bottom: 1
 
     Label

@@ -3,9 +3,9 @@ UIWidget
   visible: false
   focusable: true
   size: 560 380
-  background-color: #1E1E2E
+  background-color: #1E1E2EDD
   border-width: 1
-  border-color: #2A2A3E
+  border-color: #2A2A3EAA
   border-radius: 8
   @onEscape: modules.game_chat_custom.closeChatPopup()
 
@@ -15,7 +15,7 @@ UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    background-color: #161626
+    background-color: #161626EE
     border-radius: 8
 
     Label
@@ -45,7 +45,7 @@ UIWidget
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    background-color: #181830
+    background-color: #181830CC
     margin-top: 2
 
   UIWidget
@@ -55,7 +55,7 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: chatInputPanel.top
     margin: 2 2 2 2
-    background-color: #14142A
+    background-color: #14142ADD
     padding: 0
 
   UIWidget
@@ -65,9 +65,9 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin: 4 4 4 4
-    background-color: #181830
+    background-color: #181830CC
     border-width: 1
-    border-color: #2A2A40
+    border-color: #2A2A40AA
     border-radius: 6
 
     UIWidget
@@ -77,9 +77,9 @@ UIWidget
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       margin: 6 4 6 8
-      background-color: #222238
+      background-color: #222238CC
       border-width: 1
-      border-color: #2E2E48
+      border-color: #2E2E48AA
       border-radius: 5
 
     TextEdit
@@ -88,7 +88,7 @@ UIWidget
       margin: 2 4 2 4
       shift-navigation: true
       max-length: 255
-      background-color: #222238
+      background-color: #222238CC
       color: #E0E0E0
       font: verdana-11px-antialised
       text-align: left
@@ -105,7 +105,7 @@ UIWidget
       !text: 'Enviar'
       font: verdana-11px-rounded
       color: #9999AA
-      background-color: #222238
+      background-color: #222238CC
       anchors.right: parent.right
       anchors.verticalCenter: parent.verticalCenter
       width: 58
@@ -116,7 +116,7 @@ UIWidget
       border-radius: 5
       @onClick: modules.game_chat_custom.sendChatMessage()
       $hover:
-        background-color: #2A2A42
+        background-color: #2A2A42CC
         color: #D0D0E0
       $pressed:
-        background-color: #323250
+        background-color: #323250CC
