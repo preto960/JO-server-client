@@ -35,11 +35,12 @@ function init()
         chatPopup:hide()
 
         -- Close button via Lua (not @onClick in OTUI)
+        -- Deferred with addEvent to avoid C++ mouse event dispatch segfault
         local closeBtn = chatPopup:recursiveGetChildById('chatCloseButton')
         if closeBtn then
             closeBtn.onMouseRelease = function(self, mousePos, mouseButton)
                 if mouseButton == MouseLeftButton then
-                    closeChatPopup()
+                    addEvent(closeChatPopup)
                 end
             end
         end
