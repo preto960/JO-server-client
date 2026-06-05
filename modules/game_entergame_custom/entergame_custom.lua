@@ -1,12 +1,12 @@
 -- entergame_custom.lua - Custom login screen for JO Server
--- Creates a completely new login window, hides the original
--- Also hides top menu, bottom menu, and version label during login
+-- Transparent background, custom checkbox, Tab/Enter key support
 
 local customWindow = nil
 local originalWindow = nil
 local topMenuWidget = nil
 local bottomMenuWidget = nil
 local versionLabelWidget = nil
+local rememberChecked = false
 
 function init()
     addEvent(function()
@@ -49,30 +49,16 @@ end
 function setup()
     if not originalWindow then return end
 
-    -- Hide the original window completely
     originalWindow:hide()
 
-    -- Hide top menu bar during login
-    if topMenuWidget then
-        topMenuWidget:hide()
-    end
+    if topMenuWidget then topMenuWidget:hide() end
+    if bottomMenuWidget then bottomMenuWidget:hide() end
+    if versionLabelWidget then versionLabelWidget:hide() end
 
-    -- Hide bottom menu bar during login
-    if bottomMenuWidget then
-        bottomMenuWidget:hide()
-    end
-
-    -- Hide version label during login
-    if versionLabelWidget then
-        versionLabelWidget:hide()
-    end
-
-    -- Load our custom window
     local ok = pcall(function()
         customWindow = g_ui.loadUI('entergame_custom')
     end)
     if not ok or not customWindow then
-        -- If custom UI fails to load, show original as fallback
         originalWindow:show()
         showOriginalUI()
         return
@@ -100,13 +86,21 @@ function setup()
         customPass:setText(passEdit:getText())
     end
 
-    -- Set up Enter key binding on the custom window
+    -- Sync remember state from original
+    if rememberBox then
+        rememberChecked = rememberBox:isChecked()
+    end
+    updateRememberVisual()
+
+    -- Bind Enter key to login
     customWindow.onEnter = function()
         doCustomLogin()
     end
     customWindow.onEscape = function()
-        -- Do nothing on escape
     end
+
+    -- Bind Tab key for field navigation
+    g_keyboard.bindKeyDown('Tab', onTabPressed, customWindow)
 
     -- Focus the name field
     if customName then
@@ -121,7 +115,7 @@ function setup()
         customWindow:setPosition({ x = x, y = y })
     end
 
-    -- Connect game events to show/hide original UI elements
+    -- Connect game events
     pcall(function()
         connect(g_game, {
             onGameStart = onGameStart,
@@ -131,7 +125,8 @@ function setup()
 end
 
 function terminate()
-    -- Disconnect game events
+    g_keyboard.unbindKeyDown('Tab', customWindow)
+
     pcall(function()
         disconnect(g_game, {
             onGameStart = onGameStart,
@@ -144,7 +139,6 @@ function terminate()
         customWindow = nil
     end
 
-    -- Restore original UI elements
     showOriginalUI()
 
     if originalWindow then
@@ -153,53 +147,76 @@ function terminate()
 end
 
 function showOriginalUI()
-    -- Show top menu bar
-    if topMenuWidget then
-        topMenuWidget:show()
-    end
-    -- Show bottom menu bar
-    if bottomMenuWidget then
-        bottomMenuWidget:show()
-    end
-    -- Show version label
-    if versionLabelWidget then
-        versionLabelWidget:show()
-    end
+    if topMenuWidget then topMenuWidget:show() end
+    if bottomMenuWidget then bottomMenuWidget:show() end
+    if versionLabelWidget then versionLabelWidget:show() end
 end
 
 function hideOriginalUI()
-    -- Hide top menu bar
-    if topMenuWidget then
-        topMenuWidget:hide()
-    end
-    -- Hide bottom menu bar
-    if bottomMenuWidget then
-        bottomMenuWidget:hide()
-    end
-    -- Hide version label
-    if versionLabelWidget then
-        versionLabelWidget:hide()
-    end
+    if topMenuWidget then topMenuWidget:hide() end
+    if bottomMenuWidget then bottomMenuWidget:hide() end
+    if versionLabelWidget then versionLabelWidget:hide() end
 end
 
 function onGameStart()
-    -- Player entered the game world, show original UI elements
     showOriginalUI()
 end
 
 function onGameEnd()
-    -- Player left the game (logout/disconnect), hide original UI elements
     hideOriginalUI()
+end
+
+function onTabPressed()
+    if not customWindow then return end
+    local customName = customWindow:recursiveGetChildById('customAccountName')
+    local customPass = customWindow:recursiveGetChildById('customPassword')
+    if not customName or not customPass then return end
+
+    if customName:isFocused() then
+        customPass:focus()
+    elseif customPass:isFocused() then
+        customName:focus()
+    else
+        customName:focus()
+    end
+end
+
+function toggleRemember()
+    rememberChecked = not rememberChecked
+    updateRememberVisual()
+
+    if originalWindow then
+        local rememberBox = originalWindow:getChildById('rememberEmailBox')
+        if rememberBox then
+            pcall(function()
+                rememberBox:setChecked(rememberChecked)
+            end)
+        end
+    end
+end
+
+function updateRememberVisual()
+    if not customWindow then return end
+    local box = customWindow:recursiveGetChildById('customRememberBox')
+    if box then
+        pcall(function()
+            if rememberChecked then
+                box:setBackgroundColor('#3A3A5888')
+                box:setBorderColor('#5A5A78AA')
+            else
+                box:setBackgroundColor('#22223ACC')
+                box:setBorderColor('#3A3A58AA')
+            end
+        end)
+    end
 end
 
 function doCustomLogin()
     local customName = customWindow:recursiveGetChildById('customAccountName')
     local customPass = customWindow:recursiveGetChildById('customPassword')
-    local customRemember = customWindow:recursiveGetChildById('customRememberBox')
 
     if not customName or not customPass or not originalWindow then return end
 
-    -- Sync values to original hidden widgets
     local nameEdit = originalWindow:getChildById('accountNameTextEdit')
     local passEdit = originalWindow:getChildById('accountPasswordTextEdit')
     local rememberBox = originalWindow:getChildById('rememberEmailBox')
@@ -210,26 +227,13 @@ function doCustomLogin()
     if passEdit then
         passEdit:setText(customPass:getText())
     end
-    if rememberBox and customRemember then
-        rememberBox:setChecked(customRemember:isChecked())
+    if rememberBox then
+        rememberBox:setChecked(rememberChecked)
     end
 
-    -- Call the original login function
     pcall(function()
         EnterGame.doLogin()
     end)
-end
-
-function onRememberChange(checked)
-    -- Sync remember box to original
-    if originalWindow then
-        local rememberBox = originalWindow:getChildById('rememberEmailBox')
-        if rememberBox then
-            pcall(function()
-                rememberBox:setChecked(checked)
-            end)
-        end
-    end
 end
 
 function onForgotPassword()
@@ -251,7 +255,6 @@ end
 function togglePasswordVisibility()
     local customPass = customWindow:recursiveGetChildById('customPassword')
     if not customPass then return end
-    -- Toggle between password and text mode
     if customPass:isTextHidden() then
         customPass:setTextHidden(false)
     else
@@ -259,7 +262,7 @@ function togglePasswordVisibility()
     end
 end
 
--- Override EnterGame.show to show our custom window and hide original UI
+-- Override EnterGame.show
 if EnterGame then
     EnterGame.show = function()
         if g_game.isOnline() then return end

@@ -2,31 +2,17 @@ UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 320 400
-  background-color: #1A1A2EDD
-  border-width: 1
-  border-color: #2A2A42AA
-  border-radius: 12
-  padding: 20
-
-  UIWidget
-    id: headerArea
-    height: 70
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
-    background-color: #141428EE
-    border-radius: 10
+  size: 320 340
 
   UIWidget
     id: logoCircle
-    size: 44 44
-    anchors.horizontalCenter: headerArea.horizontalCenter
-    anchors.verticalCenter: headerArea.verticalCenter
+    size: 48 48
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: parent.top
+    margin-top: 20
     background-color: #22223AEE
     border-width: 2
     border-color: #3A3A58AA
-    border-radius: 22
 
   Label
     id: logoLabel
@@ -42,8 +28,8 @@ UIWidget
     font: verdana-11px-rounded
     color: #8888A0
     anchors.left: parent.left
-    anchors.top: headerArea.bottom
-    margin-top: 20
+    anchors.top: logoCircle.bottom
+    margin-top: 24
     margin-left: 4
 
   UIWidget
@@ -56,7 +42,6 @@ UIWidget
     background-color: #22223ACC
     border-width: 1
     border-color: #2E2E48AA
-    border-radius: 6
 
   TextEdit
     id: customAccountName
@@ -96,7 +81,6 @@ UIWidget
     background-color: #22223ACC
     border-width: 1
     border-color: #2E2E48AA
-    border-radius: 6
 
   TextEdit
     id: customPassword
@@ -117,15 +101,33 @@ UIWidget
     border-width: 0
     text-hidden: true
 
-  QtCheckBox
-    id: customRememberBox
-    !text: 'Recordar sesion'
-    font: verdana-11px-rounded
-    color: #777790
+  UIWidget
+    id: rememberRow
+    height: 18
     anchors.left: parent.left
     anchors.top: passInputBox.bottom
-    margin-top: 12
-    @onCheckChange: modules.game_entergame_custom.onRememberChange(self:isChecked())
+    margin-top: 14
+
+    UIButton
+      id: customRememberBox
+      size: 14 14
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      background-color: #22223ACC
+      border-width: 1
+      border-color: #3A3A58AA
+      @onClick: modules.game_entergame_custom.toggleRemember()
+      $hover:
+        border-color: #5A5A78AA
+
+    Label
+      id: rememberText
+      !text: 'Recordar sesion'
+      font: verdana-11px-rounded
+      color: #777790
+      anchors.left: customRememberBox.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 6
 
   UIButton
     id: loginButton
@@ -134,13 +136,12 @@ UIWidget
     color: #D0D0E0
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: customRememberBox.bottom
-    margin-top: 18
+    anchors.top: rememberRow.bottom
+    margin-top: 20
     height: 38
     background-color: #2E2E4ADD
     border-width: 1
     border-color: #3E3E5AAA
-    border-radius: 8
     @onClick: modules.game_entergame_custom.doCustomLogin()
     $hover:
       background-color: #3A3A56DD

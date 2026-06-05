@@ -6,7 +6,6 @@ UIWidget
   background-color: #16162EBB
   border-width: 1
   border-color: #2A2A4066
-  border-radius: 10
   @onEscape: modules.game_chat_custom.closeChatPopup()
 
   UIWidget
@@ -81,5 +80,4 @@ UIWidget
       selection-background-color: #3A3A58
       border-width: 1
       border-color: #282840AA
-      border-radius: 5
       image-source: none
