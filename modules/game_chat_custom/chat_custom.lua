@@ -360,16 +360,25 @@ function closeChatPopup()
         g_keyboard.unbindKeyDown('Escape', chatPopup)
     end)
 
-    restoreWidgets()
-
+    -- Hide popup immediately so the onClick event completes cleanly
     pcall(function()
         chatPopup:hide()
     end)
 
-    if consolePanel then
-        g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
-        g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
-    end
+    -- Defer heavy widget manipulation to next event loop tick
+    -- to avoid segfault from reparenting during onClick processing
+    addEvent(function()
+        restoreWidgets()
+
+        if consolePanel then
+            pcall(function()
+                g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
+            end)
+            pcall(function()
+                g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
+            end)
+        end
+    end)
 end
 
 function restoreWidgets()
@@ -381,21 +390,29 @@ function restoreWidgets()
     local consolePanel = savedWidgets.consolePanel
     if not consolePanel then return end
 
-    if contentPanel and contentPanel:getParent() ~= consolePanel then
-        pcall(function()
-            contentPanel:breakAnchors()
-            consolePanel:addChild(contentPanel)
-            contentPanel:setMarginLeft(3)
-            contentPanel:setMarginRight(2)
-            contentPanel:setMarginBottom(4)
-            contentPanel:setMarginTop(20)
-            contentPanel:setPadding(1)
-            contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
-            contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-            contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-            contentPanel:addAnchor(AnchorBottom, 'consoleTextEdit', AnchorTop)
-            contentPanel:setBackgroundColor('transparent')
-        end)
+    -- Safely reparent contentPanel back to consolePanel
+    -- Each operation wrapped individually in pcall since C++ segfaults bypass pcall
+    if contentPanel then
+        local parent = contentPanel:getParent()
+        if parent and parent ~= consolePanel then
+            pcall(function() contentPanel:breakAnchors() end)
+            pcall(function() consolePanel:addChild(contentPanel) end)
+            -- Use 'parent' for all anchors to avoid sibling ID lookup segfault
+            pcall(function() contentPanel:addAnchor(AnchorTop, 'parent', AnchorTop) end)
+            pcall(function() contentPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft) end)
+            pcall(function() contentPanel:addAnchor(AnchorRight, 'parent', AnchorRight) end)
+            pcall(function() contentPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom) end)
+            -- Use bottom margin to leave room for text edit instead of
+            -- anchoring to 'consoleTextEdit' by ID (which can segfault)
+            pcall(function()
+                contentPanel:setMarginLeft(3)
+                contentPanel:setMarginRight(2)
+                contentPanel:setMarginBottom(26)
+                contentPanel:setMarginTop(20)
+                contentPanel:setPadding(1)
+                contentPanel:setBackgroundColor('transparent')
+            end)
+        end
     end
 
     local allTabs = getAllTabs(tabBar)
