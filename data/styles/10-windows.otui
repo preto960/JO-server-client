@@ -2,34 +2,31 @@ Window < UIWindow
   font: verdana-11px-antialised
   size: 200 200
   opacity: 1
-  color: #C0C0D0
-  text-offset: 0 10
+  color: #dfdfdf
+  text-offset: 0 6
   text-align: top
-  background-color: #1A1A2E
-  border-width: 1
-  border-color: #2A2A42
-  border-radius: 8
-  padding-top: 30
-  padding-left: 14
-  padding-right: 14
-  padding-bottom: 14
+  image-source: /images/ui/window
+  image-border: 6
+  image-border-top: 27
+  padding-top: 36
+  padding-left: 16
+  padding-right: 16
+  padding-bottom: 16
 
   $disabled:
-    color: #C0C0D088
+    color: #dfdfdf88
 
   $dragging:
     opacity: 0.8
 
 HeadlessWindow < UIWindow
-  background-color: #1A1A2E
-  border-width: 1
-  border-color: #2A2A42
-  border-radius: 6
-  padding: 8
+  image-source: /images/ui/window_headless
+  image-border: 5
+  padding: 5
 
 MainWindow < Window
   anchors.centerIn: parent
-
+  
 StaticWindow < Window
   draggable: false
 
@@ -38,35 +35,29 @@ StaticMainWindow < StaticWindow
 
 UpdaterMainWindow < StaticWindow
   size: 138 90
-  background-color: #1A1A2E
-  border-width: 1
-  border-color: #2A2A42
-  border-radius: 6
-  padding-top: 6
-  padding-left: 6
-  padding-right: 6
-  padding-bottom: 6
+  image-source: /images/ui/3pixel-frame-borderimage
+  padding-top: 3
+  padding-left: 3
+  padding-right: 3
+  padding-bottom: 3
 
 NewWindow < UIWindow
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   size: 200 200
-  color: #C0C0D0
-  text-offset: 0 4
-  background-color: #1A1A2E
-  border-width: 1
-  border-color: #2A2A42
-  border-radius: 8
-  padding-top: 24
-  padding-left: 12
-  padding-right: 12
-  padding-bottom: 12
+  color: #909090
+  text-offset: -2 1
+  image-source: /images/ui/popupwindow
+  image-border: 4
+  image-border-top: 17
+  padding-top: 17
+  padding-left: 4
+  padding-right: 4
+  padding-bottom: 4
   display-sound: 2785
 
 NewHeadlessWindow < UIWindow
-  background-color: #1A1A2E
-  border-width: 1
-  border-color: #2A2A42
-  border-radius: 6
+  image-source: /images/ui/3pixel-frame-borderimage
+  image-border: 5
   anchors.centerIn: parent
 
 NewMainWindow < NewWindow
@@ -79,38 +70,32 @@ NewStaticMainWindow < NewStaticWindow
   anchors.centerIn: parent
 
 WindowCyclopedia < UIWindow
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   size: 200 200
-  color: #C0C0D0
-  text-offset: 0 4
-  background-color: #1A1A2E
-  border-width: 1
-  border-color: #2A2A42
-  border-radius: 8
-  padding-top: 24
-  padding-left: 12
-  padding-right: 12
-  padding-bottom: 12
+  color: #909090
+  text-offset: -2 1
+  image-source: /images/ui/popupwindow
+  image-border: 4
+  image-border-top: 17
+  padding-top: 17
+  padding-left: 4
+  padding-right: 4
+  padding-bottom: 4
 
 WindowPodium < UIWindow
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   size: 200 200
-  color: #C0C0D0
-  text-offset: 0 4
-  background-color: #1A1A2E
-  border-width: 1
-  border-color: #2A2A42
-  border-radius: 8
-  padding-top: 24
-  padding-left: 12
-  padding-right: 12
-  padding-bottom: 12
+  color: #909090
+  text-offset: -2 1
+  image-source: /images/ui/popupwindow
+  image-border: 4
+  image-border-top: 17
 
 ActionAssignWindow < MainWindow
   id: assignWindow
   size: 400 215
-  font: verdana-11px-antialised
-  color: #C0C0D0
+  font: Verdana Bold-11px
+  color: #909090
 
   Label
     id: chatMode
@@ -120,8 +105,8 @@ ActionAssignWindow < MainWindow
     margin-top: -7
     text-auto-resize: true
     text: Mode: "Chat On"
-    font: verdana-11px-antialised
-    color: #A0A0B8
+    font: Verdana Bold-11px
+    color: #c0c0c0
 
   FlatLabel
     id: display
@@ -131,8 +116,8 @@ ActionAssignWindow < MainWindow
     height: 33
     margin-top: 10
     text-align: center
-    font: verdana-11px-antialised
-    color: #A0A0B8
+    font: Verdana Bold-11px
+    color: #c0c0c0
 
   Label
     id: desc
@@ -141,11 +126,11 @@ ActionAssignWindow < MainWindow
     anchors.right: parent.right
     margin-top: 10
     margin-left: -1
-    text-auto-resize: true
+    text-auto-resize: true 
     text-wrap: true
     text: Click "Ok" to assign the hotkey. Click "Clear" to remove the hotkey from "
-    font: verdana-11px-antialised
-    color: #A0A0B8
+    font: Verdana Bold-11px
+    color: #c0c0c0
 
   Label
     id: warning
@@ -157,7 +142,7 @@ ActionAssignWindow < MainWindow
     text-auto-resize: true
     text: This hotkey is already in use and will be overwritten.
     color: #f75f5f
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
     visible: false
 
   HorizontalSeparator
@@ -171,7 +156,7 @@ ActionAssignWindow < MainWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     size: 45 21
-    font: verdana-11px-antialised
+    font: cipsoftFont
     text: Close
     @onClick: self:getParent():destroy()
 
@@ -181,7 +166,7 @@ ActionAssignWindow < MainWindow
     margin-right: 5
     anchors.bottom: parent.bottom
     size: 45 21
-    font: verdana-11px-antialised
+    font: cipsoftFont
     text: Clear
 
   Button
@@ -190,24 +175,23 @@ ActionAssignWindow < MainWindow
     margin-right: 5
     anchors.bottom: parent.bottom
     size: 45 21
-    font: verdana-11px-antialised
+    font: cipsoftFont
     text: Ok
 
 WindowPanel < Panel
-  background-color: #1A1A2E
-  border-width: 1
-  border-color: #2A2A42
-  border-radius: 6
-  padding-top: 8
-  padding-left: 10
-  padding-bottom: 8
-  padding-right: 10
+  image-source: /images/ui/window
+  padding-top: 3
+  padding-left: 7
+  padding-bottom: 7
+  padding-right: 7  
+  image-border: 4
+  image-border-top: 17
 
 TransparentWindow < UIWindow
   font: verdana-11px-antialised
   size: 200 200
-  color: #A0A0B8
-  text-offset: 0 4
+  color: #8f8f8f
+  text-offset: 0 2
   text-align: top
 
 RulesWindow < NewHeadlessWindow
@@ -235,8 +219,8 @@ RulesWindow < NewHeadlessWindow
       text-align: center
       padding: 1
       focusable: false
-      background-color: #22223A
-
+      background-color: #484848
+    
     HorizontalSeparator
       id: separator
       anchors.bottom: next.top
@@ -266,6 +250,6 @@ RulesWindow < NewHeadlessWindow
       !text: tr('I agree with the Terms and Conditions.')
       !tooltip: tr('I have read and I agree to the Extended Terms and Conditions.')
       margin-bottom: 5
-      font: verdana-11px-antialised
-      color: #A0A0B8
+      font: Verdana Bold-11px
+      color: #c0c0c0
       text-auto-resize: true

@@ -4,7 +4,6 @@ CheckBox < UICheckBox
   text-offset: 18 -1
   image-rect: 0 0 12 12
   image-source: /images/ui/checkbox
-  image-color: #A0A0B8
   change-cursor-image: true
   cursor: pointer
 
@@ -25,12 +24,11 @@ CheckBoxCircle < UICheckBox
   text-offset: 18 -1
   image-rect: 0 0 12 12
   image-source: /images/ui/checkboxcircle
-  image-color: #A0A0B8
   change-cursor-image: true
   cursor: pointer
 
   $hover !disabled:
-    color: #D0D0E0
+    color: #ffffff
 
   $!checked:
     image-clip: 0 0 12 12
@@ -40,19 +38,19 @@ CheckBoxCircle < UICheckBox
 
   $disabled:
     change-cursor-image: false
-
+    
 ThickCheckBox < UICheckBox
   size: 18 18
   text-align: left
   text-offset: 18 0
-  color: #C0C0D0
-  image-color: #A0A0B8
+  color: #dfdfdf
+  image-color: #dfdfdfff
   image-rect: 0 0 12 12
   image-offset: 3 3
   image-source: /images/ui/checkbox-unchecked
 
   $hover !disabled:
-    color: #D0D0E0
+    color: #ffffff
 
   $checked:
     image-source: /images/ui/checkbox-checked
@@ -61,13 +59,13 @@ ThickCheckBox < UICheckBox
     image-source: /images/ui/checkbox-checked
 
   $disabled:
-    image-color: #A0A0B888
-    color: #C0C0D088
+    image-color: #dfdfdf88
+    color: #dfdfdf88
     opacity: 0.8
 
 ColorBox < UICheckBox
   size: 13 13
-  image-color: #A0A0B8
+  image-color: #dfdfdfff
   image-source: /images/ui/colorbox-border-13
 
   $checked:
@@ -78,41 +76,40 @@ ColorBox < UICheckBox
 
 ButtonBox < UICheckBox
   font: verdana-11px-antialised
-  color: #D0D0E0
+  color: white
   size: 106 23
   text-offset: 0 0
   text-align: center
-  background-color: #2E2E4A
-  border-width: 1
-  border-color: #3E3E5A
-  border-radius: 5
+  image-source: /images/ui/button
+  image-color: #dfdfdf
+  image-clip: 0 0 22 23
+  image-border: 3
   change-cursor-image: true
   cursor: pointer
 
   $hover !disabled:
-    background-color: #3A3A56
-    border-color: #4A4A68
+    image-clip: 0 23 22 23
 
   $checked:
-    background-color: #444462
-    color: #D0D0E0
+    image-clip: 0 46 22 23
+    color: white
     text-offset: 2 2
     change-cursor-image: false
 
   $disabled:
-    color: #D0D0E088
-    opacity: 0.8
+    color: #dfdfdf88
+    image-color: #dfdfdf88
     change-cursor-image: false
 
 ButtonBoxRounded < ButtonBox
-  border-radius: 12
+  image-source: /images/ui/button_rounded
 
 QtCheckBox < UICheckBox
   size: 14 14
   text-align: left
   text-offset: 18 1
-  color: #A0A0B8
-  image-color: #A0A0B8
+  color: #dfdfdfff
+  image-color: #dfdfdfff
   image-rect: 0 0 14 14
   image-source: /images/ui/newcheckbox
 
@@ -126,49 +123,50 @@ QtCheckBox < UICheckBox
     image-clip: 0 26 14 14
 
 fakeCheckBox < UICheckBox
-  font: verdana-11px-antialised
+  font: cipsoftFont
   size: 106 23
-  background-color: #2E2E4A
-  border-width: 1
-  border-color: #3E3E5A
-  border-radius: 5
+  image-source: /images/ui/button
+  image-clip: 0 0 22 23
+  image-border: 3
   padding: 5 10 5 10
   opacity: 1.0
-  color: #C0C0D0
+  color: #b9b9b9ff
 
   $hover !disabled:
-    color: #D0D0E0
+    color: #ffffff
 
   $!checked:
+    image-clip: 0 0 22 23
 
   $hover !checked:
+    image-clip: 0 0 22 23
 
   $checked:
-    background-color: #444462
+    image-clip: 0 46 22 23
 
   $hover checked:
+    image-clip: 0 46 22 23
 
   $disabled:
-    color: #C0C0D088
+    image-color: #dfdfdf88
+    color: #dfdfdf88
     opacity: 0.8
 
 CheckBoxButton < UICheckBox
   size: 106 23
-  background-color: #2E2E4A
-  border-width: 1
-  border-color: #3E3E5A
-  border-radius: 5
+  image-source: /images/ui/button-9grid-idle
+  image-border: 3
   text-align: center
   padding: 5 10 5 10
   change-cursor-image: true
   cursor: pointer
-  color: #C0C0D0
+  color: #BDBDBD
   $checked:
-    background-color: #444462
+    image-source: /images/ui/button-9grid-pressed
     text-offset: 1 1
   $!checked:
     text-offset: 0 0
   $disabled:
-    color: #C0C0D088
+    color: #dfdfdf88
     opacity: 0.8
     change-cursor-image: false

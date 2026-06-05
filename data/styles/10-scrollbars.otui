@@ -187,22 +187,20 @@ HorizontalQtScrollBar < UIScrollBar
 
 SmallButton < UIButton
   size: 106 20
-  font: verdana-11px-antialised
+  font: cipsoftFont
   text-offset: 0 2
-  background-color: #2E2E4A
-  border-width: 1
-  border-color: #3E3E5A
-  border-radius: 4
+  image-source: /images/ui/button
+  image-clip: 0 0 22 23
+  image-border: 3
   padding: 5 10 5 10
   change-cursor-image: true
   cursor: pointer
-  color: #D0D0E0
+  color: #ffffff
   $hover !disabled:
-    background-color: #3A3A56
-    border-color: #4A4A68
+    image-clip: 0 23 22 23
   $pressed:
-    background-color: #444462
+    image-clip: 0 46 22 23
     text-offset: 1 2
   $disabled:
-    color: #D0D0E088
+    color: #ffffff88
     change-cursor-image: false

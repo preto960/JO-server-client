@@ -5,10 +5,10 @@ minipanel {
 
 window,
 FloatingInputWindow {
-  padding-top: 30;
-  padding-left: 14;
-  padding-right: 14;
-  padding-bottom: 14;
+  padding-top: 36;
+  padding-left: 16;
+  padding-right: 16;
+  padding-bottom: 16;
 }
 
 QtPanel {
@@ -80,12 +80,12 @@ TextQtEdit {
 
 .QtBorder {
   --border-width-top: 1;
-  --border-color-top: #1A1A2E;
+  --border-color-top: black;
   --border-width-left: 1;
-  --border-color-left: #1A1A2E;
+  --border-color-left: black;
   --border-width-bottom: 1;
-  --border-color-bottom: #2A2A42;
+  --border-color-bottom: #747474;
   --border-width-right: 1;
-  --border-color-right: #2A2A42;
+  --border-color-right: #747474;
   --padding: 1 1 1 1;
 }
