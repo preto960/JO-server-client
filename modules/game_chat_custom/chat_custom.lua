@@ -126,6 +126,11 @@ function openChatPopup()
 
     consolePanel:hide()
 
+    g_keyboard.unbindKeyDown('Enter', consolePanel)
+    g_keyboard.unbindKeyDown('Escape', consolePanel)
+    g_keyboard.bindKeyDown('Enter', onEnterPressed, chatPopup)
+    g_keyboard.bindKeyDown('Escape', onEscapePressed, chatPopup)
+
     if contentPanel then
         contentPanel:breakAnchors()
         local slot = chatPopup:recursiveGetChildById('chatContentSlot')
@@ -340,9 +345,19 @@ function closeChatPopup()
         tabBar.onTabChange = originalOnTabChange
         originalOnTabChange = nil
     end
+
+    g_keyboard.unbindKeyDown('Enter', chatPopup)
+    g_keyboard.unbindKeyDown('Escape', chatPopup)
+
     restoreWidgets()
     chatPopup:hide()
     isOpen = false
+
+    local consolePanel = savedWidgets.consolePanel
+    if consolePanel then
+        g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
+        g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
+    end
 end
 
 function restoreWidgets()
