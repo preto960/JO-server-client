@@ -73,7 +73,12 @@ function onEnterPressed()
     else
         local input = chatPopup:recursiveGetChildById('chatInput')
         if input then
-            input:focus()
+            local text = input:getText()
+            if text and #text > 0 then
+                sendChatMessage()
+            else
+                input:focus()
+            end
         end
     end
 end

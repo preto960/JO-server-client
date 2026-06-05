@@ -83,4 +83,3 @@ UIWidget
       border-color: #282840AA
       border-radius: 5
       image-source: none
-      @onAction: modules.game_chat_custom.sendChatMessage()
