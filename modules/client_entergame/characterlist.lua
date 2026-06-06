@@ -1023,11 +1023,7 @@ function CharacterList.updateCharactersAppearance(widget, characterInfo, showOut
         end
     end
 
-    if nameLabel then
-        nameLabel:setMarginLeft(showOutfits and 65 or 10)
-    end
-
-    widget:setHeight(showOutfits and 64 or 50)
+    widget:setHeight(showOutfits and 130 or 50)
 
     if mainCharacter then
         mainCharacter:setImageSource(characterInfo.main and '/images/game/entergame/maincharacter' or '')

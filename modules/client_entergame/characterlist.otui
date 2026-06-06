@@ -1,15 +1,16 @@
-// CharacterList - Electric Blue Theme - Rubinot Style
-// Two separate blocks: left (character list) and right (outfit preview)
+// CharacterList - Electric Blue Theme - Card Style
+// Each character is a vertical card: Name (top) -> Outfit (center) -> Info (bottom)
+// Two blocks: left (scrollable card list) and right (enlarged outfit preview)
 // Same visual style as login screen (entergame_custom.otui)
 
 // ============================================
-// CHARACTER WIDGET - Two line entry
+// CHARACTER WIDGET - Vertical Card
 // ============================================
 CharacterWidget < UIWidget
-  height: 50
+  height: 130
   background-color: #0A0A1A00
-  border-width: 0
-  border-color: #00000000
+  border-width: 1
+  border-color: #00B4D820
   &updateOnStates: |
     function(self)
       local focused = self:isFocused()
@@ -19,8 +20,10 @@ CharacterWidget < UIWidget
       end
       if focused then
         self:setBackgroundColor("#00B4D818")
+        self:setBorderColor("#00B4D860")
       else
         self:setBackgroundColor("#0A0A1A00")
+        self:setBorderColor("#00B4D820")
       end
       local pin = self:getChildById('pin')
       if pin then
@@ -31,30 +34,19 @@ CharacterWidget < UIWidget
   @onSetup: |
     self:updateOnStates()
     if g_game.getFeature(GameEnterGameShowAppearance) then
-      self:setHeight(50)
+      self:setHeight(130)
     end
 
-  UICreature
-    id: outfitCreatureBox
-    size: 0 0
-    visible: false
-    anchors.top: parent.top
-    anchors.left: parent.left
-
-  // Row 1: Name
+  // === TOP: Character Name ===
   Label
     id: name
     color: #FFFFFFFF
     anchors.top: parent.top
-    anchors.left: parent.left
-    margin-left: 12
-    margin-top: 8
-    font: verdana-11px-rounded
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 6
+    font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
-    text-offset: 2 0
-    @onSetup: |
-      self:setMarginLeft(12)
 
     $on:
       color: #00B4D8
@@ -63,9 +55,9 @@ CharacterWidget < UIWidget
     id: mainCharacter
     size: 9 8
     anchors.top: parent.top
-    anchors.left: prev.right
+    anchors.left: name.right
     margin-left: 4
-    margin-top: 10
+    margin-top: 8
     image-source: /images/game/entergame/maincharacter
     image-clip: 0 0 9 8
     visible: false
@@ -99,51 +91,55 @@ CharacterWidget < UIWidget
     image-source: /images/game/entergame/hidden
     image-clip: 0 0 11 19
 
-  // Row 1: Level (right)
+  // === CENTER: Outfit Preview ===
+  UICreature
+    id: outfitCreatureBox
+    size: 64 64
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: name.bottom
+    margin-top: 2
+    fixed-creature-size: true
+
+  // === BOTTOM: Level, Vocation, World ===
   Label
     id: level
     color: #FFFFFFBB
-    anchors.top: parent.top
-    anchors.right: parent.right
-    margin-right: 12
-    margin-top: 8
+    anchors.top: outfitCreatureBox.bottom
+    anchors.left: parent.left
+    margin-left: 10
+    margin-top: 2
     font: verdana-11px-rounded
     text-auto-resize: true
     background-color: alpha
-    text-offset: 2 0
 
     $on:
       color: #FFFFFFFF
 
-  // Row 2: Vocation (left)
   Label
     id: vocation
     color: #FFFFFF99
-    anchors.top: parent.top
-    anchors.left: parent.left
-    margin-left: 12
-    margin-top: 26
+    anchors.top: outfitCreatureBox.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 2
     font: verdana-11px-rounded
     text-auto-resize: true
     background-color: alpha
-    text-offset: 2 0
 
     $on:
       color: #FFFFFFFF
 
-  // Row 2: World (right)
   Label
     id: worldName
     color: #00B4D8
-    anchors.top: parent.top
+    anchors.top: outfitCreatureBox.bottom
     anchors.right: parent.right
-    margin-right: 12
-    margin-top: 26
+    margin-right: 10
+    margin-top: 2
     font: verdana-11px-rounded
     text-auto-resize: true
     text-wrap: true
     background-color: alpha
-    width: 200
+    width: 120
 
     $on:
       color: #00D4F8
@@ -156,7 +152,7 @@ MainWindow
   !text: ''
   visible: false
   border-width: 0
-  size: 720 460
+  size: 780 500
   image-source: none
   image-border: 0
   padding: 0
@@ -168,13 +164,13 @@ MainWindow
     g_keyboard.bindKeyPress('Down', function() self:getChildById('characters'):focusNextChild(KeyboardFocusReason) end, self)
     if g_game.getFeature(GamePreviewState) then
       if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setSize({width = 720, height = 460})
+        self:setSize({width = 780, height = 500})
         self:setText('')
         self:setColor("#00000000")
         self:setImageSource('')
         self:setImageBorder(0)
       else
-        self:setSize({width = 380, height = 460})
+        self:setSize({width = 380, height = 500})
         self:setText('')
         self:setColor("#00000000")
         self:setImageSource('')
@@ -192,14 +188,14 @@ MainWindow
     end
 
   // ============================================
-  // LEFT BLOCK - Character List Panel
+  // LEFT BLOCK - Character Cards Panel
   // ============================================
   UIWidget
     id: leftPanel
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    width: 370
+    width: 430
     background-color: #00000099
     border-width: 1
     border-color: #00B4D840
@@ -226,18 +222,18 @@ MainWindow
       font: verdana-11px-rounded
       text-auto-resize: true
 
-    // Character list
+    // Character list (cards)
     TextList
       id: characters
       background-color: #00000000
       border-width: 0
       border-color: #00000000
-      padding: 4
+      padding: 6
       anchors.top: titleLabel.bottom
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.bottom: accountStatusLabel.top
-      margin-left: 8
+      margin-left: 10
       margin-top: 8
       margin-right: 22
       margin-bottom: 4
@@ -246,7 +242,7 @@ MainWindow
       @onSetup: |
         self:setBackgroundColor("#00000000")
 
-    // Scrollbar (fixed position, no anchor to characters to avoid circular ref)
+    // Scrollbar
     VerticalScrollBar
       id: characterListScrollBar
       anchors.top: titleLabel.bottom
@@ -319,7 +315,7 @@ MainWindow
         border-color: #00B4D8
 
   // ============================================
-  // RIGHT BLOCK - Outfit Preview Panel
+  // RIGHT BLOCK - Enlarged Outfit Preview
   // ============================================
   UIWidget
     id: rightPanel
