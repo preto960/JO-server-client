@@ -1,8 +1,9 @@
 -- entergame_custom.lua - Custom login screen for JO Server
--- Electric Blue Theme - Right-side positioned login
--- Tab/Enter key support, neon accent styling
+-- Electric Blue Theme - Exact copy of Rubinot login layout
+-- Centered panel, footer bar, Tab/Enter key support
 
 local customWindow = nil
+local footerBar = nil
 local originalWindow = nil
 local topMenuWidget = nil
 local bottomMenuWidget = nil
@@ -72,6 +73,23 @@ function setup()
         end
     end
 
+    local ok2 = pcall(function()
+        footerBar = g_ui.loadUI('login_footer')
+    end)
+    if not ok2 or not footerBar then
+        g_logger.warning('[Custom Login] Could not load footer bar')
+    else
+        if not footerBar:getParent() then
+            local root = g_ui.getRootWidget()
+            if root then
+                root:addChild(footerBar)
+            end
+        end
+        footerBar:show()
+        footerBar:raise()
+        updatePlayersOnline()
+    end
+
     local nameEdit = originalWindow:getChildById('accountNameTextEdit')
     local passEdit = originalWindow:getChildById('accountPasswordTextEdit')
     local rememberBox = originalWindow:getChildById('rememberEmailBox')
@@ -100,9 +118,8 @@ function setup()
 
     local gw = g_window
     if gw and customWindow then
-        -- Position on the left side, centered vertically with nice spacing
-        local x = 80
-        local y = (gw.getHeight() - customWindow:getHeight()) / 2
+        local x = (gw.getWidth() - customWindow:getWidth()) / 2
+        local y = (gw.getHeight() - customWindow:getHeight()) / 2 - 20
         customWindow:setPosition({ x = x, y = y })
     end
 
@@ -126,6 +143,11 @@ function terminate()
             onGameEnd = onGameEnd
         })
     end)
+
+    if footerBar then
+        footerBar:destroy()
+        footerBar = nil
+    end
 
     if customWindow then
         customWindow:destroy()
@@ -153,17 +175,20 @@ end
 
 function onGameStart()
     showOriginalUI()
-    -- Hide custom login when entering the game
     if customWindow then
         customWindow:hide()
+    end
+    if footerBar then
+        footerBar:hide()
     end
 end
 
 function onGameEnd()
-    -- Hide custom login on character select screen
-    -- It should only show on the actual login screen
     if customWindow then
         customWindow:hide()
+    end
+    if footerBar then
+        footerBar:hide()
     end
 end
 
@@ -207,8 +232,8 @@ function updateRememberVisual()
                 box:setBackgroundColor('#00B4D880')
                 box:setBorderColor('#00B4D8')
             else
-                box:setBackgroundColor('#0A1628CC')
-                box:setBorderColor('#1A3A5C')
+                box:setBackgroundColor('#0A0A1A')
+                box:setBorderColor('#1A1A3A')
             end
         end)
     end
@@ -255,14 +280,71 @@ function onCreateAccount()
     end)
 end
 
-function togglePasswordVisibility()
-    local customPass = customWindow:recursiveGetChildById('customPassword')
-    if not customPass then return end
-    if customPass:isTextHidden() then
-        customPass:setTextHidden(false)
-    else
-        customPass:setTextHidden(true)
-    end
+function updatePlayersOnline()
+    if not footerBar then return end
+    local label = footerBar:recursiveGetChildById('footerPlayersLabel')
+    if not label then return end
+    pcall(function()
+        local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
+        if topMenu then
+            local onlineLabel = topMenu:recursiveGetChildById('topLeftOnlinePlayersLabel')
+            if onlineLabel then
+                label:setText(onlineLabel:getText())
+            end
+        end
+    end)
+end
+
+function toggleAudio()
+    pcall(function()
+        local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
+        if topMenu then
+            local leftBtns = topMenu:recursiveGetChildById('leftButtonsPanel')
+            if leftBtns then
+                local children = leftBtns:getChildren()
+                for i = 1, #children do
+                    if children[i]:getId() == 'audioButton' then
+                        children[i]:onClick()
+                        break
+                    end
+                end
+            end
+        end
+    end)
+end
+
+function openOptions()
+    pcall(function()
+        local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
+        if topMenu then
+            local rightBtns = topMenu:recursiveGetChildById('rightButtonsPanel')
+            if rightBtns then
+                local children = rightBtns:getChildren()
+                for i = 1, #children do
+                    if children[i]:getId() == 'optionsButton' then
+                        children[i]:onClick()
+                        break
+                    end
+                end
+            end
+        end
+    end)
+end
+
+function openDiscord()
+    pcall(function()
+        if Services and Services.discord and Services.discord ~= '' then
+            g_platform.openUrl(Services.discord)
+        end
+    end)
+end
+
+function openYoutube()
+    pcall(function()
+        if Services and Services.youtube_link and Services.youtube_link ~= '' then
+            g_platform.openUrl(Services.youtube_link)
+        end
+    end)
 end
 
 if EnterGame then
@@ -273,12 +355,20 @@ if EnterGame then
             customWindow:show()
             customWindow:raise()
             customWindow:focus()
+            if footerBar then
+                footerBar:show()
+                footerBar:raise()
+                updatePlayersOnline()
+            end
         end
     end
 
     EnterGame.hide = function()
         if customWindow then
             customWindow:hide()
+        end
+        if footerBar then
+            footerBar:hide()
         end
         if originalWindow then
             originalWindow:hide()

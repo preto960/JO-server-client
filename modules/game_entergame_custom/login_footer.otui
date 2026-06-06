@@ -1,0 +1,94 @@
+UIWidget
+  id: loginFooterBar
+  visible: false
+  focusable: false
+  anchors.bottom: parent.bottom
+  anchors.left: parent.left
+  anchors.right: parent.right
+  height: 36
+  background-color: #000000DD
+  border-width: 0
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 1
+    background-color: #00B4D840
+
+  UIButton
+    id: footerAudioBtn
+    size: 28 28
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 8
+    image-source: /images/topbuttons/audio
+    image-color: #FFFFFF50
+    image-clip: 0 0 28 28
+    image-border: 0
+    cursor: pointer
+
+    $hover:
+      image-color: #00B4D8
+
+    @onClick: modules.game_entergame_custom.toggleAudio()
+
+  UIButton
+    id: footerOptionsBtn
+    size: 28 28
+    anchors.left: footerAudioBtn.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 4
+    image-source: /images/topbuttons/options
+    image-color: #FFFFFF50
+    image-clip: 0 0 28 28
+    image-border: 0
+    cursor: pointer
+
+    $hover:
+      image-color: #00B4D8
+
+    @onClick: modules.game_entergame_custom.openOptions()
+
+  Label
+    id: footerPlayersLabel
+    !text: '0 Players Online'
+    font: verdana-11px-rounded
+    color: #00B4D8
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.verticalCenter: parent.verticalCenter
+    text-auto-resize: true
+
+  UIButton
+    id: footerDiscordBtn
+    size: 28 28
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 8
+    image-source: /images/icons/icon_discord
+    image-color: #FFFFFF50
+    image-clip: 0 0 28 28
+    image-border: 0
+    cursor: pointer
+
+    $hover:
+      image-color: #00B4D8
+
+    @onClick: modules.game_entergame_custom.openDiscord()
+
+  UIButton
+    id: footerYoutubeBtn
+    size: 28 28
+    anchors.right: footerDiscordBtn.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 4
+    image-source: /images/icons/icon_youtube
+    image-color: #FFFFFF50
+    image-clip: 0 0 28 28
+    image-border: 0
+    cursor: pointer
+
+    $hover:
+      image-color: #00B4D8
+
+    @onClick: modules.game_entergame_custom.openYoutube()

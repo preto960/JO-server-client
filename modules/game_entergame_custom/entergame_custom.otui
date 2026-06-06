@@ -2,98 +2,99 @@ UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 380 460
-  background-color: #0D0D1AB0
-  border-width: 1
-  border-color: #1A3A5C
+  size: 380 440
+  background-color: #000000DD
+  border-width: 2
+  border-color: #00B4D8
 
   UIWidget
-    id: logoBox
-    size: 180 60
+    id: logoArea
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    margin-top: 24
+    height: 80
+    width: 340
 
   Label
     id: logoLabel
     !text: 'JO'
-    font: verdana-11px-rounded
-    color: #00E5FF
-    anchors.horizontalCenter: logoBox.horizontalCenter
-    anchors.verticalCenter: logoBox.verticalCenter
+    font: Verdana Bold-13px
+    color: #00B4D8
+    anchors.horizontalCenter: logoArea.horizontalCenter
+    anchors.bottom: logoArea.bottom
+    margin-bottom: 14
 
-  Label
-    id: serverLabel
-    !text: 'Journey Onwards'
-    font: verdana-11px-rounded
-    color: #7AA8C8
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: logoBox.bottom
-    margin-top: 4
+  UIWidget
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: logoArea.bottom
+    height: 1
+    background-color: #00B4D840
+    margin-left: 30
+    margin-right: 30
 
   Label
     id: nameLabel
-    !text: 'E-MAIL'
+    !text: tr('E-MAIL')
     font: verdana-11px-rounded
-    color: #7AA8C8
+    color: #FFFFFFCC
     anchors.left: parent.left
-    anchors.top: serverLabel.bottom
-    margin-top: 24
-    margin-left: 24
+    anchors.top: logoArea.bottom
+    margin-top: 22
+    margin-left: 30
 
   TextEdit
     id: customAccountName
-    height: 36
+    height: 38
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: nameLabel.bottom
-    margin-top: 8
-    margin-left: 24
-    margin-right: 24
-    background-color: #0A1628CC
-    color: #FFFFFF
+    margin-top: 6
+    margin-left: 30
+    margin-right: 30
+    background-color: #0A0A1AFF
+    color: #FFFFFFFF
     font: verdana-11px-antialised
     text-vertical-alignment: center
-    placeholder: "tu email aqui..."
-    placeholder-color: #2A4A6A
+    placeholder: "your@email.com"
+    placeholder-color: #3A3A5A80
     image-source: none
-    selection-color: #FFFFFF
-    selection-background-color: #00B4D8
+    selection-color: #000000FF
+    selection-background-color: #00B4D8CC
     border-width: 1
-    border-color: #1A3A5C
+    border-color: #1A1A3A
     padding-left: 12
     padding-right: 12
 
   Label
     id: passLabel
-    !text: 'PASSWORD'
+    !text: tr('PASSWORD')
     font: verdana-11px-rounded
-    color: #7AA8C8
+    color: #FFFFFFCC
     anchors.left: parent.left
     anchors.top: customAccountName.bottom
     margin-top: 16
-    margin-left: 24
+    margin-left: 30
 
   TextEdit
     id: customPassword
-    height: 36
+    height: 38
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: passLabel.bottom
-    margin-top: 8
-    margin-left: 24
-    margin-right: 24
-    background-color: #0A1628CC
-    color: #FFFFFF
+    margin-top: 6
+    margin-left: 30
+    margin-right: 30
+    background-color: #0A0A1AFF
+    color: #FFFFFFFF
     font: verdana-11px-antialised
     text-vertical-alignment: center
-    placeholder: "tu password..."
-    placeholder-color: #2A4A6A
+    placeholder: "password"
+    placeholder-color: #3A3A5A80
     image-source: none
-    selection-color: #FFFFFF
-    selection-background-color: #00B4D8
+    selection-color: #000000FF
+    selection-background-color: #00B4D8CC
     border-width: 1
-    border-color: #1A3A5C
+    border-color: #1A1A3A
     padding-left: 12
     padding-right: 12
     text-hidden: true
@@ -104,62 +105,66 @@ UIWidget
     anchors.left: parent.left
     anchors.top: customPassword.bottom
     margin-top: 16
-    margin-left: 24
-    background-color: #0A1628CC
+    margin-left: 30
+    background-color: #0A0A1A
     border-width: 1
-    border-color: #1A3A5C
+    border-color: #1A1A3A
     @onClick: modules.game_entergame_custom.toggleRemember()
 
   Label
     id: rememberText
-    !text: 'Recordar sesion'
+    !text: tr('Remember me')
     font: verdana-11px-rounded
-    color: #5A8AAA
+    color: #AAAAAA
     anchors.left: customRememberBox.right
-    anchors.top: customRememberBox.top
-    margin-left: 8
+    anchors.verticalCenter: customRememberBox.verticalCenter
+    margin-left: 6
 
   UIButton
     id: loginButton
-    !text: 'Iniciar Sesion'
-    font: verdana-11px-rounded
+    !text: tr('LOGIN')
+    font: Verdana Bold-11px
     color: #0A0A1A
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: customRememberBox.bottom
     margin-top: 16
-    margin-left: 24
-    margin-right: 24
-    height: 40
+    margin-left: 30
+    margin-right: 30
+    height: 38
     background-color: #00B4D8
     border-width: 1
     border-color: #0090B0
     @onClick: modules.game_entergame_custom.doCustomLogin()
+
     $hover:
       background-color: #00D4F8
+
     $pressed:
       background-color: #008AA8
 
   UIButton
     id: forgotPassBtn
-    !text: 'Olvide mi password'
-    font: verdana-11px-rounded
-    color: #00B4D8
+    !text: tr('Forgot password')
+    font: verdana-11px-monochrome-underline
+    color: #AAAAAA
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: loginButton.bottom
-    margin-top: 16
+    margin-top: 14
     @onClick: modules.game_entergame_custom.onForgotPassword()
+
     $hover:
-      color: #00D4F8
+      color: #00B4D8
 
   UIButton
     id: createAccountBtn
-    !text: 'Crear cuenta nueva'
-    font: verdana-11px-rounded
-    color: #00B4D8
+    !text: tr('Create account')
+    font: verdana-11px-monochrome-underline
+    color: #AAAAAA
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: forgotPassBtn.bottom
-    margin-top: 8
+    margin-top: 6
     @onClick: modules.game_entergame_custom.onCreateAccount()
+
     $hover:
-      color: #00D4F8
+      color: #00B4D8

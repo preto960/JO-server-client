@@ -1,0 +1,88 @@
+// Login Custom Styles for Electric Blue Theme
+// These styles apply specifically to the custom login screen widgets
+
+LoginPanel < UIWidget
+  background-color: #000000DD
+  border-width: 2
+  border-color: #00B4D8
+
+LoginInputField < UITextEdit
+  font: verdana-11px-antialised
+  color: #FFFFFFFF
+  height: 38
+  background-color: #0A0A1AFF
+  border-width: 1
+  border-color: #1A1A3A
+  padding-left: 12
+  padding-right: 12
+  selection-color: #000000FF
+  selection-background-color: #00B4D8CC
+
+  $focus:
+    border-color: #00B4D8
+
+  $disabled:
+    color: #0A0A1A88
+    opacity: 0.5
+
+LoginLabel < UILabel
+  font: verdana-11px-rounded
+  color: #FFFFFFCC
+
+LoginButton < UIButton
+  font: Verdana Bold-11px
+  color: #0A0A1A
+  height: 38
+  background-color: #00B4D8
+  border-width: 1
+  border-color: #0090B0
+  cursor: pointer
+
+  $hover:
+    background-color: #00D4F8
+
+  $pressed:
+    background-color: #008AA8
+
+  $disabled:
+    color: #0A0A1A88
+    background-color: #1A1A3A
+    opacity: 0.7
+
+LoginLinkButton < UIButton
+  font: verdana-11px-monochrome-underline
+  color: #AAAAAA
+  background-color: alpha
+  border-width: 0
+  cursor: pointer
+
+  $hover:
+    color: #00B4D8
+
+LoginCheckbox < UICheckBox
+  size: 16 16
+  background-color: #0A0A1A
+  border-width: 1
+  border-color: #1A1A3A
+  cursor: pointer
+
+  $checked:
+    background-color: #00B4D880
+    border-color: #00B4D8
+
+LoginFooterBar < UIWidget
+  background-color: #000000DD
+  border-width: 0
+  focusable: false
+
+FooterIconButton < UIButton
+  size: 28 28
+  background-color: alpha
+  border-width: 0
+  cursor: pointer
+  image-color: #FFFFFF50
+  image-clip: 0 0 28 28
+  image-border: 0
+
+  $hover:
+    image-color: #00B4D8

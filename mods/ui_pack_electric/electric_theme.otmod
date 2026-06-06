@@ -31,4 +31,5 @@ Module
     importStyle '/ui_pack_electric/styles/20-topmenu.otui'
     importStyle '/ui_pack_electric/styles/30-miniwindow.otui'
     importStyle '/ui_pack_electric/styles/30-messageboxes.otui'
+    importStyle '/ui_pack_electric/styles/15-login.otui'
     g_logger.info('[Electric Theme] Electric Blue UI Pack loaded successfully!')
