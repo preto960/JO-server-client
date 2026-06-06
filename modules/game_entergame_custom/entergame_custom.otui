@@ -13,14 +13,14 @@ UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 380 360
-  background-color: #000000CC
+  size: 380 310
+  background-color: #00000099
   border-width: 1
   border-color: #00B4D840
-  padding: 25 30 25 30
+  padding: 20 30 20 30
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  margin-top: 10
+  margin-top: 30
 
   UIWidget
     id: topSeparator
@@ -37,7 +37,7 @@ UIWidget
     color: #FFFFFFBB
     anchors.left: parent.left
     anchors.top: topSeparator.bottom
-    margin-top: 16
+    margin-top: 10
 
   FlatLineEdit
     id: customAccountName
@@ -64,7 +64,7 @@ UIWidget
     color: #FFFFFFBB
     anchors.left: parent.left
     anchors.top: emailLine.bottom
-    margin-top: 12
+    margin-top: 10
 
   FlatLineEdit
     id: customPassword
@@ -89,7 +89,7 @@ UIWidget
     id: customRememberBox
     anchors.left: parent.left
     anchors.top: passLine.bottom
-    margin-top: 10
+    margin-top: 8
     @onClick: modules.game_entergame_custom.toggleRemember()
 
   UILabel
@@ -110,8 +110,8 @@ UIWidget
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: customRememberBox.bottom
-    margin-top: 16
-    height: 38
+    margin-top: 12
+    height: 34
     background-color: #00B4D8
     border-width: 1
     border-color: #0090B0
@@ -130,7 +130,7 @@ UIWidget
     color: #AAAAAA
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: loginButton.bottom
-    margin-top: 14
+    margin-top: 10
     background-color: alpha
     border-width: 0
     @onClick: modules.game_entergame_custom.onForgotPassword()

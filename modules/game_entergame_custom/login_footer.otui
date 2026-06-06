@@ -18,79 +18,88 @@ UIWidget
     anchors.right: parent.right
     anchors.top: parent.top
 
-  UIButton
-    id: footerAudioBtn
-    size: 28 28
-    image-source: /images/topbuttons/audio
-    image-color: #FFFFFF60
-    image-clip: 0 0 28 28
-    image-border: 0
-    cursor: pointer
+  UIWidget
+    id: footerDiscordArea
+    size: 110 32
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
-    margin-left: 12
+    margin-left: 10
 
-    $hover:
-      image-color: #00B4D8
+    UIWidget
+      id: footerDiscordIcon
+      image-source: /images/icons/icon_discord
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.left: parent.left
+      size: 24 28
 
-    @onClick: modules.game_entergame_custom.toggleAudio()
+    Panel
+      image-source: /images/icons/icon_streamers
+      anchors.top: parent.top
+      anchors.left: footerDiscordIcon.right
+      margin-left: 4
+      margin-top: 13
+      size: 11 7
 
-  UIButton
-    id: footerOptionsBtn
-    size: 28 28
-    image-source: /images/topbuttons/options
-    image-color: #FFFFFF60
-    image-clip: 0 0 28 28
-    image-border: 0
-    cursor: pointer
-    anchors.left: footerAudioBtn.right
+    Label
+      id: footerDiscordStreamersLabel
+      !text: '-'
+      font: verdana-11px-rounded
+      color: #AAAAAA
+      anchors.left: prev.right
+      margin-left: 4
+      anchors.verticalCenter: prev.verticalCenter
+      width: 40
+
+  UIWidget
+    id: footerYoutubeArea
+    size: 120 32
+    anchors.left: footerDiscordArea.right
     anchors.verticalCenter: parent.verticalCenter
-    margin-left: 6
+    margin-left: 8
 
-    $hover:
-      image-color: #00B4D8
+    UIWidget
+      id: footerYoutubeIcon
+      image-source: /images/icons/icon_youtube
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.left: parent.left
+      size: 60 14
 
-    @onClick: modules.game_entergame_custom.openOptions()
+    Panel
+      image-source: /images/icons/icon_streamers
+      anchors.top: parent.top
+      anchors.left: footerYoutubeIcon.right
+      margin-left: 4
+      margin-top: 8
+      size: 11 7
 
-  Label
-    id: footerPlayersLabel
-    !text: '0 Players Online'
-    font: verdana-11px-rounded
-    color: #00B4D8
-    text-auto-resize: true
+    Label
+      id: footerYoutubeStreamersLabel
+      !text: '-'
+      font: verdana-11px-rounded
+      color: #AAAAAA
+      anchors.left: prev.right
+      margin-left: 4
+      anchors.verticalCenter: prev.verticalCenter
+      width: 40
+
+  UIWidget
+    id: footerPlayersArea
+    size: 100 32
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
 
-  UIButton
-    id: footerYoutubeBtn
-    size: 28 28
-    image-source: /images/icons/icon_youtube
-    image-color: #FFFFFF60
-    image-clip: 0 0 28 28
-    image-border: 0
-    cursor: pointer
-    anchors.right: footerDiscordBtn.left
-    anchors.verticalCenter: parent.verticalCenter
-    margin-right: 6
+    Panel
+      image-source: /images/icons/icon_players
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.left: parent.left
+      size: 11 14
 
-    $hover:
-      image-color: #00B4D8
-
-    @onClick: modules.game_entergame_custom.openYoutube()
-
-  UIButton
-    id: footerDiscordBtn
-    size: 28 28
-    image-source: /images/icons/icon_discord
-    image-color: #FFFFFF60
-    image-clip: 0 0 28 28
-    image-border: 0
-    cursor: pointer
-    anchors.right: parent.right
-    anchors.verticalCenter: parent.verticalCenter
-    margin-right: 12
-
-    $hover:
-      image-color: #00B4D8
-
-    @onClick: modules.game_entergame_custom.openDiscord()
+    Label
+      id: footerPlayersLabel
+      !text: '- players online'
+      font: verdana-11px-rounded
+      color: #00B4D8
+      anchors.left: prev.right
+      margin-left: 5
+      anchors.verticalCenter: prev.verticalCenter
+      width: 150

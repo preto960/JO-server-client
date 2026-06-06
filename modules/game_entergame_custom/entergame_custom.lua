@@ -74,12 +74,12 @@ function setup()
         logoWidget = g_ui.loadUIFromString([[
 UIWidget
   id: loginLogoWidget
-  size: 200 100
+  size: 280 140
   image-source: /game_entergame_custom/JO_logo
   image-auto-resize: true
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.bottom: enterGameCustomWindow.top
-  margin-bottom: 20
+  margin-bottom: 25
         ]], root)
     end)
 
@@ -89,9 +89,28 @@ UIWidget
     if not ok2 or not footerBar then
         g_logger.warning('[Custom Login] Could not load footer bar')
     else
+        local discIcon = footerBar:recursiveGetChildById('footerDiscordIcon')
+        if discIcon then
+            discIcon.onClick = function()
+                if Services and Services.discord and Services.discord ~= '' then
+                    g_platform.openUrl(Services.discord)
+                end
+            end
+        end
+
+        local ytIcon = footerBar:recursiveGetChildById('footerYoutubeIcon')
+        if ytIcon then
+            ytIcon.onClick = function()
+                if Services and Services.youtube_link and Services.youtube_link ~= '' then
+                    g_platform.openUrl(Services.youtube_link)
+                end
+            end
+        end
+
         footerBar:show()
         footerBar:raise()
         updatePlayersOnline()
+        updateFooterLinks()
     end
 
     local nameEdit = originalWindow:getChildById('accountNameTextEdit')
@@ -312,6 +331,30 @@ function updatePlayersOnline()
     end)
 end
 
+function updateFooterLinks()
+    if not footerBar then return end
+    pcall(function()
+        local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
+        if not topMenu then return end
+
+        local discStreamersLabel = footerBar:recursiveGetChildById('footerDiscordStreamersLabel')
+        if discStreamersLabel then
+            local origDisc = topMenu:recursiveGetChildById('topLeftDiscordStreamersLabel')
+            if origDisc then
+                discStreamersLabel:setText(origDisc:getText())
+            end
+        end
+
+        local ytStreamersLabel = footerBar:recursiveGetChildById('footerYoutubeStreamersLabel')
+        if ytStreamersLabel then
+            local origYt = topMenu:recursiveGetChildById('topLeftYoutubeStreamersLabel')
+            if origYt then
+                ytStreamersLabel:setText(origYt:getText())
+            end
+        end
+    end)
+end
+
 function toggleAudio()
     pcall(function()
         local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
@@ -380,6 +423,7 @@ if EnterGame then
                 footerBar:show()
                 footerBar:raise()
                 updatePlayersOnline()
+                updateFooterLinks()
             end
         end
     end
