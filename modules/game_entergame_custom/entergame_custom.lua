@@ -133,6 +133,19 @@ function setup()
             onGameEnd = onGameEnd
         })
     end)
+
+    pcall(function()
+        connect(g_window, {
+            onResize = onWindowResize
+        })
+    end)
+end
+
+function onWindowResize()
+    if not customWindow then return end
+    if customWindow:isVisible() then
+        positionAll()
+    end
 end
 
 function positionAll()
@@ -216,6 +229,12 @@ function terminate()
         disconnect(g_game, {
             onGameStart = onGameStart,
             onGameEnd = onGameEnd
+        })
+    end)
+
+    pcall(function()
+        disconnect(g_window, {
+            onResize = onWindowResize
         })
     end)
 
