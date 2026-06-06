@@ -151,13 +151,17 @@ end
 
 function onGameStart()
     showOriginalUI()
+    -- Hide custom login when entering the game
+    if customWindow then
+        customWindow:hide()
+    end
 end
 
 function onGameEnd()
-    hideOriginalUI()
+    -- Hide custom login on character select screen
+    -- It should only show on the actual login screen
     if customWindow then
-        customWindow:show()
-        customWindow:raise()
+        customWindow:hide()
     end
 end
 
