@@ -1,3 +1,23 @@
+LoginBoxEdit < UITextEdit
+  background-color: #0A0A1AFF
+  border-width: 1
+  border-color: #1A1A3A
+  color: #FFFFFFFF
+  font: verdana-11px-antialised
+  height: 36
+  padding-left: 10
+  padding-right: 10
+  selection-color: #000000FF
+  selection-background-color: #00B4D8CC
+  image-source: none
+
+  $focus:
+    border-color: #00B4D8
+
+  $disabled:
+    color: #0A0A1A88
+    opacity: 0.5
+
 UIWidget
   id: enterGameCustomWindow
   visible: false
@@ -40,7 +60,7 @@ UIWidget
     anchors.top: topSeparator.bottom
     margin-top: 14
 
-  LoginInputField
+  LoginBoxEdit
     id: customAccountName
     anchors.left: parent.left
     anchors.right: parent.right
@@ -57,7 +77,7 @@ UIWidget
     anchors.top: customAccountName.bottom
     margin-top: 12
 
-  LoginInputField
+  LoginBoxEdit
     id: customPassword
     anchors.left: parent.left
     anchors.right: parent.right
