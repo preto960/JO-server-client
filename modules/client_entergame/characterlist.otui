@@ -158,6 +158,9 @@ MainWindow
   visible: false
   border-width: 0
   size: 720 450
+  image-source: none
+  image-border: 0
+  padding: 0
   background-color: #00000099
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.hide(true)
@@ -169,10 +172,14 @@ MainWindow
         self:setSize({width = 720, height = 450})
         self:setText('')
         self:setColor("#00000099")
+        self:setImageSource('none')
+        self:setImageBorder(0)
       else
         self:setSize({width = 380, height = 450})
         self:setText('')
         self:setColor("#00000099")
+        self:setImageSource('none')
+        self:setImageBorder(0)
       end
     else
       self:setSize({width = 250, height = 248})
