@@ -5,7 +5,7 @@ Module
   version: 1.0
   dependOnClient: true
   autoLoad: true
-  loadLater: true
+  loadLater: 1500
 
   onLoad: |
     if g_modules.getModule('ui_pack_fantasy') and g_modules.getModule('ui_pack_fantasy'):isLoaded() then
