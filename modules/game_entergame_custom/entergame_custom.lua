@@ -1,9 +1,9 @@
 -- entergame_custom.lua - Custom login screen for JO Server
--- Electric Blue Theme - Exact copy of Rubinot login layout
--- Box-style inputs, footer bar with icons, Tab/Enter key support
+-- Electric Blue Theme - Logo outside panel, line inputs, footer bar
 
 local customWindow = nil
 local footerBar = nil
+local logoWidget = nil
 local originalWindow = nil
 local topMenuWidget = nil
 local bottomMenuWidget = nil
@@ -57,6 +57,8 @@ function setup()
     if bottomMenuWidget then bottomMenuWidget:hide() end
     if versionLabelWidget then versionLabelWidget:hide() end
 
+    local root = g_ui.getRootWidget()
+
     local ok = pcall(function()
         customWindow = g_ui.loadUI('entergame_custom')
     end)
@@ -66,11 +68,16 @@ function setup()
         return
     end
 
-    if not customWindow:getParent() then
-        local root = g_ui.getRootWidget()
-        if root then
-            root:addChild(customWindow)
-        end
+    if not customWindow:getParent() and root then
+        root:addChild(customWindow)
+    end
+
+    logoWidget = g_ui.createWidget('UIWidget', root)
+    if logoWidget then
+        logoWidget:setId('loginLogoWidget')
+        logoWidget:setSize({ width = 200, height = 100 })
+        logoWidget:setImageSource('/game_entergame_custom/JO_logo')
+        logoWidget:setImageAutoResize(true)
     end
 
     local ok2 = pcall(function()
@@ -79,51 +86,10 @@ function setup()
     if not ok2 or not footerBar then
         g_logger.warning('[Custom Login] Could not load footer bar')
     else
-        local root = g_ui.getRootWidget()
         if root then
             root:addChild(footerBar)
         end
-
-        local gw = g_window
-        if gw and footerBar then
-            local fw = gw.getWidth()
-            local fh = 36
-            footerBar:setWidth(fw)
-            footerBar:setHeight(fh)
-            footerBar:setPosition({ x = 0, y = gw.getHeight() - fh })
-
-            local sep = footerBar:recursiveGetChildById('footerSeparator')
-            if sep then
-                sep:setPosition({ x = 0, y = 0 })
-                sep:setWidth(fw)
-            end
-
-            local audioBtn = footerBar:recursiveGetChildById('footerAudioBtn')
-            if audioBtn then
-                audioBtn:setPosition({ x = 12, y = 4 })
-            end
-
-            local optBtn = footerBar:recursiveGetChildById('footerOptionsBtn')
-            if optBtn then
-                optBtn:setPosition({ x = 46, y = 4 })
-            end
-
-            local playersLabel = footerBar:recursiveGetChildById('footerPlayersLabel')
-            if playersLabel then
-                playersLabel:setPosition({ x = (fw - playersLabel:getWidth()) / 2, y = 10 })
-            end
-
-            local ytBtn = footerBar:recursiveGetChildById('footerYoutubeBtn')
-            if ytBtn then
-                ytBtn:setPosition({ x = fw - 72, y = 4 })
-            end
-
-            local discBtn = footerBar:recursiveGetChildById('footerDiscordBtn')
-            if discBtn then
-                discBtn:setPosition({ x = fw - 40, y = 4 })
-            end
-        end
-
+        positionFooter()
         footerBar:show()
         footerBar:raise()
         updatePlayersOnline()
@@ -158,17 +124,7 @@ function setup()
     end
 
     scheduleEvent(function()
-        local gw = g_window
-        if gw and customWindow then
-            local ww = gw.getWidth()
-            local wh = gw.getHeight()
-            local cw = customWindow:getWidth()
-            local ch = customWindow:getHeight()
-            local x = (ww - cw) / 2
-            local y = (wh - ch) / 2 - 20
-            customWindow:setPosition({ x = x, y = y })
-            customWindow:raise()
-        end
+        positionAll()
     end, 300)
 
     pcall(function()
@@ -177,6 +133,77 @@ function setup()
             onGameEnd = onGameEnd
         })
     end)
+end
+
+function positionAll()
+    local gw = g_window
+    if not gw then return end
+    local ww = gw.getWidth()
+    local wh = gw.getHeight()
+
+    if logoWidget then
+        local logoW = logoWidget:getWidth()
+        local logoH = logoWidget:getHeight()
+        logoWidget:setPosition({ x = (ww - logoW) / 2, y = (wh - 500) / 2 - 60 })
+        logoWidget:raise()
+    end
+
+    if customWindow then
+        local cw = customWindow:getWidth()
+        local ch = customWindow:getHeight()
+        local x = (ww - cw) / 2
+        local y = (wh - ch) / 2 - 10
+        customWindow:setPosition({ x = x, y = y })
+        customWindow:raise()
+    end
+
+    if footerBar then
+        positionFooter()
+        footerBar:raise()
+    end
+end
+
+function positionFooter()
+    local gw = g_window
+    if not gw or not footerBar then return end
+    local ww = gw.getWidth()
+    local wh = gw.getHeight()
+    local fh = 36
+
+    footerBar:setWidth(ww)
+    footerBar:setHeight(fh)
+    footerBar:setPosition({ x = 0, y = wh - fh })
+
+    local sep = footerBar:recursiveGetChildById('footerSeparator')
+    if sep then
+        sep:setPosition({ x = 0, y = 0 })
+        sep:setWidth(ww)
+    end
+
+    local audioBtn = footerBar:recursiveGetChildById('footerAudioBtn')
+    if audioBtn then
+        audioBtn:setPosition({ x = 12, y = 4 })
+    end
+
+    local optBtn = footerBar:recursiveGetChildById('footerOptionsBtn')
+    if optBtn then
+        optBtn:setPosition({ x = 46, y = 4 })
+    end
+
+    local playersLabel = footerBar:recursiveGetChildById('footerPlayersLabel')
+    if playersLabel then
+        playersLabel:setPosition({ x = (ww - playersLabel:getWidth()) / 2, y = 10 })
+    end
+
+    local ytBtn = footerBar:recursiveGetChildById('footerYoutubeBtn')
+    if ytBtn then
+        ytBtn:setPosition({ x = ww - 72, y = 4 })
+    end
+
+    local discBtn = footerBar:recursiveGetChildById('footerDiscordBtn')
+    if discBtn then
+        discBtn:setPosition({ x = ww - 40, y = 4 })
+    end
 end
 
 function terminate()
@@ -195,6 +222,11 @@ function terminate()
     if footerBar then
         footerBar:destroy()
         footerBar = nil
+    end
+
+    if logoWidget then
+        logoWidget:destroy()
+        logoWidget = nil
     end
 
     if customWindow then
@@ -229,6 +261,9 @@ function onGameStart()
     if footerBar then
         footerBar:hide()
     end
+    if logoWidget then
+        logoWidget:hide()
+    end
 end
 
 function onGameEnd()
@@ -237,6 +272,9 @@ function onGameEnd()
     end
     if footerBar then
         footerBar:hide()
+    end
+    if logoWidget then
+        logoWidget:hide()
     end
 end
 
@@ -398,6 +436,10 @@ if EnterGame then
         if g_game.isOnline() then return end
         if customWindow then
             hideOriginalUI()
+            if logoWidget then
+                logoWidget:show()
+                logoWidget:raise()
+            end
             customWindow:show()
             customWindow:raise()
             customWindow:focus()
@@ -415,6 +457,9 @@ if EnterGame then
         end
         if footerBar then
             footerBar:hide()
+        end
+        if logoWidget then
+            logoWidget:hide()
         end
         if originalWindow then
             originalWindow:hide()

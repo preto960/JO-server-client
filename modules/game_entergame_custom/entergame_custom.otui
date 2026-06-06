@@ -1,53 +1,29 @@
-LoginBoxEdit < UITextEdit
-  background-color: #0A0A1AFF
-  border-width: 1
-  border-color: #1A1A3A
+FlatLineEdit < UITextEdit
+  background-color: #00000000
+  border-width: 0
+  border-color: #00000000
   color: #FFFFFFFF
   font: verdana-11px-antialised
-  height: 36
-  padding-left: 10
-  padding-right: 10
+  height: 22
+  image-source: none
   selection-color: #000000FF
   selection-background-color: #00B4D8CC
-  image-source: none
-
-  $focus:
-    border-color: #00B4D8
-
-  $disabled:
-    color: #0A0A1A88
-    opacity: 0.5
 
 UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 380 420
+  size: 380 360
   background-color: #000000CC
   border-width: 1
   border-color: #00B4D840
-  padding: 30 30 25 30
-
-  UIWidget
-    id: logoArea
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-    height: 70
-    width: 320
-
-  UIWidget
-    id: logoImageWidget
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.verticalCenter: logoArea.verticalCenter
-    size: 120 60
-    image-source: /game_entergame_custom/JO_logo
-    image-auto-resize: true
+  padding: 25 30 25 30
 
   UIWidget
     id: topSeparator
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: logoArea.bottom
+    anchors.top: parent.top
     height: 1
     background-color: #00B4D830
 
@@ -58,15 +34,25 @@ UIWidget
     color: #FFFFFFBB
     anchors.left: parent.left
     anchors.top: topSeparator.bottom
-    margin-top: 14
+    margin-top: 16
 
-  LoginBoxEdit
+  FlatLineEdit
     id: customAccountName
+    height: 22
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: nameLabel.bottom
     margin-top: 4
     text-vertical-alignment: center
+
+  UIWidget
+    id: emailLine
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: customAccountName.bottom
+    margin-top: 1
+    height: 1
+    background-color: #00B4D850
 
   Label
     id: passLabel
@@ -74,11 +60,12 @@ UIWidget
     font: verdana-11px-rounded
     color: #FFFFFFBB
     anchors.left: parent.left
-    anchors.top: customAccountName.bottom
+    anchors.top: emailLine.bottom
     margin-top: 12
 
-  LoginBoxEdit
+  FlatLineEdit
     id: customPassword
+    height: 22
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: passLabel.bottom
@@ -86,10 +73,19 @@ UIWidget
     text-vertical-alignment: center
     text-hidden: true
 
+  UIWidget
+    id: passLine
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: customPassword.bottom
+    margin-top: 1
+    height: 1
+    background-color: #00B4D850
+
   UICheckBox
     id: customRememberBox
     anchors.left: parent.left
-    anchors.top: customPassword.bottom
+    anchors.top: passLine.bottom
     margin-top: 10
     @onClick: modules.game_entergame_custom.toggleRemember()
 
@@ -99,7 +95,7 @@ UIWidget
     font: verdana-11px-rounded
     color: #FFFFFF99
     anchors.left: customRememberBox.right
-    anchors.top: customPassword.bottom
+    anchors.top: passLine.bottom
     anchors.verticalCenter: customRememberBox.verticalCenter
     margin-left: 6
 
