@@ -1,6 +1,8 @@
 CharacterWidget < UIWidget
-  height: 14
-  background-color: alpha
+  height: 64
+  background-color: #0A0A1A
+  border-width: 1
+  border-color: #1A1A3A
   &updateOnStates: |
     function(self)
       local focused = self:isFocused()
@@ -8,16 +10,14 @@ CharacterWidget < UIWidget
       for i=1,#children do
         children[i]:setOn(focused)
       end
-      if self.rowColor then
-        if focused then
-          self:setBackgroundColor("#696767")
-          self:setBorderWidth(1)
-          self:setBorderColor("#696767")
-        else
-          self:setBackgroundColor(self.rowColor)
-          self:setBorderWidth(0)
-          self:setBorderColor("alpha")
-        end
+      if focused then
+        self:setBackgroundColor("#00B4D830")
+        self:setBorderWidth(1)
+        self:setBorderColor("#00B4D8")
+      else
+        self:setBackgroundColor("#0A0A1A")
+        self:setBorderWidth(1)
+        self:setBorderColor("#1A1A3A")
       end
       local pin = self:getChildById('pin')
       if pin then
@@ -36,7 +36,7 @@ CharacterWidget < UIWidget
     size: 64 64
     anchors.top: parent.top
     anchors.left: parent.left
-    padding-left: 10
+    padding-left: 6
     padding-bottom: 5
     fixed-creature-size: true
     @onSetup: |
@@ -46,10 +46,10 @@ CharacterWidget < UIWidget
 
   Label
     id: name
-    color: #bbbbbb
+    color: #FFFFFFDD
     anchors.top: parent.top
     anchors.left: parent.left
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
@@ -59,7 +59,7 @@ CharacterWidget < UIWidget
       end
 
     $on:
-      color: #ffffff
+      color: #00B4D8
 
   Label
     id: mainCharacter
@@ -124,11 +124,11 @@ CharacterWidget < UIWidget
 
   Label
     id: level
-    color: #bbbbbb
+    color: #AAAAAA
     anchors.top: parent.top
     anchors.left: parent.left
     margin-left: 350
-    font: verdana-11px-monochrome
+    font: verdana-11px-antialised
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
@@ -142,11 +142,11 @@ CharacterWidget < UIWidget
 
   Label
     id: vocation
-    color: #bbbbbb
+    color: #AAAAAA
     anchors.top: parent.top
     anchors.left: parent.left
     margin-left: 410
-    font: verdana-11px-monochrome
+    font: verdana-11px-antialised
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
@@ -160,9 +160,9 @@ CharacterWidget < UIWidget
 
   Label
     id: worldName
-    color: #bbbbbb
+    color: #00B4D8
     anchors.top: parent.top
-    font: verdana-11px-monochrome
+    font: verdana-11px-antialised
     text-auto-resize: true
     text-wrap: true
     background-color: alpha
@@ -180,7 +180,7 @@ CharacterWidget < UIWidget
       end
 
     $on:
-      color: #ffffff
+      color: #00D4F8
 
 MainWindow
   id: charactersWindow
@@ -195,10 +195,11 @@ MainWindow
       if g_game.getFeature(GameEnterGameShowAppearance) then
         self:setSize({width = 745, height = 430})
         self:setText(tr('Select Character'))
-        self:setColor("#c0c0c0")
+        self:setColor("#00B4D8")
       else
         self:setSize({width = 350, height = 400})
         self:setText(tr('Character List'))
+        self:setColor("#00B4D8")
       end
     else
       self:setSize({width = 250, height = 248})
@@ -206,31 +207,24 @@ MainWindow
 
   TextList
     id: characters
-    background-color: #404040
-    border-width-top: 1
-    border-color-top: black
-    border-width-left: 1
-    border-color-left: black
-    border-width-bottom: 1
-    border-color-bottom: #747474
-    border-width-right: 1
-    border-color-right: #747474
-    padding: 1 1 1 1
+    background-color: #00000099
+    border-width: 1
+    border-color: #00B4D840
+    padding: 4
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: characterListScrollBar.left
     anchors.bottom: accountStatusCaption.top
     margin-bottom: 5
-    padding: 1
     focusable: false
     vertical-scrollbar: characterListScrollBar
     auto-focus: first
     @onSetup: |
       if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setBackgroundColor("#404040")
+        self:setBackgroundColor("#00000099")
         self:setPaddingTop(20)
       else
-        self:setBackgroundColor("#565656")
+        self:setBackgroundColor("#00000099")
       end
 
   UIWidget
@@ -240,11 +234,11 @@ MainWindow
     anchors.top: characters.top
     height: 19
     border-width: 1
-    border-color-top: #1B1B1A
-    border-color-left: #1B1B1A
-    border-color-right: #6b6b6b
-    border-color-bottom: #6b6b6b
-    background-color: #363636
+    border-color-top: #00B4D840
+    border-color-left: #00B4D840
+    border-color-right: #00B4D840
+    border-color-bottom: #00B4D840
+    background-color: #0A0A1A
     @onSetup: |
       if not(g_game.getFeature(GameEnterGameShowAppearance)) then
         self:hide()
@@ -258,15 +252,15 @@ MainWindow
       margin-top: 2
       !text: tr('Character')
       text-offset: -30 0
-      font: verdana-11px-monochrome
-      color: #c0c0c0
+      font: verdana-11px-antialised
+      color: #AAAAAA
       image-source: /images/game/entergame/sort-button
       image-clip: 0 0 7 4
       image-size: 7 4
       image-offset: 242 5
       @onClick: onSortButtonClick(self, 1)
       $pressed:
-        color: #9d9d9d
+        color: #00B4D8
         image-clip: 0 4 7 4
       $checked:
         image-clip: 0 4 7 4
@@ -284,15 +278,15 @@ MainWindow
       margin-top: 2
       !text: tr('Status')
       text-offset: -20 0
-      font: verdana-11px-monochrome
-      color: #c0c0c0
+      font: verdana-11px-antialised
+      color: #AAAAAA
       image-source: /images/game/entergame/sort-button
       image-clip: 0 0 7 4
       image-size: 7 4
       image-offset: 92 5
       @onClick: onSortButtonClick(self, 2)
       $pressed:
-        color: #9d9d9d
+        color: #00B4D8
         image-clip: 0 4 7 4
       $checked:
         image-clip: 0 4 7 4
@@ -310,15 +304,15 @@ MainWindow
       margin-top: 2
       !text: tr('Level')
       text-offset: -8 0
-      font: verdana-11px-monochrome
-      color: #c0c0c0
+      font: verdana-11px-antialised
+      color: #AAAAAA
       image-source: /images/game/entergame/sort-button
       image-clip: 0 0 7 4
       image-size: 7 4
       image-offset: 52 5
       @onClick: onSortButtonClick(self, 3)
       $pressed:
-        color: #9d9d9d
+        color: #00B4D8
         image-clip: 0 4 7 4
       $checked:
         image-clip: 0 4 7 4
@@ -336,15 +330,15 @@ MainWindow
       margin-top: 2
       !text: tr('Vocation')
       text-offset: -10 0
-      font: verdana-11px-monochrome
-      color: #c0c0c0
+      font: verdana-11px-antialised
+      color: #AAAAAA
       image-source: /images/game/entergame/sort-button
       image-clip: 0 0 7 4
       image-size: 7 4
       image-offset: 82 5
       @onClick: onSortButtonClick(self, 4)
       $pressed:
-        color: #9d9d9d
+        color: #00B4D8
         image-clip: 0 4 7 4
       $checked:
         image-clip: 0 4 7 4
@@ -362,15 +356,15 @@ MainWindow
       margin-top: 2
       !text: tr('World')
       text-offset: -85 0
-      font: verdana-11px-monochrome
-      color: #c0c0c0
+      font: verdana-11px-antialised
+      color: #AAAAAA
       image-source: /images/game/entergame/sort-button
       image-clip: 0 0 7 4
       image-size: 7 4
       image-offset: 212 5
       @onClick: onSortButtonClick(self, 5)
       $pressed:
-        color: #9d9d9d
+        color: #00B4D8
         image-clip: 0 4 7 4
       $checked:
         image-clip: 0 4 7 4
@@ -471,14 +465,14 @@ MainWindow
       end
 
     $on:
-      color: #FF0000
+      color: #00B4D8
 
   Button
     id: premiumButton
     !text: tr('Get Premium')
     anchors.right: parent.right
     text-auto-resize: true
-    image-color: green
+    image-color: #00B4D8
     @onClick: onPremiumButtonClick(self)
     @onSetup: |
       if g_game.getFeature(GameEnterGameShowAppearance) then
@@ -523,8 +517,8 @@ MainWindow
       margin-top: 2
       padding-left: 6
       padding-right: 6
-      color: #cfcfcf
-      font: verdana-11px-monochrome
+      color: #AAAAAA
+      font: verdana-11px-antialised
       text-auto-resize: true
 
     UIWidget
@@ -549,8 +543,8 @@ MainWindow
         anchors.top: premiumBenefitSpellsIcon.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         margin-top: 2
-        font: verdana-11px-monochrome
-        color: #d7d7d7
+        font: verdana-11px-antialised
+        color: #AAAAAA
         width: 160
         text-wrap: true
         text-align: center
@@ -578,8 +572,8 @@ MainWindow
         anchors.horizontalCenter: parent.horizontalCenter
         margin-top: 2
         text-auto-resize: true
-        font: verdana-11px-monochrome
-        color: #d7d7d7
+        font: verdana-11px-antialised
+        color: #AAAAAA
 
     UIWidget
       id: premiumBenefitVip
@@ -607,8 +601,8 @@ MainWindow
         text-wrap: true
         text-align: center
         text-vertical-auto-resize: true
-        font: verdana-11px-monochrome
-        color: #d7d7d7
+        font: verdana-11px-antialised
+        color: #AAAAAA
 
     Label
       id: premiumBenefitsFooter
@@ -617,8 +611,8 @@ MainWindow
       anchors.bottom: parent.bottom
       margin-left: 8
       text-auto-resize: true
-      font: verdana-11px-monochrome
-      color: #d7d7d7
+      font: verdana-11px-antialised
+      color: #AAAAAA
 
     HorizontalSeparator
       anchors.left: parent.left
@@ -634,14 +628,9 @@ MainWindow
     anchors.bottom: autoReconnect.top
     margin-bottom: 6
     size: 165 22
-    border-width-top: 1
-    border-color-top: black
-    border-width-left: 1
-    border-color-left: black
-    border-width-bottom: 1
-    border-color-bottom: #747474
-    border-width-right: 1
-    border-color-right: #747474
+    background-color: #0A0A1A
+    border-width: 1
+    border-color: #00B4D840
     @onSetup: |
       if not(g_game.getFeature(GameEnterGameShowAppearance)) then
         self:setHeight(0)
@@ -659,7 +648,7 @@ MainWindow
       checked: true
       !text: tr('Show Hidden Characters')
       text-auto-resize: true
-      color: #c0c0c0
+      color: #AAAAAA
       @onCheckChange: onShowHiddenCharacters(self, self:isChecked())
 
 
@@ -669,14 +658,9 @@ MainWindow
     anchors.verticalCenter: buttonHidden.verticalCenter
     margin-left: 10
     size: 100 22
-    border-width-top: 1
-    border-color-top: black
-    border-width-left: 1
-    border-color-left: black
-    border-width-bottom: 1
-    border-color-bottom: #747474
-    border-width-right: 1
-    border-color-right: #747474
+    background-color: #0A0A1A
+    border-width: 1
+    border-color: #00B4D840
     padding: 1 1 1 1
     @onSetup: |
       if not(g_game.getFeature(GameEnterGameShowAppearance)) then
@@ -692,7 +676,7 @@ MainWindow
       margin-left: 6      
       !text: tr('Show Outfit')
       text-auto-resize: true
-      color: #c0c0c0
+      color: #AAAAAA
       @onCheckChange: onShowOutfits(self, self:isChecked())
 
   Button
@@ -709,7 +693,7 @@ MainWindow
     $!on:
       image-color: red
     $on:
-      image-color: green
+      image-color: #00B4D8
 
   Button
     id: buttonOk

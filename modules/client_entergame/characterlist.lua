@@ -784,8 +784,8 @@ function CharacterList.rebuildCharactersList()
 
     local showAppearance = shouldShowAppearance()
     local showOutfits = showAppearance and getShowOutfits()
-    local oddRowColor = showAppearance and '#484848' or '#565656'
-    local evenRowColor = showAppearance and '#414141' or '#4f4f4f'
+    local oddRowColor = showAppearance and '#0D0D1A' or '#0A0A1A'
+    local evenRowColor = showAppearance and '#0A0A1A' or '#0A0A1A'
     local focused = characterList:getFocusedChild()
     local focusName = focused and focused.characterName or g_settings.get('last-used-character')
     local focusWorld = focused and focused.worldName or g_settings.get('last-used-world')
