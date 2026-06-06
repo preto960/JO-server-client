@@ -1,5 +1,3 @@
--- Electric Theme: Progress Bars
--- Neon pink HP, electric blue mana
 
 ProgressBar < UIProgressBar
   height: 16

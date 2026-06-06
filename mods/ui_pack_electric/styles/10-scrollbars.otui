@@ -1,5 +1,3 @@
--- Electric Theme: Scrollbars
--- Dark navy scrollbars with blue accents
 
 VerticalScrollBar < UIScrollBar
   orientation: vertical

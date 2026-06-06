@@ -1,5 +1,3 @@
--- Medieval Theme: Checkboxes
--- Dark panels with cold blue accent when checked
 
 CheckBox < UICheckBox
   background-color: #111827

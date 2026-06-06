@@ -1,5 +1,3 @@
--- Electric Theme: Windows
--- Deep black with neon blue accents, cyberpunk feel
 
 Window < UIWindow
   font: verdana-11px-antialised

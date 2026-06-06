@@ -1,6 +1,3 @@
--- Electric Theme: Checkboxes
--- Dark boxes with neon blue checked state
-
 CheckBox < UICheckBox
   size: 12 12
   text-align: left

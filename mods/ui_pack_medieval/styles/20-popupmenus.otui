@@ -1,5 +1,3 @@
--- Medieval Theme: PopupMenus
--- Dark slate popups with stone borders
 
 PopupMenuButton < UIButton
   background-color: #1A1E24

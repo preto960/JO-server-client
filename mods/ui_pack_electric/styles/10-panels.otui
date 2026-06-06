@@ -1,5 +1,3 @@
--- Electric Theme: Panels
--- Deep black panels with subtle blue border glow
 
 Panel < UIWidget
   phantom: true

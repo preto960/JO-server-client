@@ -1,5 +1,3 @@
--- Medieval Theme: Scrollbars
--- Dark scrollbars with steel grey borders
 
 VerticalScrollBar < UIScrollBar
   background-color: #111827

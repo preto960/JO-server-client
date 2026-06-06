@@ -1,5 +1,3 @@
--- Electric Theme: TabBars
--- Dark navy tabs with electric blue active state
 
 MoveableTabBar < UIMoveableTabBar
   size: 80 21

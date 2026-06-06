@@ -1,5 +1,3 @@
--- Electric Theme: Separators
--- Neon blue divider lines
 
 HorizontalSeparator < UIWidget
   background-color: #1A3A5C

@@ -1,5 +1,3 @@
--- Medieval Theme: Panels
--- Dark near-black blue panels with stone borders
 
 Panel < UIGroup
   background-color: #111827

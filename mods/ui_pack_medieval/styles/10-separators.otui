@@ -1,5 +1,3 @@
--- Medieval Theme: Separators
--- Iron grey divider lines
 
 HorizontalSeparator < UIGroup
   background-color: #374151

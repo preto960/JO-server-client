@@ -1,5 +1,3 @@
--- Medieval Theme: ProgressBars
--- Dark blood red HP, navy blue mana
 
 ProgressBar < UIProgressBar
   background-color: #111827

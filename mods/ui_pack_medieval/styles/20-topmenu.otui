@@ -1,5 +1,3 @@
--- Medieval Theme: TopMenu
--- Dark top menu bar with steel buttons
 
 TopButton < UIButton
   background-color: #374151

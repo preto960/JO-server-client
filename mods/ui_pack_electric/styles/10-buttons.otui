@@ -1,5 +1,3 @@
--- Electric Theme: Buttons
--- Dark navy with neon blue highlights
 
 Button < UIButton
   font: cipsoftFont

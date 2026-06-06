@@ -1,5 +1,3 @@
--- Medieval Theme: TextEdits
--- Dark input fields with steel borders
 
 TextEdit < UITextEdit
   background-color: #111827

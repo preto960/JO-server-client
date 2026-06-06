@@ -1,6 +1,3 @@
--- Electric Blue Theme: Login Screen
--- Positioned on the right side, cyberpunk-neon aesthetic
-
 UIWidget
   id: enterGameCustomWindow
   visible: false
@@ -10,7 +7,6 @@ UIWidget
   border-width: 2
   border-color: #1A3A5CCC
 
-  -- Header bar with electric blue accent
   UIWidget
     id: headerBar
     anchors.top: parent.top
@@ -20,7 +16,6 @@ UIWidget
     background-color: #00B4D8
     phantom: true
 
-  -- Logo area
   UIWidget
     id: logoCircle
     size: 56 56
@@ -39,7 +34,6 @@ UIWidget
     anchors.horizontalCenter: logoCircle.horizontalCenter
     anchors.verticalCenter: logoCircle.verticalCenter
 
-  -- Server name
   Label
     id: serverLabel
     !text: 'Journey Onwards'
@@ -49,7 +43,6 @@ UIWidget
     anchors.top: logoCircle.bottom
     margin-top: 8
 
-  -- Thin decorative line under server name
   UIWidget
     anchors.top: serverLabel.bottom
     anchors.left: parent.left
@@ -61,7 +54,6 @@ UIWidget
     background-color: #1A3A5C
     phantom: true
 
-  -- Email label
   Label
     id: nameLabel
     !text: 'Email'
@@ -72,7 +64,6 @@ UIWidget
     margin-top: 20
     margin-left: 20
 
-  -- Email input
   TextEdit
     id: customAccountName
     height: 32
@@ -96,7 +87,6 @@ UIWidget
     padding-left: 10
     padding-right: 10
 
-  -- Password label
   Label
     id: passLabel
     !text: 'Password'
@@ -107,7 +97,6 @@ UIWidget
     margin-top: 14
     margin-left: 20
 
-  -- Password input
   TextEdit
     id: customPassword
     height: 32
@@ -132,7 +121,6 @@ UIWidget
     padding-right: 10
     text-hidden: true
 
-  -- Remember me checkbox
   UIButton
     id: customRememberBox
     size: 14 14
@@ -154,7 +142,6 @@ UIWidget
     anchors.top: customRememberBox.top
     margin-left: 6
 
-  -- Login button
   UIButton
     id: loginButton
     !text: 'Iniciar Sesion'
@@ -178,7 +165,6 @@ UIWidget
       background-color: #0A1628DD
       border-color: #00B4D8
 
-  -- Forgot password link
   UIButton
     id: forgotPassBtn
     !text: 'Olvide mi password'
@@ -191,7 +177,6 @@ UIWidget
     $hover:
       color: #00B4D8
 
-  -- Create account link
   UIButton
     id: createAccountBtn
     !text: 'Crear cuenta nueva'
@@ -204,7 +189,6 @@ UIWidget
     $hover:
       color: #00B4D8
 
-  -- Bottom decorative line
   UIWidget
     anchors.bottom: parent.bottom
     anchors.left: parent.left
@@ -216,7 +200,6 @@ UIWidget
     background-color: #1A3A5C
     phantom: true
 
-  -- Version label
   Label
     id: versionLabel
     !text: 'v1.0'

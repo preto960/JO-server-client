@@ -1,5 +1,3 @@
--- Fantasy Theme: Scrollbars
--- Brown/golden themed scrollbars
 
 VerticalScrollBar < UIScrollBar
   orientation: vertical

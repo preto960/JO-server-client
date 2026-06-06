@@ -1,5 +1,3 @@
--- Medieval Theme: Labels
--- Cool light grey text on dark backgrounds
 
 Label < UILabel
   color: #D1D5DB

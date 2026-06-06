@@ -1,5 +1,3 @@
--- Medieval Theme: Buttons
--- Steel and iron buttons with cold blue-grey tones
 
 Button < UIButton
   background-color: #374151

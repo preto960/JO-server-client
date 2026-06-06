@@ -1,5 +1,3 @@
--- Medieval Theme: MiniWindows
--- Compact stone/iron windows with cold blue-grey tones
 
 MiniWindow < UIGroup
   background-color: #1A1E24

@@ -1,5 +1,3 @@
--- Fantasy Theme: MiniWindows
--- Warm brown body with golden header accents
 
 MiniWindow < UIMiniWindow
   font: verdana-11px-antialised

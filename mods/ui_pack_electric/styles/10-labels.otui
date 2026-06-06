@@ -1,5 +1,3 @@
--- Electric Theme: Labels
--- Cyan/ice blue text on dark backgrounds
 
 Label < UILabel
   font: verdana-11px-antialised
