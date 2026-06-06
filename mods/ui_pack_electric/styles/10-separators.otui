@@ -1,0 +1,14 @@
+-- Electric Theme: Separators
+-- Neon blue divider lines
+
+HorizontalSeparator < UIWidget
+  background-color: #1A3A5C
+  height: 2
+  phantom: true
+  focusable: false
+
+VerticalSeparator < UIWidget
+  background-color: #1A3A5C
+  width: 2
+  phantom: true
+  focusable: false

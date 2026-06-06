@@ -1,154 +1,320 @@
+-- Electric Blue Theme: Login Screen
+-- Positioned on the right side, cyberpunk-neon aesthetic
+-- Colors: Deep black + Electric blue accents
+
 UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 320 330
+  size: 340 420
 
+  -- Main container panel with neon border effect
   UIWidget
-    id: logoCircle
-    size: 48 48
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-    margin-top: 16
-    background-color: #22223AEE
+    id: loginPanel
+    anchors.fill: parent
+    background-color: #0A0A1AEE
     border-width: 2
-    border-color: #3A3A58AA
+    border-color: #1A3A5CCC
 
-  Label
-    id: logoLabel
-    !text: 'JO'
-    font: verdana-11px-rounded
-    color: #A0A0C0
-    anchors.horizontalCenter: logoCircle.horizontalCenter
-    anchors.verticalCenter: logoCircle.verticalCenter
+    -- Outer glow border (top edge)
+    UIWidget
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 1
+      margin-left: -2
+      margin-right: -2
+      margin-top: -2
+      background-color: #00B4D860
+      phantom: true
 
-  Label
-    id: nameLabel
-    !text: 'Email'
-    font: verdana-11px-rounded
-    color: #8888A0
-    anchors.left: parent.left
-    anchors.top: logoCircle.bottom
-    margin-top: 20
-    margin-left: 4
+    -- Outer glow border (left edge)
+    UIWidget
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.bottom: parent.bottom
+      width: 1
+      margin-left: -2
+      margin-top: -2
+      margin-bottom: -2
+      background-color: #00B4D840
+      phantom: true
 
-  TextEdit
-    id: customAccountName
-    height: 28
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: nameLabel.bottom
-    margin-top: 3
-    margin-left: 0
-    margin-right: 0
-    background-color: #22223ACC
-    color: #E0E0E0
-    font: verdana-12px-antialised
-    text-vertical-alignment: center
-    placeholder: "tu email aqui..."
-    placeholder-color: #555570
-    image-source: none
-    selection-color: #E0E0E0FF
-    selection-background-color: #3A3A58
-    border-width: 1
-    border-color: #2E2E48AA
-    padding-left: 8
-    padding-right: 8
+    -- Outer glow border (right edge)
+    UIWidget
+      anchors.top: parent.top
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      width: 1
+      margin-right: -2
+      margin-top: -2
+      margin-bottom: -2
+      background-color: #00B4D840
+      phantom: true
 
-  Label
-    id: passLabel
-    !text: 'Password'
-    font: verdana-11px-rounded
-    color: #8888A0
-    anchors.left: parent.left
-    anchors.top: customAccountName.bottom
-    margin-top: 12
-    margin-left: 4
+    -- Header bar with electric blue accent
+    UIWidget
+      id: headerBar
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 4
+      background-color: #00B4D8
+      margin-left: 0
+      margin-right: 0
+      margin-top: 0
+      phantom: true
 
-  TextEdit
-    id: customPassword
-    height: 28
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: passLabel.bottom
-    margin-top: 3
-    margin-left: 0
-    margin-right: 0
-    background-color: #22223ACC
-    color: #E0E0E0
-    font: verdana-12px-antialised
-    text-vertical-alignment: center
-    placeholder: "tu password..."
-    placeholder-color: #555570
-    image-source: none
-    selection-color: #E0E0E0FF
-    selection-background-color: #3A3A58
-    border-width: 1
-    border-color: #2E2E48AA
-    padding-left: 8
-    padding-right: 8
-    text-hidden: true
+    -- Logo area
+    UIWidget
+      id: logoCircle
+      size: 56 56
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: parent.top
+      margin-top: 20
+      background-color: #0D1B2A
+      border-width: 2
+      border-color: #00B4D8
 
-  UIButton
-    id: customRememberBox
-    size: 14 14
-    anchors.left: parent.left
-    anchors.top: customPassword.bottom
-    margin-top: 12
-    background-color: #22223ACC
-    border-width: 1
-    border-color: #3A3A58AA
-    @onClick: modules.game_entergame_custom.toggleRemember()
+      -- Inner glow ring
+      UIWidget
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        margin: 4
+        background-color: alpha
+        border-width: 1
+        border-color: #00B4D830
+        phantom: true
 
-  Label
-    id: rememberText
-    !text: 'Recordar sesion'
-    font: verdana-11px-rounded
-    color: #777790
-    anchors.left: customRememberBox.right
-    anchors.top: customRememberBox.top
-    margin-left: 6
+    Label
+      id: logoLabel
+      !text: 'JO'
+      font: verdana-14px-rounded
+      color: #00E5FF
+      anchors.horizontalCenter: logoCircle.horizontalCenter
+      anchors.verticalCenter: logoCircle.verticalCenter
 
-  UIButton
-    id: loginButton
-    !text: 'Iniciar Sesion'
-    font: verdana-11px-rounded
-    color: #D0D0E0
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: customRememberBox.bottom
-    margin-top: 18
-    height: 36
-    background-color: #2E2E4ADD
-    border-width: 1
-    border-color: #3E3E5AAA
-    @onClick: modules.game_entergame_custom.doCustomLogin()
-    $hover:
-      background-color: #3A3A56DD
-      border-color: #4A4A68AA
-    $pressed:
-      background-color: #444462DD
+    -- Server name
+    Label
+      id: serverLabel
+      !text: 'Journey Onwards'
+      font: verdana-11px-rounded
+      color: #90E0EF
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: logoCircle.bottom
+      margin-top: 8
 
-  UIButton
-    id: forgotPassBtn
-    !text: 'Olvide mi password'
-    font: verdana-9px-rounded
-    color: #666680
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: loginButton.bottom
-    margin-top: 10
-    @onClick: modules.game_entergame_custom.onForgotPassword()
-    $hover:
-      color: #9999BB
+    -- Thin decorative line under server name
+    UIWidget
+      anchors.top: serverLabel.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 1
+      margin-top: 8
+      margin-left: 30
+      margin-right: 30
+      background-color: #1A3A5C
+      phantom: true
 
-  UIButton
-    id: createAccountBtn
-    !text: 'Crear cuenta nueva'
-    font: verdana-9px-rounded
-    color: #666680
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: forgotPassBtn.bottom
-    margin-top: 4
-    @onClick: modules.game_entergame_custom.onCreateAccount()
-    $hover:
-      color: #9999BB
+    -- Email label
+    Label
+      id: nameLabel
+      !text: 'Email'
+      font: verdana-10px-rounded
+      color: #5A7A9A
+      anchors.left: parent.left
+      anchors.top: serverLabel.bottom
+      margin-top: 20
+      margin-left: 20
+
+    -- Email input
+    TextEdit
+      id: customAccountName
+      height: 32
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: nameLabel.bottom
+      margin-top: 4
+      margin-left: 20
+      margin-right: 20
+      background-color: #060612CC
+      color: #CAF0F8
+      font: verdana-12px-antialised
+      text-vertical-alignment: center
+      placeholder: "tu email aqui..."
+      placeholder-color: #1A3A5C
+      image-source: none
+      selection-color: #CAF0F8FF
+      selection-background-color: #00B4D8
+      border-width: 1
+      border-color: #12263A
+      padding-left: 10
+      padding-right: 10
+
+      -- Left accent line on input
+      UIWidget
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        width: 2
+        margin-left: -1
+        margin-top: -1
+        margin-bottom: -1
+        background-color: #00B4D840
+        phantom: true
+
+    -- Password label
+    Label
+      id: passLabel
+      !text: 'Password'
+      font: verdana-10px-rounded
+      color: #5A7A9A
+      anchors.left: parent.left
+      anchors.top: customAccountName.bottom
+      margin-top: 14
+      margin-left: 20
+
+    -- Password input
+    TextEdit
+      id: customPassword
+      height: 32
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: passLabel.bottom
+      margin-top: 4
+      margin-left: 20
+      margin-right: 20
+      background-color: #060612CC
+      color: #CAF0F8
+      font: verdana-12px-antialised
+      text-vertical-alignment: center
+      placeholder: "tu password..."
+      placeholder-color: #1A3A5C
+      image-source: none
+      selection-color: #CAF0F8FF
+      selection-background-color: #00B4D8
+      border-width: 1
+      border-color: #12263A
+      padding-left: 10
+      padding-right: 10
+      text-hidden: true
+
+      -- Left accent line on input
+      UIWidget
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        width: 2
+        margin-left: -1
+        margin-top: -1
+        margin-bottom: -1
+        background-color: #00B4D840
+        phantom: true
+
+    -- Remember me checkbox
+    UIButton
+      id: customRememberBox
+      size: 14 14
+      anchors.left: parent.left
+      anchors.top: customPassword.bottom
+      margin-top: 14
+      margin-left: 20
+      background-color: #060612CC
+      border-width: 1
+      border-color: #1A3A5C
+      @onClick: modules.game_entergame_custom.toggleRemember()
+
+    Label
+      id: rememberText
+      !text: 'Recordar sesion'
+      font: verdana-10px-rounded
+      color: #5A7A9A
+      anchors.left: customRememberBox.right
+      anchors.top: customRememberBox.top
+      margin-left: 6
+
+    -- Login button - main CTA with electric blue glow
+    UIButton
+      id: loginButton
+      !text: 'Iniciar Sesion'
+      font: verdana-12px-rounded
+      color: #CAF0F8
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: customRememberBox.bottom
+      margin-top: 18
+      margin-left: 20
+      margin-right: 20
+      height: 40
+      background-color: #0D1B2ADD
+      border-width: 1
+      border-color: #00B4D8
+      @onClick: modules.game_entergame_custom.doCustomLogin()
+      $hover:
+        background-color: #1B3A5CDD
+        border-color: #48CAE4
+      $pressed:
+        background-color: #0A1628DD
+        border-color: #00B4D8
+
+      -- Top glow on button
+      UIWidget
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 1
+        margin-left: -1
+        margin-right: -1
+        margin-top: -1
+        background-color: #00B4D850
+        phantom: true
+
+    -- Forgot password link
+    UIButton
+      id: forgotPassBtn
+      !text: 'Olvide mi password'
+      font: verdana-9px-rounded
+      color: #5A7A9A
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: loginButton.bottom
+      margin-top: 12
+      @onClick: modules.game_entergame_custom.onForgotPassword()
+      $hover:
+        color: #00B4D8
+
+    -- Create account link
+    UIButton
+      id: createAccountBtn
+      !text: 'Crear cuenta nueva'
+      font: verdana-9px-rounded
+      color: #5A7A9A
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: forgotPassBtn.bottom
+      margin-top: 4
+      @onClick: modules.game_entergame_custom.onCreateAccount()
+      $hover:
+        color: #00B4D8
+
+    -- Bottom decorative line
+    UIWidget
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 1
+      margin-bottom: 12
+      margin-left: 30
+      margin-right: 30
+      background-color: #1A3A5C
+      phantom: true
+
+    -- Version label
+    Label
+      id: versionLabel
+      !text: 'v1.0'
+      font: verdana-9px-rounded
+      color: #12263A
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.bottom: parent.bottom
+      margin-bottom: 4

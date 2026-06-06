@@ -3,3 +3,9 @@
 !.gitignore
 !client_mods/
 !client_mods/**
+!ui_pack_fantasy/
+!ui_pack_fantasy/**
+!ui_pack_medieval/
+!ui_pack_medieval/**
+!ui_pack_electric/
+!ui_pack_electric/**

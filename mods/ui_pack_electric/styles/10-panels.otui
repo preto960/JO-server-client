@@ -1,0 +1,179 @@
+-- Electric Theme: Panels
+-- Deep black panels with subtle blue border glow
+
+Panel < UIWidget
+  phantom: true
+  auto-focus: first
+
+ScrollablePanel < UIScrollArea
+  phantom: true
+  auto-focus: first
+
+FlatPanel < Panel
+  background-color: #060612
+  border-width: 1
+  border-color: #12263A
+
+ScrollableFlatPanel < ScrollablePanel
+  background-color: #060612
+  border-width: 1
+  border-color: #12263A
+
+LightFlatPanel < Panel
+  background-color: #0A0A1A
+  border-width: 1
+  border-color: #1A3A5C
+
+QtPanel < UIWidget
+  padding: 10
+  auto-focus: first
+  background-color: #060612
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #00B4D8
+    margin-left: -10
+    margin-right: -10
+    margin-top: -10
+    height: 2
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    background-color: #00B4D8
+    margin-left: -10
+    margin-top: -10
+    margin-bottom: -10
+    width: 2
+
+  UIWidget
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #1A3A5C
+    margin-left: -10
+    margin-right: -10
+    margin-bottom: -10
+    height: 2
+
+  UIWidget
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    background-color: #1A3A5C
+    margin-top: -10
+    margin-right: -10
+    margin-bottom: -10
+    width: 2
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.left: parent.left
+    background-color: #00B4D8
+    margin-top: -10
+    margin-left: -10
+    size: 2 2
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.right: parent.right
+    background-color: #00B4D8
+    margin-top: -10
+    margin-right: -10
+    size: 2 2
+
+  UIWidget
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    background-color: #1A3A5C
+    margin-bottom: -10
+    margin-left: -10
+    size: 2 2
+
+  UIWidget
+    anchors.bottom: parent.bottom
+    anchors.right: parent.left
+    background-color: #1A3A5C
+    margin-bottom: -10
+    margin-right: -10
+    size: 2 2
+
+SmallReversedQtPanel < UIWidget
+  padding: 4
+  auto-focus: first
+  background-color: #060612
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #1A3A5C
+    margin-left: -4
+    margin-right: -4
+    margin-top: -4
+    height: 2
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    background-color: #1A3A5C
+    margin-left: -4
+    margin-top: -4
+    margin-bottom: -4
+    width: 2
+
+  UIWidget
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #00B4D8
+    margin-left: -4
+    margin-right: -4
+    margin-bottom: -4
+    height: 2
+
+  UIWidget
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    background-color: #00B4D8
+    margin-top: -4
+    margin-right: -4
+    margin-bottom: -4
+    width: 2
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.left: parent.left
+    background-color: #1A3A5C
+    margin-top: -4
+    margin-left: -4
+    size: 2 2
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.right: parent.right
+    background-color: #1A3A5C
+    margin-top: -4
+    margin-right: -4
+    size: 2 2
+
+  UIWidget
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    background-color: #00B4D8
+    margin-bottom: -4
+    margin-left: -4
+    size: 2 2
+
+  UIWidget
+    anchors.bottom: parent.bottom
+    anchors.right: parent.left
+    background-color: #00B4D8
+    margin-bottom: -4
+    margin-right: -4
+    size: 2 2

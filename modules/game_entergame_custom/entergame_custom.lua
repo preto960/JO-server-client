@@ -1,5 +1,6 @@
 -- entergame_custom.lua - Custom login screen for JO Server
--- Transparent background, custom checkbox, Tab/Enter key support
+-- Electric Blue Theme - Right-side positioned login
+-- Tab/Enter key support, neon accent styling
 
 local customWindow = nil
 local originalWindow = nil
@@ -99,7 +100,8 @@ function setup()
 
     local gw = g_window
     if gw and customWindow then
-        local x = (gw.getWidth() - customWindow:getWidth()) / 2
+        -- Position on the right side of the screen with padding
+        local x = gw.getWidth() - customWindow:getWidth() - 60
         local y = (gw.getHeight() - customWindow:getHeight()) / 2
         customWindow:setPosition({ x = x, y = y })
     end
@@ -202,11 +204,11 @@ function updateRememberVisual()
     if box then
         pcall(function()
             if rememberChecked then
-                box:setBackgroundColor('#3A3A5888')
-                box:setBorderColor('#5A5A78AA')
+                box:setBackgroundColor('#00B4D840')
+                box:setBorderColor('#00B4D8AA')
             else
-                box:setBackgroundColor('#22223ACC')
-                box:setBorderColor('#3A3A58AA')
+                box:setBackgroundColor('#060612CC')
+                box:setBorderColor('#1A3A5CCC')
             end
         end)
     end

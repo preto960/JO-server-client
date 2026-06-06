@@ -1,0 +1,135 @@
+-- Electric Theme: Windows
+-- Deep black with neon blue accents, cyberpunk feel
+
+Window < UIWindow
+  font: verdana-11px-antialised
+  size: 200 200
+  opacity: 1
+  color: #CAF0F8
+  text-offset: 0 6
+  text-align: top
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #1A3A5C
+  padding-top: 30
+  padding-left: 12
+  padding-right: 12
+  padding-bottom: 12
+
+  $disabled:
+    color: #CAF0F888
+
+  $dragging:
+    opacity: 0.85
+
+HeadlessWindow < UIWindow
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #1A3A5C
+  padding: 8
+
+MainWindow < Window
+  anchors.centerIn: parent
+
+StaticWindow < Window
+  draggable: false
+
+StaticMainWindow < StaticWindow
+  anchors.centerIn: parent
+
+UpdaterMainWindow < StaticWindow
+  size: 138 90
+  background-color: #060612
+  border-width: 2
+  border-color: #12263A
+  padding: 6
+
+NewWindow < UIWindow
+  font: Verdana Bold-11px
+  size: 200 200
+  color: #90E0EF
+  text-offset: -2 1
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #00B4D8
+  padding-top: 22
+  padding-left: 8
+  padding-right: 8
+  padding-bottom: 8
+
+NewHeadlessWindow < UIWindow
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #1A3A5C
+  anchors.centerIn: parent
+
+NewMainWindow < NewWindow
+  anchors.centerIn: parent
+
+NewStaticWindow < NewWindow
+  &static: true
+
+NewStaticMainWindow < NewStaticWindow
+  anchors.centerIn: parent
+
+WindowCyclopedia < UIWindow
+  font: Verdana Bold-11px
+  size: 200 200
+  color: #90E0EF
+  text-offset: -2 1
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #00B4D8
+  padding-top: 22
+  padding-left: 8
+  padding-right: 8
+  padding-bottom: 8
+
+WindowPodium < UIWindow
+  font: Verdana Bold-11px
+  size: 200 200
+  color: #90E0EF
+  text-offset: -2 1
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #00B4D8
+  padding-top: 22
+
+TransparentWindow < UIWindow
+  font: verdana-11px-antialised
+  size: 200 200
+  color: #00B4D8
+  text-offset: 0 2
+  text-align: top
+
+WindowPanel < Panel
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #1A3A5C
+  padding: 8
+
+RulesWindow < NewHeadlessWindow
+  anchors.centerIn: parent
+  size: 450 345
+  UIWidget
+    size: 145 56
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: -33
+    phantom: true
+  Panel
+    id: contentPanel
+    anchors.fill: parent
+    margin: 15 13 17 13
+    TextList
+      id: rules
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: separator.top
+      margin-top: 10
+      margin-bottom: 10
+      text-align: center
+      padding: 1
+      focusable: false
+      background-color: #060612

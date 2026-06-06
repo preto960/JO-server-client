@@ -1,0 +1,70 @@
+-- Electric Theme: Scrollbars
+-- Dark navy scrollbars with blue accents
+
+VerticalScrollBar < UIScrollBar
+  orientation: vertical
+  width: 12
+  height: 39
+  background-color: #060612
+  border-width: 1
+  border-color: #12263A
+  pixels-scroll: true
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    size: 12 12
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
+    $pressed:
+      background-color: #0A1628
+      border-color: #00B4D8
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 12 12
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
+    $pressed:
+      background-color: #0A1628
+      border-color: #00B4D8
+
+HorizontalScrollBar < UIScrollBar
+  orientation: horizontal
+  height: 12
+  width: 39
+  background-color: #060612
+  border-width: 1
+  border-color: #12263A
+
+  $disabled:
+    color: #CAF0F888
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    size: 12 12
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
+    $pressed:
+      background-color: #0A1628
+      border-color: #00B4D8
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 12 12
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
+    $pressed:
+      background-color: #0A1628
+      border-color: #00B4D8

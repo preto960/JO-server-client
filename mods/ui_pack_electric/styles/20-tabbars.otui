@@ -1,0 +1,61 @@
+-- Electric Theme: TabBars
+-- Dark navy tabs with electric blue active state
+
+MoveableTabBar < UIMoveableTabBar
+  size: 80 21
+MoveableTabBarPanel < Panel
+MoveableTabBarButton < UIButton
+  size: 96 18
+  background-color: #0A1628
+  border-width: 1
+  border-color: #12263A
+  color: #5A7A9A
+  anchors.top: parent.top
+  anchors.left: parent.left
+  margin-top: 2
+  padding: 3
+
+  $checked:
+    background-color: #00B4D8
+    border-color: #1A3A5C
+    color: #0A0A1A
+
+  $on !checked:
+    color: #FF2E63
+
+TabBar < UITabBar
+  size: 80 21
+  Panel
+    id: buttonsPanel
+    anchors.fill: parent
+TabBarPanel < Panel
+TabBarButton < UIButton
+  size: 17 18
+  background-color: #0A1628
+  border-width: 1
+  border-color: #12263A
+  color: #5A7A9A
+  anchors.top: parent.top
+  padding: 5
+
+  $first:
+    anchors.left: parent.left
+
+  $!first:
+    anchors.left: prev.right
+    margin-left: 5
+
+  $hover !checked:
+    background-color: #1B3A5C
+    color: #90E0EF
+
+  $disabled:
+    background-color: #06061288
+
+  $checked:
+    background-color: #00B4D8
+    border-color: #1A3A5C
+    color: #0A0A1A
+
+  $on !checked:
+    color: #FF2E63

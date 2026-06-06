@@ -1,0 +1,257 @@
+-- Electric Theme: Buttons
+-- Dark navy with neon blue highlights
+
+Button < UIButton
+  font: cipsoftFont
+  color: #CAF0F8FF
+  size: 43 20
+  text-offset: 0 2
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+  padding: 10
+  opacity: 1.0
+
+  $hover !disabled:
+    background-color: #1B3A5C
+    border-color: #00B4D8
+
+  $pressed:
+    background-color: #0A1628
+    border-color: #1A3A5C
+    text-offset: 1 1
+
+  $on:
+    background-color: #0A1628
+    border-color: #00B4D8
+    text-offset: 1 1
+
+  $checked:
+    background-color: #0A1628
+    border-color: #00B4D8
+    text-offset: 1 1
+
+  $disabled:
+    color: #CAF0F888
+    opacity: 0.8
+    change-cursor-image: false
+
+TabButton < UIButton
+  size: 22 23
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+  text-offset: 0 1
+  icon-color: #CAF0F8
+  color: #CAF0F8
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !on:
+    background-color: #1B3A5C
+    color: #CAF0F8
+
+  $disabled:
+    background-color: #0A162866
+    icon-color: #1A3A5C
+    change-cursor-image: false
+
+  $on:
+    background-color: #00B4D8
+    color: #0A0A1A
+
+NextButton < UIButton
+  size: 12 21
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+  color: #CAF0F8
+  text-offset: 0 1
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    background-color: #1B3A5C
+
+  $pressed:
+    background-color: #0A1628
+
+  $disabled:
+    color: #CAF0F888
+    change-cursor-image: false
+
+PreviousButton < UIButton
+  size: 12 21
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+  color: #CAF0F8
+  text-offset: 0 1
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    background-color: #1B3A5C
+
+  $pressed:
+    background-color: #0A1628
+
+  $disabled:
+    color: #CAF0F888
+    change-cursor-image: false
+
+AddButton < UIButton
+  size: 20 20
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+  color: #CAF0F8
+  text-offset: 0 1
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    background-color: #1B3A5C
+
+  $pressed:
+    background-color: #0A1628
+
+  $disabled:
+    color: #CAF0F855
+    change-cursor-image: false
+
+TextButton < UIButton
+  size: 22 23
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+  text-offset: 0 1
+  color: #CAF0F8
+
+ImageButton < UIButton
+  size: 22 23
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+  text-offset: 0 1
+  color: #CAF0F8
+
+QtButton < UIButton
+  font: cipsoftFont
+  size: 106 23
+  text-offset: 0 0
+  background-color: #0D1B2A
+  border-width: 2
+  border-color: #1A3A5C
+  padding: 5 10 5 10
+  opacity: 1.0
+  color: #90E0EFFF
+
+  $hover !disabled:
+    background-color: #1B3A5C
+    border-color: #00B4D8
+
+  $pressed:
+    background-color: #0A1628
+    border-color: #1A3A5C
+    text-offset: 1 1
+
+  $disabled:
+    color: #CAF0F888
+    opacity: 0.8
+
+BigPremiumButton < UIButton
+  size: 128 37
+  background-color: #1B3A5C
+  border-width: 2
+  border-color: #00B4D8
+  $pressed:
+    background-color: #0A1628
+  $!on:
+    background-color: #0D1B2A
+  $disabled:
+    color: #CAF0F888
+    opacity: 0.8
+
+MiniPremiumButton < UIButton
+  size: 26 22
+  background-color: #00B4D8
+  border-width: 1
+  border-color: #1A3A5C
+  $pressed:
+    background-color: #1A3A5C
+
+SmallButton < UIButton
+  size: 106 20
+  font: cipsoftFont
+  text-offset: 0 2
+  background-color: #0D1B2A
+  border-width: 2
+  border-color: #1A3A5C
+  padding: 5 10 5 10
+  change-cursor-image: true
+  cursor: pointer
+  color: #CAF0F8
+
+  $hover !disabled:
+    background-color: #1B3A5C
+    border-color: #00B4D8
+
+  $pressed:
+    background-color: #0A1628
+    border-color: #1A3A5C
+    text-offset: 1 2
+
+  $disabled:
+    color: #CAF0F888
+    change-cursor-image: false
+
+ButtonBox < UICheckBox
+  font: verdana-11px-antialised
+  color: #CAF0F8
+  size: 106 23
+  text-offset: 0 0
+  text-align: center
+  background-color: #0D1B2A
+  border-width: 2
+  border-color: #1A3A5C
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    background-color: #1B3A5C
+    border-color: #00B4D8
+
+  $checked:
+    background-color: #00B4D8
+    color: #0A0A1A
+    text-offset: 2 2
+    change-cursor-image: false
+
+  $disabled:
+    color: #CAF0F888
+    opacity: 0.8
+    change-cursor-image: false
+
+ButtonBoxRounded < ButtonBox
+
+CheckBoxButton < UICheckBox
+  size: 106 23
+  background-color: #0D1B2A
+  border-width: 2
+  border-color: #1A3A5C
+  text-align: center
+  padding: 5 10 5 10
+  change-cursor-image: true
+  cursor: pointer
+  color: #90E0EF
+  $checked:
+    background-color: #0A1628
+    border-color: #00B4D8
+    text-offset: 1 1
+  $!checked:
+    text-offset: 0 0
+  $disabled:
+    color: #CAF0F888
+    opacity: 0.8
+    change-cursor-image: false

@@ -1,0 +1,27 @@
+-- Electric Theme: Labels
+-- Cyan/ice blue text on dark backgrounds
+
+Label < UILabel
+  font: verdana-11px-antialised
+  color: #CAF0F8
+
+  $disabled:
+    color: #CAF0F888
+
+FlatLabel < UILabel
+  font: verdana-11px-antialised
+  color: #CAF0F8
+  size: 86 20
+  text-offset: 3 3
+  background-color: #060612
+  border-width: 1
+  border-color: #12263A
+
+  $disabled:
+    color: #CAF0F888
+
+MenuLabel < Label
+
+GameLabel < UILabel
+  font: verdana-11px-antialised
+  color: #CAF0F8

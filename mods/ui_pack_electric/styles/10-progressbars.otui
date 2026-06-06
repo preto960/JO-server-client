@@ -1,0 +1,65 @@
+-- Electric Theme: Progress Bars
+-- Neon pink HP, electric blue mana
+
+ProgressBar < UIProgressBar
+  height: 16
+  background-color: #060612
+  border-width: 2
+  border-color: #1A3A5C
+  font: verdana-11px-rounded
+  text-offset: 0 2
+
+  $!on:
+    visible: false
+    margin-top: 0
+    margin-bottom: 0
+    height: 0
+
+ThickProgressBar < ProgressBar
+
+LifeProgressBar < UIProgressBar
+  height: 16
+  background-color: #FF2E63
+  border: 1 #1A3A5C
+  font: verdana-11px-rounded
+  text-offset: 0 2
+  margin: 2
+
+ProgressRect < UIProgressRect
+  anchors.fill: parent
+  phantom: true
+  color: #CAF0F8
+  background-color: #06061288
+  font: verdana-11px-rounded
+
+HealthBar < ProgressBar
+  border-width: 2
+  border-color: #1A3A5C
+
+ManaBar < ProgressBar
+  background-color: #00B4D8
+  border-width: 2
+  border-color: #1A3A5C
+
+ProgressBarSD < UIProgressBarSD
+  height: 22
+  tooltip-delayed: true
+
+HealthBarSD < ProgressBarSD
+
+ProgressBarSDInv < UIProgressBarSDInverted
+
+InvManaBar < UIProgressBarSDInverted
+  size: 10 30
+  border-width: 1
+  border-color: #1A3A5C
+
+InvVerticalBar < UIVerticalProgressBarSDInverted
+  size: 10 30
+  border-width: 1
+  border-color: #1A3A5C
+
+VerticalBar < UIVerticalProgressBarSD
+  size: 10 30
+  border-width: 1
+  border-color: #1A3A5C

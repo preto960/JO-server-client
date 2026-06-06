@@ -1,0 +1,75 @@
+-- Electric Theme: Top Menu
+-- Deep black top bar with neon blue accent buttons
+
+TopButton < UIButton
+  size: 26 26
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+  color: #CAF0F8FF
+  icon-color: #CAF0F8FF
+
+  $on:
+    background-color: #1B3A5C
+    border-color: #00B4D8
+
+  $hover !disabled:
+    background-color: #1B3A5C
+    border-color: #00B4D8
+    color: #CAF0F899
+
+  $pressed:
+    background-color: #0A1628
+
+  $disabled:
+    color: #CAF0F844
+    icon-color: #CAF0F844
+
+TopToggleButton < UIButton
+  size: 26 26
+  background-color: #1B3A5C
+  border-width: 1
+  border-color: #00B4D8
+  icon-offset: 0 0
+
+  $pressed:
+    background-color: #0A1628
+    icon-offset: 1 1
+
+  $disabled:
+    background-color: #0D1B2A
+    icon-offset: 1 1
+
+MainToggleButton < UIButton
+  size: 20 20
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
+
+  $pressed:
+    background-color: #0A1628
+
+  $on:
+    background-color: #0A1628
+
+TopMenuButtonsPanel < Panel
+  layout:
+    type: horizontalBox
+    spacing: 4
+    fit-children: true
+  padding: 6 4
+
+TopMenuPanel < Panel
+  height: 36
+  background-color: #060612
+  focusable: false
+
+TopMenuFrameCounterLabel < Label
+  font: verdana-11px-rounded
+  color: #00B4D8
+  margin-top: 4
+  margin-left: 5
+
+TopMenuPingLabel < Label
+  font: verdana-11px-rounded
+  color: #CAF0F8

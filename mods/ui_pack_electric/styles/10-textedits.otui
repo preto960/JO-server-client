@@ -1,0 +1,119 @@
+-- Electric Theme: TextEdits
+-- Dark input fields with neon blue accents
+
+TextEdit < UITextEdit
+  font: Verdana Bold-11px
+  color: #CAF0F8
+  padding-left: 2
+  height: 16
+  opacity: 1
+  background-color: #060612
+  border-width: 1
+  border-color: #1A3A5C
+  selection-background-color: #00B4D8
+  cursor: none
+  blink-speed: 600
+  $disabled:
+    color: #06061288
+    opacity: 0.5
+
+PasswordTextEdit < TextEdit
+  text-hidden: true
+  font: pVerdana Bold-11px
+  color: #CAF0F8
+  padding-top: 2
+  padding-left: 3
+
+MultilineTextEdit < TextEdit
+  multiline: true
+
+TextQtEdit < UITextEdit
+  font: verdana-11px-antialised
+  color: #CAF0F8FF
+  size: 86 22
+  text-offset: 0 4
+  opacity: 1
+  padding: 4
+  background-color: #060612FF
+  border-width: 1
+  border-color: #1A3A5CFF
+  selection-color: #0A0A1AFF
+  selection-background-color: #00B4D8FF
+  change-cursor-image: false
+
+  UIWidget
+    background-color: #00B4D8
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin-top: -4
+    margin-bottom: -4
+    margin-left: -4
+    phantom: true
+    width: 1
+
+  UIWidget
+    background-color: #00B4D8
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: -4
+    margin-left: -4
+    margin-right: -4
+    phantom: true
+    height: 1
+
+  UIWidget
+    background-color: #1A3A5C
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-top: -4
+    margin-bottom: -4
+    margin-right: -4
+    phantom: true
+    width: 1
+
+  UIWidget
+    background-color: #1A3A5C
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: -4
+    margin-left: -4
+    margin-right: -4
+    phantom: true
+    height: 1
+
+HiddenTextQtEdit < TextQtEdit
+  text-hidden: true
+
+HiddenTextQtToggleEdit < TextQtEdit
+  text-hidden: true
+
+  UICheckBox
+    size: 19 20
+    anchors.right: parent.right
+    margin-right: -2
+    anchors.verticalCenter: parent.verticalCenter
+    background-color: alpha
+    @onCheckChange: |
+      self:getParent():setTextHidden(not self:isChecked())
+      self:getParent():setTextWrap(false)
+
+AccTextEdit < TextEdit
+  font: pVerdana Bold-11px
+  color: #CAF0F8
+  padding-left: 3
+  padding-top: 2
+  height: 16
+  opacity: 1
+  background-color: #060612
+  border-width: 1
+  border-color: #1A3A5C
+  selection-background-color: #00B4D8
+  cursor: none
+  blink-speed: 600
+  $disabled:
+    color: #06061288
+    opacity: 0.5

@@ -1,0 +1,134 @@
+-- Electric Theme: Checkboxes
+-- Dark boxes with neon blue checked state
+
+CheckBox < UICheckBox
+  size: 12 12
+  text-align: left
+  text-offset: 18 -1
+  background-color: #060612
+  border-width: 1
+  border-color: #1A3A5C
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    border-color: #48CAE4
+
+  $!checked:
+    background-color: #060612
+
+  $checked:
+    background-color: #00B4D8
+
+  $disabled:
+    change-cursor-image: false
+
+CheckBoxCircle < UICheckBox
+  size: 12 12
+  text-align: left
+  text-offset: 18 -1
+  background-color: #060612
+  border-width: 1
+  border-color: #1A3A5C
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    color: #CAF0F8
+
+  $!checked:
+    background-color: #060612
+
+  $checked:
+    background-color: #00B4D8
+
+  $disabled:
+    change-cursor-image: false
+
+ThickCheckBox < UICheckBox
+  size: 18 18
+  text-align: left
+  text-offset: 18 0
+  color: #CAF0F8
+  background-color: #060612
+  border-width: 1
+  border-color: #1A3A5C
+
+  $hover !disabled:
+    color: #CAF0F8
+    border-color: #48CAE4
+
+  $checked:
+    background-color: #00B4D8
+    color: #0A0A1A
+
+  $hover checked:
+    background-color: #00B4D8
+    color: #0A0A1A
+
+  $disabled:
+    color: #CAF0F888
+    opacity: 0.8
+
+ColorBox < UICheckBox
+  size: 13 13
+  background-color: #060612
+  border-width: 1
+  border-color: #1A3A5C
+
+  $checked:
+    background-color: #00B4D8
+
+  $!checked:
+    background-color: #060612
+
+QtCheckBox < UICheckBox
+  size: 14 14
+  text-align: left
+  text-offset: 18 1
+  color: #CAF0F8FF
+  background-color: #060612
+  border-width: 1
+  border-color: #1A3A5C
+
+  $!checked:
+    background-color: #060612
+
+  $checked !disabled:
+    background-color: #00B4D8
+    color: #0A0A1A
+
+  $checked disabled:
+    background-color: #1A3A5C
+
+fakeCheckBox < UICheckBox
+  font: cipsoftFont
+  size: 106 23
+  background-color: #0D1B2A
+  border-width: 2
+  border-color: #1A3A5C
+  padding: 5 10 5 10
+  opacity: 1.0
+  color: #90E0EFFF
+
+  $hover !disabled:
+    color: #CAF0F8
+    border-color: #00B4D8
+
+  $!checked:
+    background-color: #0D1B2A
+
+  $hover !checked:
+    background-color: #1B3A5C
+
+  $checked:
+    background-color: #0A1628
+    border-color: #00B4D8
+
+  $hover checked:
+    background-color: #0A1628
+    border-color: #00B4D8
+
+  $disabled:
+    color: #CAF0F888
+    opacity: 0.8
