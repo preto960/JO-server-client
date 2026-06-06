@@ -695,13 +695,13 @@ function CharacterList.create(characters, account, otui)
     end
 
     charactersWindow = g_ui.displayUI(otui)
-    characterList = charactersWindow:getChildById('characters')
-    panelSort = charactersWindow:getChildById('characterTable')
-    autoReconnectButton = charactersWindow:getChildById('autoReconnect')
+    characterList = charactersWindow:recursiveGetChildById('characters')
+    panelSort = charactersWindow:recursiveGetChildById('characterTable')
+    autoReconnectButton = charactersWindow:recursiveGetChildById('autoReconnect')
     showHiddenCheckbox = charactersWindow:recursiveGetChildById('checkBoxHidden')
     showOutfitsCheckbox = charactersWindow:recursiveGetChildById('checkBoxOutfit')
-    premiumBenefitsPanel = charactersWindow:getChildById('premiumBenefitsPanel')
-    premiumButton = charactersWindow:getChildById('premiumButton')
+    premiumBenefitsPanel = charactersWindow:recursiveGetChildById('premiumBenefitsPanel')
+    premiumButton = charactersWindow:recursiveGetChildById('premiumButton')
 
     characterList.onChildFocusChange = function(self, focusedChild, oldFocusedChild)
         removeAutoReconnectEvent()
@@ -717,7 +717,7 @@ function CharacterList.create(characters, account, otui)
     G.characters = characters
     G.characterAccount = account
 
-    local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
+    local accountStatusLabel = charactersWindow:recursiveGetChildById('accountStatusLabel')
     local accountStatusIcon = nil
     if shouldShowAppearance() then
         accountStatusIcon = charactersWindow:getChildById('accountStatusIcon')

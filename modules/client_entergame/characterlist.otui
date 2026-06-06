@@ -171,13 +171,13 @@ MainWindow
         self:setSize({width = 720, height = 460})
         self:setText('')
         self:setColor("#00000000")
-        self:setImageSource('none')
+        self:setImageSource('')
         self:setImageBorder(0)
       else
         self:setSize({width = 380, height = 460})
         self:setText('')
         self:setColor("#00000000")
-        self:setImageSource('none')
+        self:setImageSource('')
         self:setImageBorder(0)
       end
     else
@@ -235,24 +235,25 @@ MainWindow
       padding: 4
       anchors.top: titleLabel.bottom
       anchors.left: parent.left
-      anchors.right: characterListScrollBar.left
+      anchors.right: parent.right
       anchors.bottom: accountStatusLabel.top
       margin-left: 8
       margin-top: 8
-      margin-right: 4
+      margin-right: 22
       margin-bottom: 4
       focusable: false
-      vertical-scrollbar: characterListScrollBar
       auto-focus: first
       @onSetup: |
         self:setBackgroundColor("#00000000")
 
-    // Scrollbar
+    // Scrollbar (fixed position, no anchor to characters to avoid circular ref)
     VerticalScrollBar
       id: characterListScrollBar
-      anchors.top: characters.top
-      anchors.bottom: characters.bottom
+      anchors.top: titleLabel.bottom
+      anchors.bottom: accountStatusLabel.top
       anchors.right: parent.right
+      margin-top: 8
+      margin-bottom: 4
       margin-right: 8
       step: 14
       pixels-scroll: true
