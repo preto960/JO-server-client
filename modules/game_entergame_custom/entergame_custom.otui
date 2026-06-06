@@ -17,18 +17,10 @@ UIWidget
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840
-  padding: 20 30 20 30
+  padding: 20 30 8 30
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   margin-top: 30
-
-  UIWidget
-    id: topSeparator
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: parent.top
-    height: 1
-    background-color: #00B4D830
 
   Label
     id: nameLabel
@@ -36,7 +28,7 @@ UIWidget
     font: verdana-11px-rounded
     color: #FFFFFFBB
     anchors.left: parent.left
-    anchors.top: topSeparator.bottom
+    anchors.top: parent.top
     margin-top: 10
 
   FlatLineEdit
@@ -54,7 +46,7 @@ UIWidget
     anchors.right: parent.right
     anchors.top: customAccountName.bottom
     margin-top: 1
-    height: 1
+    height: 2
     background-color: #00B4D850
 
   Label
@@ -82,7 +74,7 @@ UIWidget
     anchors.right: parent.right
     anchors.top: customPassword.bottom
     margin-top: 1
-    height: 1
+    height: 2
     background-color: #00B4D850
 
   UICheckBox
