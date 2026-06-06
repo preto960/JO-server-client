@@ -2,133 +2,130 @@ UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 340 420
-  background-color: #0A0A1AEE
+  size: 360 440
+  background-color: #0D0D1ACC
   border-width: 2
-  border-color: #1A3A5CCC
+  border-color: #0A3D5C
 
   UIWidget
-    id: headerBar
+    id: headerArea
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 4
-    background-color: #00B4D8
-    phantom: true
+    height: 80
+    background-color: #0A1628AA
 
   UIWidget
-    id: logoCircle
-    size: 56 56
+    id: logoBox
+    size: 48 48
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    margin-top: 20
-    background-color: #0D1B2A
+    margin-top: 16
+    background-color: #00B4D8
     border-width: 2
-    border-color: #00B4D8
+    border-color: #00E5FF
 
   Label
     id: logoLabel
     !text: 'JO'
-    font: verdana-14px-rounded
-    color: #00E5FF
-    anchors.horizontalCenter: logoCircle.horizontalCenter
-    anchors.verticalCenter: logoCircle.verticalCenter
+    font: verdana-16px-rounded
+    color: #FFFFFF
+    anchors.horizontalCenter: logoBox.horizontalCenter
+    anchors.verticalCenter: logoBox.verticalCenter
 
   Label
     id: serverLabel
     !text: 'Journey Onwards'
-    font: verdana-11px-rounded
+    font: verdana-12px-rounded
     color: #90E0EF
     anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: logoCircle.bottom
-    margin-top: 8
+    anchors.top: logoBox.bottom
+    margin-top: 6
 
   UIWidget
-    anchors.top: serverLabel.bottom
+    id: headerLine
+    anchors.top: headerArea.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     height: 1
-    margin-top: 8
-    margin-left: 30
-    margin-right: 30
-    background-color: #1A3A5C
+    background-color: #00B4D880
     phantom: true
 
   Label
     id: nameLabel
     !text: 'Email'
-    font: verdana-10px-rounded
-    color: #5A7A9A
+    font: verdana-11px-rounded
+    color: #7AA8C8
     anchors.left: parent.left
-    anchors.top: serverLabel.bottom
-    margin-top: 20
-    margin-left: 20
+    anchors.top: headerArea.bottom
+    margin-top: 18
+    margin-left: 28
 
   TextEdit
     id: customAccountName
-    height: 32
+    height: 34
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: nameLabel.bottom
     margin-top: 4
-    margin-left: 20
-    margin-right: 20
-    background-color: #060612CC
+    margin-left: 28
+    margin-right: 28
+    background-color: #0A1628CC
     color: #CAF0F8
     font: verdana-12px-antialised
     text-vertical-alignment: center
     placeholder: "tu email aqui..."
-    placeholder-color: #1A3A5C
+    placeholder-color: #2A4A6A
     image-source: none
     selection-color: #CAF0F8FF
     selection-background-color: #00B4D8
     border-width: 1
-    border-color: #12263A
+    border-color: #1A3A5C
     padding-left: 10
     padding-right: 10
 
   Label
     id: passLabel
     !text: 'Password'
-    font: verdana-10px-rounded
-    color: #5A7A9A
+    font: verdana-11px-rounded
+    color: #7AA8C8
     anchors.left: parent.left
     anchors.top: customAccountName.bottom
     margin-top: 14
-    margin-left: 20
+    margin-left: 28
 
   TextEdit
     id: customPassword
-    height: 32
+    height: 34
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: passLabel.bottom
     margin-top: 4
-    margin-left: 20
-    margin-right: 20
-    background-color: #060612CC
+    margin-left: 28
+    margin-right: 28
+    background-color: #0A1628CC
     color: #CAF0F8
     font: verdana-12px-antialised
     text-vertical-alignment: center
     placeholder: "tu password..."
-    placeholder-color: #1A3A5C
+    placeholder-color: #2A4A6A
     image-source: none
     selection-color: #CAF0F8FF
     selection-background-color: #00B4D8
     border-width: 1
-    border-color: #12263A
+    border-color: #1A3A5C
     padding-left: 10
     padding-right: 10
     text-hidden: true
 
   UIButton
     id: customRememberBox
-    size: 14 14
+    size: 16 16
     anchors.left: parent.left
     anchors.top: customPassword.bottom
-    margin-top: 14
-    margin-left: 20
-    background-color: #060612CC
+    margin-top: 16
+    margin-left: 28
+    background-color: #0A1628CC
     border-width: 1
     border-color: #1A3A5C
     @onClick: modules.game_entergame_custom.toggleRemember()
@@ -137,42 +134,42 @@ UIWidget
     id: rememberText
     !text: 'Recordar sesion'
     font: verdana-10px-rounded
-    color: #5A7A9A
+    color: #5A8AAA
     anchors.left: customRememberBox.right
     anchors.top: customRememberBox.top
-    margin-left: 6
+    margin-left: 8
 
   UIButton
     id: loginButton
     !text: 'Iniciar Sesion'
-    font: verdana-12px-rounded
-    color: #CAF0F8
+    font: verdana-13px-rounded
+    color: #FFFFFF
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: customRememberBox.bottom
-    margin-top: 18
-    margin-left: 20
-    margin-right: 20
-    height: 40
-    background-color: #0D1B2ADD
+    margin-top: 20
+    margin-left: 28
+    margin-right: 28
+    height: 42
+    background-color: #00B4D8
     border-width: 1
-    border-color: #00B4D8
+    border-color: #0090B0
     @onClick: modules.game_entergame_custom.doCustomLogin()
     $hover:
-      background-color: #1B3A5CDD
-      border-color: #48CAE4
-    $pressed:
-      background-color: #0A1628DD
+      background-color: #00D4F8
       border-color: #00B4D8
+    $pressed:
+      background-color: #008AA8
+      border-color: #006080
 
   UIButton
     id: forgotPassBtn
     !text: 'Olvide mi password'
-    font: verdana-9px-rounded
-    color: #5A7A9A
+    font: verdana-10px-rounded
+    color: #5A8AAA
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: loginButton.bottom
-    margin-top: 12
+    margin-top: 14
     @onClick: modules.game_entergame_custom.onForgotPassword()
     $hover:
       color: #00B4D8
@@ -180,8 +177,8 @@ UIWidget
   UIButton
     id: createAccountBtn
     !text: 'Crear cuenta nueva'
-    font: verdana-9px-rounded
-    color: #5A7A9A
+    font: verdana-10px-rounded
+    color: #5A8AAA
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: forgotPassBtn.bottom
     margin-top: 4
@@ -190,13 +187,14 @@ UIWidget
       color: #00B4D8
 
   UIWidget
+    id: bottomLine
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     height: 1
-    margin-bottom: 20
-    margin-left: 30
-    margin-right: 30
+    margin-bottom: 14
+    margin-left: 28
+    margin-right: 28
     background-color: #1A3A5C
     phantom: true
 
@@ -204,7 +202,7 @@ UIWidget
     id: versionLabel
     !text: 'v1.0'
     font: verdana-9px-rounded
-    color: #12263A
+    color: #1A3A5C
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
-    margin-bottom: 6
+    margin-bottom: 4

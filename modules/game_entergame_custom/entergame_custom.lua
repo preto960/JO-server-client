@@ -100,8 +100,8 @@ function setup()
 
     local gw = g_window
     if gw and customWindow then
-        -- Position on the right side of the screen with padding
-        local x = gw.getWidth() - customWindow:getWidth() - 60
+        -- Position on the left side, centered vertically with nice spacing
+        local x = 80
         local y = (gw.getHeight() - customWindow:getHeight()) / 2
         customWindow:setPosition({ x = x, y = y })
     end
@@ -204,11 +204,11 @@ function updateRememberVisual()
     if box then
         pcall(function()
             if rememberChecked then
-                box:setBackgroundColor('#00B4D840')
-                box:setBorderColor('#00B4D8AA')
+                box:setBackgroundColor('#00B4D880')
+                box:setBorderColor('#00B4D8')
             else
-                box:setBackgroundColor('#060612CC')
-                box:setBorderColor('#1A3A5CCC')
+                box:setBackgroundColor('#0A1628CC')
+                box:setBorderColor('#1A3A5C')
             end
         end)
     end
