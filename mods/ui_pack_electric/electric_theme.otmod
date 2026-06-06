@@ -4,7 +4,7 @@ Module
   author: JO Dev
   version: 1.0
   dependOnClient: true
-  autoLoad: false
+  autoLoad: true
   loadLater: true
 
   onLoad: |
