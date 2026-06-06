@@ -1,0 +1,61 @@
+-- Fantasy Theme: TabBars
+-- Warm brown tabs with golden active state
+
+MoveableTabBar < UIMoveableTabBar
+  size: 80 21
+MoveableTabBarPanel < Panel
+MoveableTabBarButton < UIButton
+  size: 96 18
+  background-color: #3A2008
+  border-width: 1
+  border-color: #6B4A22
+  color: #8B6914
+  anchors.top: parent.top
+  anchors.left: parent.left
+  margin-top: 2
+  padding: 3
+
+  $checked:
+    background-color: #6B4A22
+    border-color: #D4A017
+    color: #F0D8A8
+
+  $on !checked:
+    color: #C41E3A
+
+TabBar < UITabBar
+  size: 80 21
+  Panel
+    id: buttonsPanel
+    anchors.fill: parent
+TabBarPanel < Panel
+TabBarButton < UIButton
+  size: 17 18
+  background-color: #3A2008
+  border-width: 1
+  border-color: #6B4A22
+  color: #8B6914
+  anchors.top: parent.top
+  padding: 5
+
+  $first:
+    anchors.left: parent.left
+
+  $!first:
+    anchors.left: prev.right
+    margin-left: 5
+
+  $hover !checked:
+    background-color: #6B4A22
+    color: #F0D8A8
+
+  $disabled:
+    background-color: #1E120888
+
+  $checked:
+    background-color: #D4A017
+    border-color: #8B6914
+    color: #2A1A0A
+
+  $on !checked:
+    color: #C41E3A

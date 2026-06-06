@@ -1,0 +1,112 @@
+-- Medieval Theme: ProgressBars
+-- Dark blood red HP, navy blue mana
+
+ProgressBar < UIProgressBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-10px
+  padding: 2
+  size: 180 20
+
+ThickProgressBar < UIProgressBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 2
+  color: #D1D5DB
+  font: terminus-medium-11px
+  padding: 4
+  size: 180 24
+
+LifeProgressBar < UIProgressBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-12px
+  padding: 2
+  size: 180 20
+
+ProgressRect < UIProgressBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  size: 100% 20
+
+HealthBar < UIProgressBar
+  background-color: #111827
+  color: #991B1B
+  border-color: #374151
+  border-width: 1
+  font: terminus-bold-11px
+  padding: 2
+  size: 180 20
+  $!check:
+    image-source: /ui_pack_medieval/images/healthbar.png
+    image-border: 2
+  $check:
+    image-source: /ui_pack_medieval/images/healthbar_checked.png
+    image-border: 2
+
+ManaBar < UIProgressBar
+  background-color: #111827
+  color: #1E40AF
+  border-color: #374151
+  border-width: 1
+  font: terminus-bold-11px
+  padding: 2
+  size: 180 20
+  $!check:
+    image-source: /ui_pack_medieval/images/manabar.png
+    image-border: 2
+  $check:
+    image-source: /ui_pack_medieval/images/manabar_checked.png
+    image-border: 2
+
+ProgressBarSD < UIProgressBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  padding: 2
+  size: 180 20
+
+HealthBarSD < UIProgressBar
+  background-color: #111827
+  color: #991B1B
+  border-color: #374151
+  border-width: 1
+  padding: 2
+  size: 180 20
+
+ProgressBarSDInv < UIProgressBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  padding: 2
+  size: 20 180
+  &inverted: true
+
+InvManaBar < UIProgressBar
+  background-color: #111827
+  color: #1E40AF
+  border-color: #374151
+  border-width: 1
+  padding: 2
+  size: 20 180
+  &inverted: true
+
+InvVerticalBar < UIProgressBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  padding: 2
+  size: 20 180
+  &inverted: true
+
+VerticalBar < UIProgressBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  padding: 2
+  size: 20 180

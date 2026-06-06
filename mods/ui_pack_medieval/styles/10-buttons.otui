@@ -1,0 +1,146 @@
+-- Medieval Theme: Buttons
+-- Steel and iron buttons with cold blue-grey tones
+
+Button < UIButton
+  background-color: #374151
+  color: #D1D5DB
+  border-color: #4A5568
+  border-width: 1
+  font: terminus-medium-12px
+  padding: 4 8
+  size: 100 24
+  &focusable: true
+  $hover:
+    background-color: #4B5563
+    border-color: #60A5FA
+    color: #E5E7EB
+  $pressed:
+    background-color: #1F2937
+    border-color: #4A5568
+    color: #9CA3AF
+  $disabled:
+    background-color: #1F2937
+    color: #6B7280
+    border-color: #374151
+
+TabButton < Button
+  font: terminus-medium-11px
+  padding: 3 6
+  size: 90 20
+  $checked:
+    background-color: #1F2937
+    border-color: #60A5FA
+    color: #60A5FA
+
+NextButton < Button
+  size: 20 20
+  text: >
+  padding: 0
+  font: terminus-bold-14px
+  image-source: /ui_pack_medieval/images/button_next.png
+  image-size: 20 20
+  $hover:
+    image-source: /ui_pack_medieval/images/button_next_hover.png
+
+PreviousButton < Button
+  size: 20 20
+  text: <
+  padding: 0
+  font: terminus-bold-14px
+  image-source: /ui_pack_medieval/images/button_previous.png
+  image-size: 20 20
+  $hover:
+    image-source: /ui_pack_medieval/images/button_previous_hover.png
+
+AddButton < Button
+  size: 20 20
+  text: +
+  padding: 0
+  font: terminus-bold-14px
+
+TextButton < Button
+  background-color: transparent
+  border-color: transparent
+  border-width: 0
+  padding: 2 4
+  $hover:
+    background-color: #374151
+    border-color: #4A5568
+    border-width: 1
+
+ImageButton < UIButton
+  background-color: transparent
+  border-color: transparent
+  border-width: 0
+  size: 20 20
+  $hover:
+    background-color: #37415144
+  $pressed:
+    background-color: #1F293744
+
+QtButton < Button
+  background-color: #374151
+  border-width: 0
+  image-source: /ui_pack_medieval/images/qt_button.png
+  image-border: 6
+  padding: 6 12
+  size: 120 26
+  $hover:
+    background-color: #4B5563
+  $pressed:
+    background-color: #1F2937
+
+BigPremiumButton < Button
+  size: 140 28
+  font: terminus-bold-13px
+  background-color: #374151
+  border-color: #4A5568
+  $hover:
+    background-color: #4B5563
+    border-color: #60A5FA
+
+MiniPremiumButton < Button
+  size: 90 20
+  font: terminus-medium-11px
+  background-color: #374151
+  border-color: #4A5568
+  $hover:
+    background-color: #4B5563
+    border-color: #60A5FA
+
+SmallButton < Button
+  size: 20 20
+  padding: 0
+  font: terminus-medium-11px
+
+ButtonBox < UIWidget
+  background-color: #374151
+  border-color: #4A5568
+  border-width: 1
+  padding: 2
+  size: 24 24
+  &focusable: true
+  $hover:
+    background-color: #4B5563
+    border-color: #60A5FA
+  $pressed:
+    background-color: #1F2937
+    border-color: #4A5568
+
+ButtonBoxRounded < ButtonBox
+  image-source: /ui_pack_medieval/images/buttonbox_rounded.png
+  image-border: 5
+
+CheckBoxButton < UIButton
+  background-color: #111827
+  border-color: #4A5568
+  border-width: 1
+  size: 16 16
+  $hover:
+    border-color: #60A5FA
+  $checked:
+    background-color: #60A5FA
+    border-color: #60A5FA
+  $disabled:
+    background-color: #1F2937
+    border-color: #374151

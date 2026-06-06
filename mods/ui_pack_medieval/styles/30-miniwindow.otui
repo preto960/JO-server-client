@@ -1,0 +1,264 @@
+-- Medieval Theme: MiniWindows
+-- Compact stone/iron windows with cold blue-grey tones
+
+MiniWindow < UIGroup
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 1
+  size: 200 200
+  &resizeable: true
+  &moveable: true
+  &dragable: true
+  image-source: /ui_pack_medieval/images/mini_window.png
+  image-border: 4
+
+  UILabel#miniwindowTitle
+    background-color: #2D3748
+    color: #D1D5DB
+    font: terminus-medium-11px
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 20
+    padding-left: 6
+    padding-right: 6
+    margin.top: 1
+    margin.left: 1
+    margin.right: 1
+    text-auto-resize: true
+    text-margin-bottom: 2
+
+  UIButton#closeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 2
+    margin.right: 2
+    size: 16 16
+    image-source: /ui_pack_medieval/images/miniwindow_close.png
+    $hover:
+      background-color: #991B1B
+      image-source: /ui_pack_medieval/images/miniwindow_close_hover.png
+    $pressed:
+      background-color: #7F1D1D
+      image-source: /ui_pack_medieval/images/miniwindow_close_pressed.png
+
+  UIButton#pinButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 2
+    margin.right: 20
+    size: 16 16
+    image-source: /ui_pack_medieval/images/miniwindow_pin.png
+    $hover:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_hover.png
+    $pressed:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_pressed.png
+    $checked:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_on.png
+
+  UIButton#miniwindowIcon
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin.top: 2
+    margin.left: 2
+    size: 16 16
+
+  UIButton#minimizeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 2
+    margin.right: 38
+    size: 16 16
+    image-source: /ui_pack_medieval/images/miniwindow_minimize.png
+    $hover:
+      image-source: /ui_pack_medieval/images/miniwindow_minimize_hover.png
+    $pressed:
+      image-source: /ui_pack_medieval/images/miniwindow_minimize_pressed.png
+
+  UIButton#maximizeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 2
+    margin.right: 56
+    size: 16 16
+    image-source: /ui_pack_medieval/images/miniwindow_maximize.png
+    $hover:
+      image-source: /ui_pack_medieval/images/miniwindow_maximize_hover.png
+    $pressed:
+      image-source: /ui_pack_medieval/images/miniwindow_maximize_pressed.png
+
+  UIButton#resizeGrip
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 12 12
+    image-source: /ui_pack_medieval/images/miniwindow_resize.png
+
+MiniWindowContents < UIGroup
+  anchors.top: parent.top
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.bottom: parent.bottom
+  margin.top: 22
+  padding: 2
+
+MiniQtScrollableWindow < UIGroup
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 1
+  size: 200 200
+  &resizeable: true
+  &moveable: true
+
+  UILabel#miniwindowTitle
+    background-color: #2D3748
+    color: #D1D5DB
+    font: terminus-medium-11px
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 20
+    padding-left: 6
+    padding-right: 6
+    margin.top: 1
+    margin.left: 1
+    margin.right: 1
+    text-auto-resize: true
+    text-margin-bottom: 2
+
+  UIButton#closeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 2
+    margin.right: 2
+    size: 16 16
+    image-source: /ui_pack_medieval/images/miniwindow_close.png
+    $hover:
+      background-color: #991B1B
+      image-source: /ui_pack_medieval/images/miniwindow_close_hover.png
+    $pressed:
+      background-color: #7F1D1D
+      image-source: /ui_pack_medieval/images/miniwindow_close_pressed.png
+
+  UIButton#pinButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 2
+    margin.right: 20
+    size: 16 16
+    image-source: /ui_pack_medieval/images/miniwindow_pin.png
+    $hover:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_hover.png
+    $pressed:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_pressed.png
+    $checked:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_on.png
+
+  UIWidget#contents
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.top: 22
+    padding: 2
+    &scrollable: true
+
+MiniQtWindow < UIGroup
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 1
+  size: 200 200
+
+  UILabel#miniwindowTitle
+    background-color: #2D3748
+    color: #D1D5DB
+    font: terminus-medium-11px
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 20
+    padding-left: 6
+    padding-right: 6
+    margin.top: 1
+    margin.left: 1
+    margin.right: 1
+    text-auto-resize: true
+    text-margin-bottom: 2
+
+  UIButton#closeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 2
+    margin.right: 2
+    size: 16 16
+    image-source: /ui_pack_medieval/images/miniwindow_close.png
+    $hover:
+      background-color: #991B1B
+      image-source: /ui_pack_medieval/images/miniwindow_close_hover.png
+    $pressed:
+      background-color: #7F1D1D
+      image-source: /ui_pack_medieval/images/miniwindow_close_pressed.png
+
+  UIButton#pinButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 2
+    margin.right: 20
+    size: 16 16
+    image-source: /ui_pack_medieval/images/miniwindow_pin.png
+    $hover:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_hover.png
+    $pressed:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_pressed.png
+    $checked:
+      image-source: /ui_pack_medieval/images/miniwindow_pin_on.png
+
+  UIWidget#contents
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.top: 22
+    padding: 2
+
+FloatingInputWindow < UIGroup
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 2
+  size: 200 30
+
+  UITextEdit#textEdit
+    background-color: #111827
+    color: #D1D5DB
+    border-color: #374151
+    border-width: 1
+    font: terminus-medium-12px
+    padding: 4 6
+    anchors.fill: parent
+    text-offset-x: 4
+    text-offset-y: 2
+    selection-color: #4A556866
+    selection-background-color: #4A5568
+
+BorderlessGameWindow < UIGroup
+  background-color: transparent
+  border-color: transparent
+  border-width: 0
+  size: 200 200
+  &dragable: true
+
+  UILabel#dragHeader
+    background-color: #2D374899
+    color: #D1D5DB
+    font: terminus-medium-11px
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 18
+    padding-left: 4
+    padding-right: 4
+    text-auto-resize: true
+    text-margin-bottom: 1

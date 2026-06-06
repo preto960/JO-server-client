@@ -1,0 +1,121 @@
+-- Medieval Theme: TextEdits
+-- Dark input fields with steel borders
+
+TextEdit < UITextEdit
+  background-color: #111827
+  color: #D1D5DB
+  border-color: #374151
+  border-width: 1
+  font: terminus-medium-12px
+  padding: 4 6
+  size: 180 24
+  text-offset-x: 4
+  text-offset-y: 2
+  selection-color: #4A556866
+  selection-background-color: #4A5568
+  $disabled:
+    color: #6B7280
+    background-color: #0D1117
+    border-color: #1F2937
+
+PasswordTextEdit < TextEdit
+  &text-hidden: true
+
+MultilineTextEdit < TextEdit
+  size: 200 80
+  &multiline: true
+  text-wrap: true
+
+TextQtEdit < UITextEdit
+  background-color: #111827
+  color: #D1D5DB
+  border-width: 0
+  font: terminus-medium-12px
+  padding: 4 6
+  size: 180 24
+  text-offset-x: 4
+  text-offset-y: 2
+  selection-color: #4A556866
+  selection-background-color: #4A5568
+
+  UILabel#borderTop
+    background-color: #4A5568
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 1
+    margin-top: 1
+    margin-left: 1
+    margin-right: 1
+
+  UILabel#borderBottom
+    background-color: #4A5568
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 1
+    margin-bottom: 1
+    margin-left: 1
+    margin-right: 1
+
+  UILabel#borderLeft
+    background-color: #4A5568
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    width: 1
+    margin-top: 1
+    margin-bottom: 1
+    margin-left: 1
+
+  UILabel#borderRight
+    background-color: #4A5568
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    width: 1
+    margin-top: 1
+    margin-bottom: 1
+    margin-right: 1
+
+  UILabel#borderTopLeft
+    image-source: /ui_pack_medieval/images/panel_corner.png
+    anchors.top: parent.top
+    anchors.left: parent.left
+    size: 2 2
+
+  UILabel#borderTopRight
+    image-source: /ui_pack_medieval/images/panel_corner.png
+    anchors.top: parent.top
+    anchors.right: parent.right
+    size: 2 2
+
+  UILabel#borderBottomLeft
+    image-source: /ui_pack_medieval/images/panel_corner.png
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    size: 2 2
+
+  UILabel#borderBottomRight
+    image-source: /ui_pack_medieval/images/panel_corner.png
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 2 2
+
+HiddenTextQtEdit < TextQtEdit
+  &text-hidden: true
+
+HiddenTextQtToggleEdit < HiddenTextQtEdit
+
+AccTextEdit < UITextEdit
+  background-color: #111827
+  color: #D1D5DB
+  border-color: #374151
+  border-width: 1
+  font: terminus-medium-12px
+  padding: 4 6
+  size: 180 24
+  text-offset-x: 4
+  text-offset-y: 2
+  selection-color: #4A556866
+  selection-background-color: #4A5568

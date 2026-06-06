@@ -1,0 +1,136 @@
+-- Medieval Theme: Windows
+-- Stone/iron medieval windows with cold blue-grey tones
+
+Window < UIGroup
+  background-color: #1A1E24
+  color: #D1D5DB
+  border-color: #4A5568
+  border-width: 1
+  border-image:
+    source: /ui_pack_medieval/images/panel_flat.png
+    border: 4
+    border.top: 4
+    border.bottom: 4
+    border.left: 4
+    border.right: 4
+  padding: 4
+  size: 480 360
+  &resizeable: true
+
+HeadlessWindow < Window
+  headless: true
+
+MainWindow < Window
+  size: 100% 100%
+  anchors.fill: parent
+  margin-top: 0
+  margin-right: 0
+  margin-bottom: 0
+  margin-left: 0
+
+StaticWindow < Window
+  &moveable: false
+  &resizeable: false
+
+StaticMainWindow < StaticWindow
+  anchors.fill: parent
+
+UpdaterMainWindow < MainWindow
+
+NewWindow < UIGroup
+  background-color: #1A1E24
+  color: #D1D5DB
+  border-color: #4A5568
+  border-width: 1
+  padding: 6
+  size: 480 360
+  image-source: /ui_pack_medieval/images/window.png
+  image-border: 32
+  &resizeable: true
+
+NewHeadlessWindow < NewWindow
+  headless: true
+
+NewMainWindow < NewWindow
+  size: 100% 100%
+  anchors.fill: parent
+  margin-top: 0
+  margin-right: 0
+  margin-bottom: 0
+  margin-left: 0
+
+NewStaticWindow < NewWindow
+  &moveable: false
+  &resizeable: false
+
+NewStaticMainWindow < NewStaticWindow
+  anchors.fill: parent
+
+WindowCyclopedia < NewWindow
+  size: 900 640
+
+WindowPodium < NewWindow
+  size: 400 500
+
+TransparentWindow < Window
+  background-color: #1A1E2499
+  border-color: #4A556855
+  border-width: 1
+
+WindowPanel < UIGroup
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 1
+  image-source: /ui_pack_medieval/images/panel.png
+  image-border: 4
+
+RulesWindow < NewWindow
+  size: 600 400
+
+-- Window Header (used internally)
+WindowTitleBar < UILabel
+  background-color: #2D3748
+  color: #D1D5DB
+  font: terminus-medium-14px
+  anchors.top: parent.top
+  anchors.left: parent.left
+  anchors.right: parent.right
+  height: 22
+  padding-left: 6
+  padding-right: 6
+  margin.top: 1
+  margin.left: 1
+  margin.right: 1
+  text-auto-resize: true
+  text-margin-bottom: 2
+
+WindowCloseButton < UIButton
+  anchors.top: parent.top
+  anchors.right: parent.right
+  margin.top: 3
+  margin.right: 3
+  size: 18 18
+  image-source: /ui_pack_medieval/images/button_close.png
+  $hover:
+    image-source: /ui_pack_medieval/images/button_close_hover.png
+  $pressed:
+    image-source: /ui_pack_medieval/images/button_close_pressed.png
+
+WindowPinButton < UIButton
+  anchors.top: parent.top
+  anchors.right: parent.right
+  margin.top: 3
+  margin.right: 22
+  size: 18 18
+  image-source: /ui_pack_medieval/images/button_pin.png
+  $hover:
+    image-source: /ui_pack_medieval/images/button_pin_hover.png
+  $pressed:
+    image-source: /ui_pack_medieval/images/button_pin_pressed.png
+
+WindowResizeGrip < UIButton
+  anchors.bottom: parent.bottom
+  anchors.right: parent.right
+  size: 14 14
+  image-source: /ui_pack_medieval/images/resize_grip.png

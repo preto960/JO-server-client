@@ -1,0 +1,87 @@
+-- Medieval Theme: PopupMenus
+-- Dark slate popups with stone borders
+
+PopupMenuButton < UIButton
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-12px
+  padding: 4 8
+  size: 100% 24
+  margin: 1
+  text-align: left
+  text-auto-resize: true
+  &focusable: true
+  $hover:
+    background-color: #374151
+    border-color: #60A5FA
+    color: #E5E7EB
+  $pressed:
+    background-color: #1F2937
+    border-color: #4A5568
+  $disabled:
+    color: #6B7280
+    background-color: #1A1E24
+
+PopupMenuShortcutLabel < UILabel
+  color: #6B7280
+  font: terminus-medium-11px
+  anchors.right: parent.right
+  anchors.vertical-center: parent.vertical-center
+  margin-right: 8
+  text-auto-resize: true
+
+PopupMenuSeparator < UIGroup
+  background-color: #374151
+  size: 100% 1
+  height: 1
+  margin: 4 2
+
+PopupMenu < UIPopupMenu
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 2
+  size: 160 100
+  &auto-reposition: true
+
+PopupScrollMenuButton < PopupMenuButton
+  size: 100% 22
+
+PopupScrollMenuShortcutLabel < PopupMenuShortcutLabel
+
+PopupScrollMenuSeparator < PopupMenuSeparator
+
+PopupScrollMenu < UIPopupMenu
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 2
+  size: 160 120
+  &auto-reposition: true
+  &scrollable: true
+
+PopupMenuCheckBox < UIButton
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-12px
+  padding: 4 8
+  size: 100% 24
+  margin: 1
+  text-align: left
+  text-auto-resize: true
+  &focusable: true
+  $hover:
+    background-color: #374151
+    border-color: #60A5FA
+  $pressed:
+    background-color: #1F2937
+  $checked:
+    background-color: #1F2937
+    border-color: #60A5FA
+  $disabled:
+    color: #6B7280
+    background-color: #1A1E24

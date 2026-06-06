@@ -1,0 +1,102 @@
+-- Medieval Theme: Checkboxes
+-- Dark panels with cold blue accent when checked
+
+CheckBox < UICheckBox
+  background-color: #111827
+  border-color: #4A5568
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-12px
+  size: 18 18
+  text-margin-right: 6
+  text-auto-resize: true
+  box-height: 16
+  box-width: 16
+  $hover:
+    border-color: #60A5FA
+  $checked:
+    box-color: #60A5FA
+    box-border-color: #60A5FA
+  $disabled:
+    color: #6B7280
+    box-color: #1F2937
+    box-border-color: #374151
+
+CheckBoxCircle < UICheckBox
+  background-color: #111827
+  border-color: #4A5568
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-12px
+  size: 18 18
+  text-margin-right: 6
+  text-auto-resize: true
+  box-height: 16
+  box-width: 16
+  $hover:
+    border-color: #60A5FA
+  $checked:
+    box-color: #60A5FA
+    box-border-color: #60A5FA
+  $disabled:
+    color: #6B7280
+    box-color: #1F2937
+    box-border-color: #374151
+
+ThickCheckBox < UICheckBox
+  background-color: #111827
+  border-color: #4A5568
+  border-width: 2
+  color: #D1D5DB
+  font: terminus-medium-12px
+  size: 20 20
+  text-margin-right: 8
+  text-auto-resize: true
+  box-height: 18
+  box-width: 18
+  $hover:
+    border-color: #60A5FA
+  $checked:
+    box-color: #60A5FA
+    box-border-color: #60A5FA
+  $disabled:
+    color: #6B7280
+    box-color: #1F2937
+    box-border-color: #374151
+
+ColorBox < UIWidget
+  background-color: #111827
+  border-color: #4A5568
+  border-width: 1
+  size: 16 16
+
+QtCheckBox < UICheckBox
+  background-color: transparent
+  color: #D1D5DB
+  font: terminus-medium-12px
+  size: 16 16
+  text-margin-right: 6
+  text-auto-resize: true
+  box-height: 16
+  box-width: 16
+  box-color: #111827
+  box-border-color: #4A5568
+  $hover:
+    box-border-color: #60A5FA
+  $checked:
+    box-color: #60A5FA
+    box-border-color: #60A5FA
+  $disabled:
+    color: #6B7280
+    box-color: #1F2937
+    box-border-color: #374151
+
+fakeCheckBox < UILabel
+  color: #D1D5DB
+  background-color: #111827
+  border-color: #4A5568
+  border-width: 1
+  font: terminus-medium-12px
+  size: 18 18
+  padding: 2
+  text-auto-resize: true

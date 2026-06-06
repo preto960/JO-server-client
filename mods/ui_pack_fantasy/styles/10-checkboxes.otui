@@ -1,0 +1,134 @@
+-- Fantasy Theme: Checkboxes
+-- Golden border with warm amber accents
+
+CheckBox < UICheckBox
+  size: 12 12
+  text-align: left
+  text-offset: 18 -1
+  background-color: #1E1208
+  border-width: 1
+  border-color: #8B6914
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    border-color: #D4A017
+
+  $!checked:
+    background-color: #1E1208
+
+  $checked:
+    background-color: #D4A017
+
+  $disabled:
+    change-cursor-image: false
+
+CheckBoxCircle < UICheckBox
+  size: 12 12
+  text-align: left
+  text-offset: 18 -1
+  background-color: #1E1208
+  border-width: 1
+  border-color: #8B6914
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    color: #F0D8A8
+
+  $!checked:
+    background-color: #1E1208
+
+  $checked:
+    background-color: #D4A017
+
+  $disabled:
+    change-cursor-image: false
+
+ThickCheckBox < UICheckBox
+  size: 18 18
+  text-align: left
+  text-offset: 18 0
+  color: #F0D8A8
+  background-color: #1E1208
+  border-width: 1
+  border-color: #8B6914
+
+  $hover !disabled:
+    color: #F0D8A8
+    border-color: #D4A017
+
+  $checked:
+    background-color: #D4A017
+    color: #2A1A0A
+
+  $hover checked:
+    background-color: #D4A017
+    color: #2A1A0A
+
+  $disabled:
+    color: #F0D8A888
+    opacity: 0.8
+
+ColorBox < UICheckBox
+  size: 13 13
+  background-color: #1E1208
+  border-width: 1
+  border-color: #8B6914
+
+  $checked:
+    background-color: #D4A017
+
+  $!checked:
+    background-color: #1E1208
+
+QtCheckBox < UICheckBox
+  size: 14 14
+  text-align: left
+  text-offset: 18 1
+  color: #F0D8A8FF
+  background-color: #1E1208
+  border-width: 1
+  border-color: #8B6914
+
+  $!checked:
+    background-color: #1E1208
+
+  $checked !disabled:
+    background-color: #D4A017
+    color: #2A1A0A
+
+  $checked disabled:
+    background-color: #6B4A22
+
+fakeCheckBox < UICheckBox
+  font: cipsoftFont
+  size: 106 23
+  background-color: #4A3018
+  border-width: 2
+  border-color: #8B6914
+  padding: 5 10 5 10
+  opacity: 1.0
+  color: #E8C87AFF
+
+  $hover !disabled:
+    color: #F0D8A8
+    border-color: #D4A017
+
+  $!checked:
+    background-color: #4A3018
+
+  $hover !checked:
+    background-color: #6B4A22
+
+  $checked:
+    background-color: #3A2008
+    border-color: #D4A017
+
+  $hover checked:
+    background-color: #3A2008
+    border-color: #D4A017
+
+  $disabled:
+    color: #F0D8A888
+    opacity: 0.8

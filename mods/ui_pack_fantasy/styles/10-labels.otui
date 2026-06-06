@@ -1,0 +1,27 @@
+-- Fantasy Theme: Labels
+-- Warm cream/parchment text colors
+
+Label < UILabel
+  font: verdana-11px-antialised
+  color: #F0D8A8
+
+  $disabled:
+    color: #F0D8A888
+
+FlatLabel < UILabel
+  font: verdana-11px-antialised
+  color: #F0D8A8
+  size: 86 20
+  text-offset: 3 3
+  background-color: #1E1208
+  border-width: 1
+  border-color: #6B4A22
+
+  $disabled:
+    color: #F0D8A888
+
+MenuLabel < Label
+
+GameLabel < UILabel
+  font: verdana-11px-antialised
+  color: #F0D8A8

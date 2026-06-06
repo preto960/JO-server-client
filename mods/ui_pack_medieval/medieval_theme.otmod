@@ -1,0 +1,31 @@
+Module
+  name: ui_pack_medieval
+  description: Medieval UI Theme - Stone and iron with cold blue-grey tones
+  author: JO Dev
+  version: 1.0
+  dependOnClient: true
+  autoLoad: false
+  loadLater: true
+
+  onLoad: |
+    -- Only load if fantasy pack is NOT active
+    if g_modules.getModule('ui_pack_fantasy') and g_modules.getModule('ui_pack_fantasy'):isLoaded() then
+      g_logger.warning('[Medieval Theme] Fantasy theme is already active, skipping medieval theme.')
+      return
+    end
+    g_logger.info('[Medieval Theme] Loading Medieval UI Pack...')
+    importStyle '/ui_pack_medieval/styles/10-windows.otui'
+    importStyle '/ui_pack_medieval/styles/10-buttons.otui'
+    importStyle '/ui_pack_medieval/styles/10-panels.otui'
+    importStyle '/ui_pack_medieval/styles/10-labels.otui'
+    importStyle '/ui_pack_medieval/styles/10-checkboxes.otui'
+    importStyle '/ui_pack_medieval/styles/10-textedits.otui'
+    importStyle '/ui_pack_medieval/styles/10-separators.otui'
+    importStyle '/ui_pack_medieval/styles/10-progressbars.otui'
+    importStyle '/ui_pack_medieval/styles/10-scrollbars.otui'
+    importStyle '/ui_pack_medieval/styles/20-tabbars.otui'
+    importStyle '/ui_pack_medieval/styles/20-popupmenus.otui'
+    importStyle '/ui_pack_medieval/styles/20-topmenu.otui'
+    importStyle '/ui_pack_medieval/styles/30-miniwindow.otui'
+    importStyle '/ui_pack_medieval/styles/30-messageboxes.otui'
+    g_logger.info('[Medieval Theme] Medieval UI Pack loaded successfully!')

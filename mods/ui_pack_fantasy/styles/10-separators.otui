@@ -1,0 +1,14 @@
+-- Fantasy Theme: Separators
+-- Golden amber lines
+
+HorizontalSeparator < UIWidget
+  background-color: #8B6914
+  height: 2
+  phantom: true
+  focusable: false
+
+VerticalSeparator < UIWidget
+  background-color: #8B6914
+  width: 2
+  phantom: true
+  focusable: false

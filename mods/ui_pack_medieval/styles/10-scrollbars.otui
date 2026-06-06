@@ -1,0 +1,70 @@
+-- Medieval Theme: Scrollbars
+-- Dark scrollbars with steel grey borders
+
+VerticalScrollBar < UIScrollBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  steps-scroll: 3
+  $vertical:
+    size: 16 100%
+    width: 16
+    padding-top: 16
+    padding-bottom: 16
+
+HorizontalScrollBar < UIScrollBar
+  background-color: #111827
+  border-color: #374151
+  border-width: 1
+  steps-scroll: 3
+  $horizontal:
+    size: 100% 16
+    height: 16
+    padding-left: 16
+    padding-right: 16
+
+VerticalScrollBar > UIButton
+  image-source: /ui_pack_medieval/images/scrollbar_v_button.png
+  image-border: 2
+  background-color: #374151
+  border-color: #4A5568
+  border-width: 1
+  $hover:
+    background-color: #4B5563
+  $pressed:
+    background-color: #1F2937
+
+HorizontalScrollBar > UIButton
+  image-source: /ui_pack_medieval/images/scrollbar_h_button.png
+  image-border: 2
+  background-color: #374151
+  border-color: #4A5568
+  border-width: 1
+  $hover:
+    background-color: #4B5563
+  $pressed:
+    background-color: #1F2937
+
+VerticalScrollBar > UIButton#decrementButton
+  anchors.top: parent.top
+  size: 14 14
+  margin-top: 1
+  image-source: /ui_pack_medieval/images/scrollbar_up.png
+
+VerticalScrollBar > UIButton#incrementButton
+  anchors.bottom: parent.bottom
+  size: 14 14
+  margin-bottom: 1
+  image-source: /ui_pack_medieval/images/scrollbar_down.png
+
+HorizontalScrollBar > UIButton#decrementButton
+  anchors.left: parent.left
+  size: 14 14
+  margin-left: 1
+  image-source: /ui_pack_medieval/images/scrollbar_left.png
+
+HorizontalScrollBar > UIButton#incrementButton
+  anchors.right: parent.right
+  size: 14 14
+  margin-right: 1
+  image-source: /ui_pack_medieval/images/scrollbar_right.png

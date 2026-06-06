@@ -1,0 +1,31 @@
+Module
+  name: ui_pack_fantasy
+  description: Fantasy UI Theme - Golden warm tones with ornate medieval fantasy feel
+  author: JO Dev
+  version: 1.0
+  dependOnClient: true
+  autoLoad: false
+  loadLater: true
+
+  onLoad: |
+    -- Only load if medieval pack is NOT active
+    if g_modules.getModule('ui_pack_medieval') and g_modules.getModule('ui_pack_medieval'):isLoaded() then
+      g_logger.warning('[Fantasy Theme] Medieval theme is already active, skipping fantasy theme.')
+      return
+    end
+    g_logger.info('[Fantasy Theme] Loading Fantasy UI Pack...')
+    importStyle '/ui_pack_fantasy/styles/10-windows.otui'
+    importStyle '/ui_pack_fantasy/styles/10-buttons.otui'
+    importStyle '/ui_pack_fantasy/styles/10-panels.otui'
+    importStyle '/ui_pack_fantasy/styles/10-labels.otui'
+    importStyle '/ui_pack_fantasy/styles/10-checkboxes.otui'
+    importStyle '/ui_pack_fantasy/styles/10-textedits.otui'
+    importStyle '/ui_pack_fantasy/styles/10-separators.otui'
+    importStyle '/ui_pack_fantasy/styles/10-progressbars.otui'
+    importStyle '/ui_pack_fantasy/styles/10-scrollbars.otui'
+    importStyle '/ui_pack_fantasy/styles/20-tabbars.otui'
+    importStyle '/ui_pack_fantasy/styles/20-popupmenus.otui'
+    importStyle '/ui_pack_fantasy/styles/20-topmenu.otui'
+    importStyle '/ui_pack_fantasy/styles/30-miniwindow.otui'
+    importStyle '/ui_pack_fantasy/styles/30-messageboxes.otui'
+    g_logger.info('[Fantasy Theme] Fantasy UI Pack loaded successfully!')

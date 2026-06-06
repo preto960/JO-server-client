@@ -1,0 +1,188 @@
+-- Medieval Theme: MessageBoxes
+-- Dark slate message dialogs with stone borders
+
+MessageBoxWindow < UIWindow
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 4
+  size: 400 200
+  &moveable: true
+  &resizeable: false
+  image-source: /ui_pack_medieval/images/window.png
+  image-border: 32
+
+  UILabel#messageLabel
+    background-color: transparent
+    color: #D1D5DB
+    font: terminus-medium-12px
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin: 28 16 42 16
+    text-wrap: true
+    text-align: center
+    text-auto-resize: true
+
+  UILabel#titleLabel
+    background-color: #2D3748
+    color: #D1D5DB
+    font: terminus-bold-13px
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 22
+    padding-left: 8
+    padding-right: 8
+    margin.top: 4
+    margin.left: 4
+    margin.right: 4
+    text-auto-resize: true
+    text-margin-bottom: 2
+    text-align: center
+
+  UIButton#closeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 6
+    margin.right: 6
+    size: 18 18
+    image-source: /ui_pack_medieval/images/button_close.png
+    $hover:
+      background-color: #991B1B
+      image-source: /ui_pack_medieval/images/button_close_hover.png
+    $pressed:
+      background-color: #7F1D1D
+      image-source: /ui_pack_medieval/images/button_close_pressed.png
+
+  UIButton#okButton
+    background-color: #374151
+    border-color: #4A5568
+    border-width: 1
+    color: #D1D5DB
+    font: terminus-medium-12px
+    padding: 4 12
+    size: 80 26
+    anchors.bottom: parent.bottom
+    anchors.horizontal-center: parent.horizontal-center
+    margin.bottom: 8
+    text: OK
+    $hover:
+      background-color: #4B5563
+      border-color: #60A5FA
+      color: #E5E7EB
+    $pressed:
+      background-color: #1F2937
+
+  UIButton#yesButton
+    background-color: #374151
+    border-color: #4A5568
+    border-width: 1
+    color: #D1D5DB
+    font: terminus-medium-12px
+    padding: 4 12
+    size: 80 26
+    anchors.bottom: parent.bottom
+    margin.bottom: 8
+    margin.right: 8
+    text: Yes
+    $hover:
+      background-color: #4B5563
+      border-color: #60A5FA
+      color: #E5E7EB
+    $pressed:
+      background-color: #1F2937
+
+  UIButton#noButton
+    background-color: #374151
+    border-color: #4A5568
+    border-width: 1
+    color: #D1D5DB
+    font: terminus-medium-12px
+    padding: 4 12
+    size: 80 26
+    anchors.bottom: parent.bottom
+    margin.bottom: 8
+    margin.right: 8
+    text: No
+    $hover:
+      background-color: #4B5563
+      border-color: #60A5FA
+      color: #E5E7EB
+    $pressed:
+      background-color: #1F2937
+
+MessageBoxShopWindow < UIWindow
+  background-color: #1A1E24
+  border-color: #4A5568
+  border-width: 1
+  padding: 4
+  size: 400 200
+  &moveable: true
+  &resizeable: false
+  image-source: /ui_pack_medieval/images/window.png
+  image-border: 32
+
+  UILabel#messageLabel
+    background-color: transparent
+    color: #D1D5DB
+    font: terminus-medium-12px
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin: 28 16 42 16
+    text-wrap: true
+    text-align: center
+    text-auto-resize: true
+
+  UILabel#titleLabel
+    background-color: #2D3748
+    color: #D1D5DB
+    font: terminus-bold-13px
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 22
+    padding-left: 8
+    padding-right: 8
+    margin.top: 4
+    margin.left: 4
+    margin.right: 4
+    text-auto-resize: true
+    text-margin-bottom: 2
+    text-align: center
+
+  UIButton#closeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 6
+    margin.right: 6
+    size: 18 18
+    image-source: /ui_pack_medieval/images/button_close.png
+    $hover:
+      background-color: #991B1B
+      image-source: /ui_pack_medieval/images/button_close_hover.png
+    $pressed:
+      background-color: #7F1D1D
+      image-source: /ui_pack_medieval/images/button_close_pressed.png
+
+  UIButton#okButton
+    background-color: #374151
+    border-color: #4A5568
+    border-width: 1
+    color: #D1D5DB
+    font: terminus-medium-12px
+    padding: 4 12
+    size: 80 26
+    anchors.bottom: parent.bottom
+    anchors.horizontal-center: parent.horizontal-center
+    margin.bottom: 8
+    text: OK
+    $hover:
+      background-color: #4B5563
+      border-color: #60A5FA
+      color: #E5E7EB
+    $pressed:
+      background-color: #1F2937

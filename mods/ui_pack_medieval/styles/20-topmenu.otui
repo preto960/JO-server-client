@@ -1,0 +1,72 @@
+-- Medieval Theme: TopMenu
+-- Dark top menu bar with steel buttons
+
+TopButton < UIButton
+  background-color: #374151
+  border-color: #4A5568
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-11px
+  padding: 4 8
+  size: 32 32
+  &focusable: true
+  $hover:
+    background-color: #4B5563
+    border-color: #60A5FA
+    color: #E5E7EB
+  $pressed:
+    background-color: #1F2937
+    border-color: #4A5568
+  $checked:
+    background-color: #1F2937
+    border-color: #60A5FA
+    color: #60A5FA
+
+TopToggleButton < TopButton
+  icon: /ui_pack_medieval/images/top_toggle.png
+  icon-size: 20 20
+  icon-color: #D1D5DB
+  $hover:
+    icon-color: #E5E7EB
+  $checked:
+    icon-color: #60A5FA
+
+MainToggleButton < TopToggleButton
+  icon: /ui_pack_medieval/images/main_toggle.png
+
+TopMenuButtonsPanel < UIGroup
+  background-color: #111827
+  border-color: #374151
+  border-width: 0
+  size: 100% 38
+  padding: 3
+  margin-right: 2
+  layout: horizontalBox
+  layout-spacing: 2
+
+TopMenuPanel < UIGroup
+  background-color: #111827
+  border-color: #374151
+  border-width: 0
+  size: 100% 42
+  layout: horizontalBox
+
+TopMenuFrameCounterLabel < UILabel
+  color: #60A5FA
+  background-color: transparent
+  font: terminus-medium-11px
+  padding: 2
+  anchors.vertical-center: parent.vertical-center
+  margin-right: 8
+  text-auto-resize: true
+  text-align: right
+
+TopMenuPingLabel < UILabel
+  color: #D1D5DB
+  background-color: transparent
+  font: terminus-medium-11px
+  padding: 2
+  anchors.vertical-center: parent.vertical-center
+  margin-right: 8
+  text-auto-resize: true
+  text-align: right

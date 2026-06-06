@@ -1,0 +1,65 @@
+-- Fantasy Theme: Progress Bars
+-- Crimson HP, Royal Blue mana, golden accents
+
+ProgressBar < UIProgressBar
+  height: 16
+  background-color: #1E1208
+  border-width: 2
+  border-color: #8B6914
+  font: verdana-11px-rounded
+  text-offset: 0 2
+
+  $!on:
+    visible: false
+    margin-top: 0
+    margin-bottom: 0
+    height: 0
+
+ThickProgressBar < ProgressBar
+
+LifeProgressBar < UIProgressBar
+  height: 16
+  background-color: #C41E3A
+  border: 1 #8B6914
+  font: verdana-11px-rounded
+  text-offset: 0 2
+  margin: 2
+
+ProgressRect < UIProgressRect
+  anchors.fill: parent
+  phantom: true
+  color: #F0D8A8
+  background-color: #1E120888
+  font: verdana-11px-rounded
+
+HealthBar < ProgressBar
+  border-width: 2
+  border-color: #8B6914
+
+ManaBar < ProgressBar
+  background-color: #2E5CB8
+  border-width: 2
+  border-color: #8B6914
+
+ProgressBarSD < UIProgressBarSD
+  height: 22
+  tooltip-delayed: true
+
+HealthBarSD < ProgressBarSD
+
+ProgressBarSDInv < UIProgressBarSDInverted
+
+InvManaBar < UIProgressBarSDInverted
+  size: 10 30
+  border-width: 1
+  border-color: #8B6914
+
+InvVerticalBar < UIVerticalProgressBarSDInverted
+  size: 10 30
+  border-width: 1
+  border-color: #8B6914
+
+VerticalBar < UIVerticalProgressBarSD
+  size: 10 30
+  border-width: 1
+  border-color: #8B6914

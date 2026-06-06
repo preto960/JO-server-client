@@ -1,0 +1,70 @@
+-- Fantasy Theme: Scrollbars
+-- Brown/golden themed scrollbars
+
+VerticalScrollBar < UIScrollBar
+  orientation: vertical
+  width: 12
+  height: 39
+  background-color: #1E1208
+  border-width: 1
+  border-color: #6B4A22
+  pixels-scroll: true
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    size: 12 12
+    background-color: #4A3018
+    border-width: 1
+    border-color: #8B6914
+    $pressed:
+      background-color: #3A2008
+      border-color: #D4A017
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 12 12
+    background-color: #4A3018
+    border-width: 1
+    border-color: #8B6914
+    $pressed:
+      background-color: #3A2008
+      border-color: #D4A017
+
+HorizontalScrollBar < UIScrollBar
+  orientation: horizontal
+  height: 12
+  width: 39
+  background-color: #1E1208
+  border-width: 1
+  border-color: #6B4A22
+
+  $disabled:
+    color: #F0D8A888
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    size: 12 12
+    background-color: #4A3018
+    border-width: 1
+    border-color: #8B6914
+    $pressed:
+      background-color: #3A2008
+      border-color: #D4A017
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 12 12
+    background-color: #4A3018
+    border-width: 1
+    border-color: #8B6914
+    $pressed:
+      background-color: #3A2008
+      border-color: #D4A017

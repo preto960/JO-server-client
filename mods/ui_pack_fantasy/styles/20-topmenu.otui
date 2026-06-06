@@ -1,0 +1,75 @@
+-- Fantasy Theme: Top Menu
+-- Warm brown top bar with golden accent buttons
+
+TopButton < UIButton
+  size: 26 26
+  background-color: #4A3018
+  border-width: 1
+  border-color: #8B6914
+  color: #F0D8A8FF
+  icon-color: #F0D8A8FF
+
+  $on:
+    background-color: #6B4A22
+    border-color: #D4A017
+
+  $hover !disabled:
+    background-color: #6B4A22
+    border-color: #D4A017
+    color: #F0D8A899
+
+  $pressed:
+    background-color: #3A2008
+
+  $disabled:
+    color: #F0D8A844
+    icon-color: #F0D8A844
+
+TopToggleButton < UIButton
+  size: 26 26
+  background-color: #6B4A22
+  border-width: 1
+  border-color: #D4A017
+  icon-offset: 0 0
+
+  $pressed:
+    background-color: #3A2008
+    icon-offset: 1 1
+
+  $disabled:
+    background-color: #4A3018
+    icon-offset: 1 1
+
+MainToggleButton < UIButton
+  size: 20 20
+  background-color: #4A3018
+  border-width: 1
+  border-color: #8B6914
+
+  $pressed:
+    background-color: #3A2008
+
+  $on:
+    background-color: #3A2008
+
+TopMenuButtonsPanel < Panel
+  layout:
+    type: horizontalBox
+    spacing: 4
+    fit-children: true
+  padding: 6 4
+
+TopMenuPanel < Panel
+  height: 36
+  background-color: #1E1208
+  focusable: false
+
+TopMenuFrameCounterLabel < Label
+  font: verdana-11px-rounded
+  color: #D4A017
+  margin-top: 4
+  margin-left: 5
+
+TopMenuPingLabel < Label
+  font: verdana-11px-rounded
+  color: #F0D8A8

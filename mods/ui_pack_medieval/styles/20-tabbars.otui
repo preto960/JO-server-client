@@ -1,0 +1,99 @@
+-- Medieval Theme: TabBars
+-- Dark steel tabs with cold blue highlight on active
+
+MoveableTabBar < UITabBar
+  background-color: #1F2937
+  border-color: #374151
+  border-width: 1
+  size: 100% 24
+  &tab-content: true
+  padding: 2
+
+MoveableTabBarPanel < MoveableTabBar
+  &moveable: true
+
+MoveableTabBarButton < UIButton
+  background-color: #1F2937
+  border-color: #374151
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-11px
+  padding: 3 6
+  size: 90 20
+  margin-right: 2
+  text-auto-resize: true
+  text-margin-right: 4
+  &focusable: true
+  $hover:
+    background-color: #374151
+    border-color: #4A5568
+  $pressed:
+    background-color: #1F2937
+  $checked:
+    background-color: #1F2937
+    border-color: #60A5FA
+    color: #60A5FA
+
+TabBar < UITabBar
+  background-color: #1F2937
+  border-color: #374151
+  border-width: 1
+  size: 100% 22
+  &tab-content: true
+  padding: 2
+
+TabBarPanel < TabBar
+  &moveable: true
+
+TabBarButton < UIButton
+  background-color: #1F2937
+  border-color: #374151
+  border-width: 1
+  color: #D1D5DB
+  font: terminus-medium-11px
+  padding: 2 6
+  size: 80 18
+  margin-right: 1
+  text-auto-resize: true
+  &focusable: true
+  $hover:
+    background-color: #374151
+    border-color: #4A5568
+  $pressed:
+    background-color: #1F2937
+  $checked:
+    background-color: #1F2937
+    border-color: #60A5FA
+    color: #60A5FA
+
+TabBarRounded < UITabBar
+  background-color: transparent
+  size: 100% 26
+  &tab-content: true
+  padding: 0
+
+TabBarRoundedPanel < TabBarRounded
+  &moveable: true
+
+TabBarRoundedButton < UIButton
+  background-color: #1F2937
+  border-color: #374151
+  border-width: 1
+  border.top: 2
+  color: #D1D5DB
+  font: terminus-medium-11px
+  padding: 4 8
+  margin-right: 1
+  text-auto-resize: true
+  image-source: /ui_pack_medieval/images/tab_rounded.png
+  image-border: 6
+  &focusable: true
+  $hover:
+    background-color: #374151
+    border-color: #4A5568
+  $pressed:
+    background-color: #1F2937
+  $checked:
+    background-color: #1F2937
+    border-color: #60A5FA
+    color: #60A5FA
