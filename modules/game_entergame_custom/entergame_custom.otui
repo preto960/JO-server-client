@@ -98,6 +98,7 @@ UIWidget
     font: verdana-11px-rounded
     color: #FFFFFF99
     anchors.left: customRememberBox.right
+    anchors.right: parent.right
     anchors.top: passLine.bottom
     anchors.verticalCenter: customRememberBox.verticalCenter
     margin-left: 6
