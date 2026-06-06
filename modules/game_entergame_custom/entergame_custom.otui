@@ -128,11 +128,13 @@ UIWidget
     !text: tr('FORGOT PASSWORD')
     font: verdana-11px-rounded
     color: #AAAAAA
-    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.left: parent.left
+    anchors.right: parent.right
     anchors.top: loginButton.bottom
     margin-top: 10
     background-color: alpha
     border-width: 0
+    height: 20
     @onClick: modules.game_entergame_custom.onForgotPassword()
 
     $hover:
@@ -143,11 +145,13 @@ UIWidget
     !text: tr('CREATE ACCOUNT')
     font: verdana-11px-rounded
     color: #AAAAAA
-    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.left: parent.left
+    anchors.right: parent.right
     anchors.top: forgotPassBtn.bottom
     margin-top: 6
     background-color: alpha
     border-width: 0
+    height: 20
     @onClick: modules.game_entergame_custom.onCreateAccount()
 
     $hover:
