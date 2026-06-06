@@ -4,14 +4,20 @@ UIWidget
   focusable: false
   height: 36
   width: 100
-  background-color: #000000DD
+  background-color: #000000CC
   border-width: 0
+
+  UIWidget
+    id: footerSeparator
+    height: 1
+    width: 100
+    background-color: #00B4D830
 
   UIButton
     id: footerAudioBtn
     size: 28 28
     image-source: /images/topbuttons/audio
-    image-color: #FFFFFF50
+    image-color: #FFFFFF60
     image-clip: 0 0 28 28
     image-border: 0
     cursor: pointer
@@ -25,7 +31,7 @@ UIWidget
     id: footerOptionsBtn
     size: 28 28
     image-source: /images/topbuttons/options
-    image-color: #FFFFFF50
+    image-color: #FFFFFF60
     image-clip: 0 0 28 28
     image-border: 0
     cursor: pointer
@@ -43,24 +49,10 @@ UIWidget
     text-auto-resize: true
 
   UIButton
-    id: footerDiscordBtn
-    size: 28 28
-    image-source: /images/icons/icon_discord
-    image-color: #FFFFFF50
-    image-clip: 0 0 28 28
-    image-border: 0
-    cursor: pointer
-
-    $hover:
-      image-color: #00B4D8
-
-    @onClick: modules.game_entergame_custom.openDiscord()
-
-  UIButton
     id: footerYoutubeBtn
     size: 28 28
     image-source: /images/icons/icon_youtube
-    image-color: #FFFFFF50
+    image-color: #FFFFFF60
     image-clip: 0 0 28 28
     image-border: 0
     cursor: pointer
@@ -69,3 +61,17 @@ UIWidget
       image-color: #00B4D8
 
     @onClick: modules.game_entergame_custom.openYoutube()
+
+  UIButton
+    id: footerDiscordBtn
+    size: 28 28
+    image-source: /images/icons/icon_discord
+    image-color: #FFFFFF60
+    image-clip: 0 0 28 28
+    image-border: 0
+    cursor: pointer
+
+    $hover:
+      image-color: #00B4D8
+
+    @onClick: modules.game_entergame_custom.openDiscord()

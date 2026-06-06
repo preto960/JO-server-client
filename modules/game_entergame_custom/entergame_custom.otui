@@ -1,29 +1,19 @@
-FlatLineEdit < UITextEdit
-  background-color: #00000000
-  border-width: 0
-  border-color: #00000000
-  color: #FFFFFFFF
-  font: verdana-11px-antialised
-  height: 20
-  image-source: none
-  selection-color: #000000FF
-  selection-background-color: #00B4D8CC
-
 UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 380 380
-  background-color: #000000DD
-  border-width: 2
-  border-color: #00B4D8
+  size: 380 420
+  background-color: #000000CC
+  border-width: 1
+  border-color: #00B4D840
+  padding: 30 30 25 30
 
   UIWidget
     id: logoArea
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    height: 80
-    width: 340
+    height: 70
+    width: 320
 
   UIWidget
     id: logoImageWidget
@@ -34,86 +24,64 @@ UIWidget
     image-auto-resize: true
 
   UIWidget
+    id: topSeparator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: logoArea.bottom
     height: 1
-    background-color: #00B4D860
-    margin-left: 30
-    margin-right: 30
+    background-color: #00B4D830
 
   Label
     id: nameLabel
     !text: tr('E-MAIL')
     font: verdana-11px-rounded
-    color: #FFFFFFCC
+    color: #FFFFFFBB
     anchors.left: parent.left
-    anchors.top: logoArea.bottom
-    margin-top: 16
-    margin-left: 30
+    anchors.top: topSeparator.bottom
+    margin-top: 14
 
-  FlatLineEdit
+  LoginInputField
     id: customAccountName
-    height: 20
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: nameLabel.bottom
     margin-top: 4
-    margin-left: 30
-    margin-right: 30
     text-vertical-alignment: center
-
-  UIWidget
-    id: emailLine
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: customAccountName.bottom
-    margin-top: 1
-    margin-left: 30
-    margin-right: 30
-    height: 1
-    background-color: #00B4D850
 
   Label
     id: passLabel
     !text: tr('PASSWORD')
     font: verdana-11px-rounded
-    color: #FFFFFFCC
+    color: #FFFFFFBB
     anchors.left: parent.left
-    anchors.top: emailLine.bottom
+    anchors.top: customAccountName.bottom
     margin-top: 12
-    margin-left: 30
 
-  FlatLineEdit
+  LoginInputField
     id: customPassword
-    height: 20
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: passLabel.bottom
     margin-top: 4
-    margin-left: 30
-    margin-right: 30
     text-vertical-alignment: center
     text-hidden: true
 
-  UIWidget
-    id: passLine
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: customPassword.bottom
-    margin-top: 1
-    margin-left: 30
-    margin-right: 30
-    height: 1
-    background-color: #00B4D850
-
-  UIButton
+  UICheckBox
     id: customRememberBox
-    size: 0 0
-    visible: false
     anchors.left: parent.left
-    anchors.top: passLine.bottom
+    anchors.top: customPassword.bottom
+    margin-top: 10
     @onClick: modules.game_entergame_custom.toggleRemember()
+
+  UILabel
+    id: rememberLabel
+    !text: tr('REMEMBER ME')
+    font: verdana-11px-rounded
+    color: #FFFFFF99
+    anchors.left: customRememberBox.right
+    anchors.top: customPassword.bottom
+    anchors.verticalCenter: customRememberBox.verticalCenter
+    margin-left: 6
 
   UIButton
     id: loginButton
@@ -122,10 +90,8 @@ UIWidget
     color: #0A0A1A
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: passLine.bottom
-    margin-top: 22
-    margin-left: 30
-    margin-right: 30
+    anchors.top: customRememberBox.bottom
+    margin-top: 16
     height: 38
     background-color: #00B4D8
     border-width: 1
@@ -140,12 +106,14 @@ UIWidget
 
   UIButton
     id: forgotPassBtn
-    !text: tr('Forgot password')
-    font: verdana-11px-monochrome-underline
+    !text: tr('FORGOT PASSWORD')
+    font: verdana-11px-rounded
     color: #AAAAAA
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: loginButton.bottom
-    margin-top: 16
+    margin-top: 14
+    background-color: alpha
+    border-width: 0
     @onClick: modules.game_entergame_custom.onForgotPassword()
 
     $hover:
@@ -153,12 +121,14 @@ UIWidget
 
   UIButton
     id: createAccountBtn
-    !text: tr('Create account')
-    font: verdana-11px-monochrome-underline
+    !text: tr('CREATE ACCOUNT')
+    font: verdana-11px-rounded
     color: #AAAAAA
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: forgotPassBtn.bottom
     margin-top: 6
+    background-color: alpha
+    border-width: 0
     @onClick: modules.game_entergame_custom.onCreateAccount()
 
     $hover:

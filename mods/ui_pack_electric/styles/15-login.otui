@@ -1,20 +1,20 @@
 // Login Custom Styles for Electric Blue Theme
-// These styles apply specifically to the custom login screen widgets
+// Rubinot-style box inputs with dark background and borders
 
 LoginPanel < UIWidget
-  background-color: #000000DD
-  border-width: 2
-  border-color: #00B4D8
+  background-color: #000000CC
+  border-width: 1
+  border-color: #00B4D840
 
 LoginInputField < UITextEdit
   font: verdana-11px-antialised
   color: #FFFFFFFF
-  height: 38
+  height: 36
   background-color: #0A0A1AFF
   border-width: 1
   border-color: #1A1A3A
-  padding-left: 12
-  padding-right: 12
+  padding-left: 10
+  padding-right: 10
   selection-color: #000000FF
   selection-background-color: #00B4D8CC
 
@@ -27,7 +27,7 @@ LoginInputField < UITextEdit
 
 LoginLabel < UILabel
   font: verdana-11px-rounded
-  color: #FFFFFFCC
+  color: #FFFFFFBB
 
 LoginButton < UIButton
   font: Verdana Bold-11px
@@ -50,7 +50,7 @@ LoginButton < UIButton
     opacity: 0.7
 
 LoginLinkButton < UIButton
-  font: verdana-11px-monochrome-underline
+  font: verdana-11px-rounded
   color: #AAAAAA
   background-color: alpha
   border-width: 0
@@ -71,7 +71,7 @@ LoginCheckbox < UICheckBox
     border-color: #00B4D8
 
 LoginFooterBar < UIWidget
-  background-color: #000000DD
+  background-color: #000000CC
   border-width: 0
   focusable: false
 
@@ -80,7 +80,7 @@ FooterIconButton < UIButton
   background-color: alpha
   border-width: 0
   cursor: pointer
-  image-color: #FFFFFF50
+  image-color: #FFFFFF60
   image-clip: 0 0 28 28
   image-border: 0
 

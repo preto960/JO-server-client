@@ -1,6 +1,6 @@
 -- entergame_custom.lua - Custom login screen for JO Server
 -- Electric Blue Theme - Exact copy of Rubinot login layout
--- Centered panel, footer bar, Tab/Enter key support
+-- Box-style inputs, footer bar with icons, Tab/Enter key support
 
 local customWindow = nil
 local footerBar = nil
@@ -86,29 +86,42 @@ function setup()
 
         local gw = g_window
         if gw and footerBar then
-            footerBar:setWidth(gw.getWidth())
-            footerBar:setPosition({ x = 0, y = gw.getHeight() - 36 })
-        end
+            local fw = gw.getWidth()
+            local fh = 36
+            footerBar:setWidth(fw)
+            footerBar:setHeight(fh)
+            footerBar:setPosition({ x = 0, y = gw.getHeight() - fh })
 
-        local audioBtn = footerBar:recursiveGetChildById('footerAudioBtn')
-        if audioBtn then
-            audioBtn:setPosition({ x = 8, y = 4 })
-        end
-        local optBtn = footerBar:recursiveGetChildById('footerOptionsBtn')
-        if optBtn then
-            optBtn:setPosition({ x = 40, y = 4 })
-        end
-        local playersLabel = footerBar:recursiveGetChildById('footerPlayersLabel')
-        if playersLabel and gw then
-            playersLabel:setPosition({ x = (gw.getWidth() - playersLabel:getWidth()) / 2, y = 10 })
-        end
-        local discBtn = footerBar:recursiveGetChildById('footerDiscordBtn')
-        if discBtn and gw then
-            discBtn:setPosition({ x = gw.getWidth() - 36, y = 4 })
-        end
-        local ytBtn = footerBar:recursiveGetChildById('footerYoutubeBtn')
-        if ytBtn and gw then
-            ytBtn:setPosition({ x = gw.getWidth() - 68, y = 4 })
+            local sep = footerBar:recursiveGetChildById('footerSeparator')
+            if sep then
+                sep:setPosition({ x = 0, y = 0 })
+                sep:setWidth(fw)
+            end
+
+            local audioBtn = footerBar:recursiveGetChildById('footerAudioBtn')
+            if audioBtn then
+                audioBtn:setPosition({ x = 12, y = 4 })
+            end
+
+            local optBtn = footerBar:recursiveGetChildById('footerOptionsBtn')
+            if optBtn then
+                optBtn:setPosition({ x = 46, y = 4 })
+            end
+
+            local playersLabel = footerBar:recursiveGetChildById('footerPlayersLabel')
+            if playersLabel then
+                playersLabel:setPosition({ x = (fw - playersLabel:getWidth()) / 2, y = 10 })
+            end
+
+            local ytBtn = footerBar:recursiveGetChildById('footerYoutubeBtn')
+            if ytBtn then
+                ytBtn:setPosition({ x = fw - 72, y = 4 })
+            end
+
+            local discBtn = footerBar:recursiveGetChildById('footerDiscordBtn')
+            if discBtn then
+                discBtn:setPosition({ x = fw - 40, y = 4 })
+            end
         end
 
         footerBar:show()
@@ -264,11 +277,9 @@ function updateRememberVisual()
     if box then
         pcall(function()
             if rememberChecked then
-                box:setBackgroundColor('#00B4D880')
-                box:setBorderColor('#00B4D8')
+                box:setChecked(true)
             else
-                box:setBackgroundColor('#0A0A1A')
-                box:setBorderColor('#1A1A3A')
+                box:setChecked(false)
             end
         end)
     end
