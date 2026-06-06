@@ -113,7 +113,9 @@ function setup()
     g_keyboard.bindKeyDown('Tab', onTabPressed, customWindow)
 
     if customName then
-        customName:focus()
+        scheduleEvent(function()
+            if customName then customName:focus() end
+        end, 200)
     end
 
     local gw = g_window
