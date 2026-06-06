@@ -17,7 +17,7 @@ UIWidget
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840
-  padding: 20 30 8 30
+  padding: 20 30 4 30
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   margin-top: 30
@@ -47,7 +47,7 @@ UIWidget
     anchors.top: customAccountName.bottom
     margin-top: 1
     height: 2
-    background-color: #00B4D850
+    background-color: #00B4D8
 
   Label
     id: passLabel
@@ -75,7 +75,7 @@ UIWidget
     anchors.top: customPassword.bottom
     margin-top: 1
     height: 2
-    background-color: #00B4D850
+    background-color: #00B4D8
 
   UICheckBox
     id: customRememberBox
