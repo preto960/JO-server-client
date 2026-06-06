@@ -87,9 +87,18 @@ UIWidget
 
   UICheckBox
     id: customRememberBox
+    size: 16 16
+    background-color: #0A0A1A
+    border-width: 1
+    border-color: #1A1A3A
     anchors.left: parent.left
     anchors.top: passLine.bottom
     margin-top: 8
+
+    $checked:
+      background-color: #00B4D880
+      border-color: #00B4D8
+
     @onClick: modules.game_entergame_custom.toggleRemember()
 
   UILabel
