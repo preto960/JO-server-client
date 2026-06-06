@@ -74,7 +74,7 @@ function setup()
         logoWidget = g_ui.loadUIFromString([[
 UIWidget
   id: loginLogoWidget
-  size: 280 140
+  size: 320 190
   image-source: /game_entergame_custom/JO_logo
   image-auto-resize: true
   anchors.horizontalCenter: parent.horizontalCenter
