@@ -1,9 +1,11 @@
 // CharacterList - Electric Blue Theme - Rubinot Style
-// Panel izquierdo con lista de personajes (nombre, level, vocacion, mundo, pvp)
-// Panel derecho con preview del outfit del personaje seleccionado (UICreature)
-// Sin bordes de ventana, sin tabla de sort visible, sin premium visible
-// Todos los IDs se mantienen para compatibilidad con characterlist.lua
+// Same visual style as login screen (entergame_custom.otui)
+// Left panel: character list | Right panel: outfit preview
+// All IDs preserved for Lua compatibility
 
+// ============================================
+// CHARACTER WIDGET - Two line entry
+// ============================================
 CharacterWidget < UIWidget
   height: 50
   background-color: #0A0A1A00
@@ -17,7 +19,7 @@ CharacterWidget < UIWidget
         children[i]:setOn(focused)
       end
       if focused then
-        self:setBackgroundColor("#00B4D830")
+        self:setBackgroundColor("#00B4D818")
       else
         self:setBackgroundColor("#0A0A1A00")
       end
@@ -41,20 +43,20 @@ CharacterWidget < UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
 
-  // === First row: Name + Level ===
+  // === Row 1: Name (left) + Level (right) ===
   Label
     id: name
-    color: #FFFFFFDD
+    color: #FFFFFFFF
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-left: 10
-    margin-top: 6
-    font: Verdana Bold-11px
+    margin-left: 12
+    margin-top: 8
+    font: verdana-11px-rounded
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
     @onSetup: |
-      self:setMarginLeft(10)
+      self:setMarginLeft(12)
 
     $on:
       color: #00B4D8
@@ -65,7 +67,7 @@ CharacterWidget < UIWidget
     anchors.top: parent.top
     anchors.left: prev.right
     margin-left: 4
-    margin-top: 8
+    margin-top: 10
     image-source: /images/game/entergame/maincharacter
     image-clip: 0 0 9 8
     visible: false
@@ -99,37 +101,37 @@ CharacterWidget < UIWidget
     image-source: /images/game/entergame/hidden
     image-clip: 0 0 11 19
 
-  // === Level (first row, right side) ===
+  // === Level (row 1, right side) ===
   Label
     id: level
-    color: #AAAAAA
+    color: #FFFFFFBB
     anchors.top: parent.top
     anchors.left: parent.left
     margin-left: 240
-    margin-top: 6
-    font: verdana-11px-antialised
+    margin-top: 8
+    font: verdana-11px-rounded
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
 
     $on:
-      color: #ffffff
+      color: #FFFFFFFF
 
-  // === Second row: Vocation + World ===
+  // === Row 2: Vocation (left) + World (right) ===
   Label
     id: vocation
-    color: #AAAAAA
+    color: #FFFFFF99
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-left: 10
-    margin-top: 24
-    font: verdana-11px-antialised
+    margin-left: 12
+    margin-top: 26
+    font: verdana-11px-rounded
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
 
     $on:
-      color: #ffffff
+      color: #FFFFFFFF
 
   Label
     id: worldName
@@ -137,8 +139,8 @@ CharacterWidget < UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
     margin-left: 140
-    margin-top: 24
-    font: verdana-11px-antialised
+    margin-top: 26
+    font: verdana-11px-rounded
     text-auto-resize: true
     text-wrap: true
     background-color: alpha
@@ -147,13 +149,16 @@ CharacterWidget < UIWidget
     $on:
       color: #00D4F8
 
+// ============================================
+// MAIN WINDOW
+// ============================================
 MainWindow
   id: charactersWindow
   !text: ''
   visible: false
   border-width: 0
   size: 720 450
-  background-color: #0A0A1AE0
+  background-color: #00000099
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.hide(true)
   @onSetup: |
@@ -163,11 +168,11 @@ MainWindow
       if g_game.getFeature(GameEnterGameShowAppearance) then
         self:setSize({width = 720, height = 450})
         self:setText('')
-        self:setColor("#0A0A1AE0")
+        self:setColor("#00000099")
       else
         self:setSize({width = 380, height = 450})
         self:setText('')
-        self:setColor("#0A0A1AE0")
+        self:setColor("#00000099")
       end
     else
       self:setSize({width = 250, height = 248})
@@ -181,61 +186,78 @@ MainWindow
     end
 
   // ============================================
-  // RIGHT PANEL - Outfit Preview
+  // TOP ACCENT LINE
   // ============================================
-  Panel
-    id: rightPanel
-    anchors.top: parent.top
+  UIWidget
+    id: topSeparator
+    height: 2
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    margin-left: 385
-    background-color: #0A0A1A90
-    border-width: 1
-    border-color: #00B4D820
-
-    UICreature
-      id: outfitPreview
-      size: 128 128
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.horizontalCenter: parent.horizontalCenter
-      fixed-creature-size: true
+    anchors.top: parent.top
+    background-color: #00B4D8
 
   // ============================================
   // TITLE
   // ============================================
   Label
     id: titleLabel
-    !text: tr('Select Character')
-    color: #FFFFFFCC
+    !text: tr('SELECT CHARACTER')
+    color: #FFFFFFBB
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-left: 15
-    margin-top: 12
-    font: Verdana Bold-13px
+    margin-left: 20
+    margin-top: 14
+    font: verdana-11px-rounded
     text-auto-resize: true
+
+  // ============================================
+  // RIGHT PANEL - Outfit Preview
+  // ============================================
+  UIWidget
+    id: rightPanel
+    anchors.top: topSeparator.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 385
+
+    UIWidget
+      id: rightSeparator
+      width: 1
+      anchors.left: parent.left
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      background-color: #00B4D820
+
+    UICreature
+      id: outfitPreview
+      size: 128 128
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin-left: 30
+      fixed-creature-size: true
 
   // ============================================
   // CHARACTER LIST
   // ============================================
   TextList
     id: characters
-    background-color: #00000070
-    border-width: 1
-    border-color: #00B4D830
+    background-color: #00000000
+    border-width: 0
+    border-color: #00000000
     padding: 4
     anchors.top: titleLabel.bottom
     anchors.left: parent.left
     anchors.right: characterListScrollBar.left
     anchors.bottom: accountStatusLabel.top
-    margin-left: 15
-    margin-top: 8
+    margin-left: 20
+    margin-top: 10
     margin-bottom: 8
     focusable: false
     vertical-scrollbar: characterListScrollBar
     auto-focus: first
     @onSetup: |
-      self:setBackgroundColor("#00000070")
+      self:setBackgroundColor("#00000000")
 
   // ============================================
   // SCROLLBAR
@@ -245,8 +267,8 @@ MainWindow
     anchors.top: titleLabel.bottom
     anchors.bottom: accountStatusLabel.top
     anchors.right: rightPanel.left
-    margin-right: 8
-    margin-top: 8
+    margin-right: 10
+    margin-top: 10
     margin-bottom: 8
     step: 14
     pixels-scroll: true
@@ -302,7 +324,7 @@ MainWindow
     @onSetup: self:hide()
 
   // ============================================
-  // HIDDEN ACCOUNT STATUS WIDGETS
+  // HIDDEN ACCOUNT STATUS WIDGETS (IDs for Lua)
   // ============================================
   Label
     id: accountStatusCaption
@@ -322,7 +344,7 @@ MainWindow
     @onSetup: self:hide()
 
   // ============================================
-  // VISIBLE ACCOUNT STATUS LABEL (FREE ACCOUNT)
+  // FREE ACCOUNT LABEL
   // ============================================
   Label
     id: accountStatusLabel
@@ -330,10 +352,10 @@ MainWindow
     visible: true
     anchors.left: parent.left
     anchors.bottom: buttonOk.top
-    margin-left: 15
-    margin-bottom: 8
-    color: #888888
-    font: verdana-11px-antialised
+    margin-left: 20
+    margin-bottom: 10
+    color: #FFFFFF99
+    font: verdana-11px-rounded
     text-auto-resize: true
 
     $on:
@@ -390,29 +412,46 @@ MainWindow
       image-color: #00B4D8
 
   // ============================================
-  // BUTTONS - ENTER / EXIT
+  // BUTTONS - OK / CANCEL (login style)
   // ============================================
-  Button
+  UIButton
     id: buttonOk
-    !text: tr('Ok')
-    width: 120
-    height: 36
+    !text: tr('OK')
+    font: Verdana Bold-11px
+    color: #0A0A1A
+    width: 130
+    height: 34
     anchors.right: buttonCancel.left
     anchors.bottom: parent.bottom
     margin-right: 8
     margin-bottom: 14
+    background-color: #00B4D8
+    border-width: 1
+    border-color: #0090B0
     @onClick: CharacterList.doLogin()
 
     $hover:
       background-color: #00D4F8
 
-  Button
+    $pressed:
+      background-color: #008AA8
+
+  UIButton
     id: buttonCancel
     !text: tr('Cancel')
-    width: 120
-    height: 36
+    font: verdana-11px-rounded
+    color: #FFFFFF99
+    width: 130
+    height: 34
     anchors.right: rightPanel.left
     anchors.bottom: parent.bottom
-    margin-right: 15
+    margin-right: 20
     margin-bottom: 14
+    background-color: #00000000
+    border-width: 1
+    border-color: #00B4D840
     @onClick: CharacterList.hide(true)
+
+    $hover:
+      color: #00B4D8
+      border-color: #00B4D8
