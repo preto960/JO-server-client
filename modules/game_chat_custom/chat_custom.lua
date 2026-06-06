@@ -193,10 +193,20 @@ function closeChatPopup()
     if not isOpen then return end
     isOpen = false
 
-    -- Just hide the popup. That's it. Same pattern as skills_custom.
-    -- NO widget manipulation, NO style restoration, NO consolePanel show.
-    -- All heavy cleanup deferred to terminate()/onGameEnd().
+    -- Hide popup
     chatPopup:hide()
+
+    -- Rebind keys back to consolePanel so Enter can reopen
+    local consolePanel = savedWidgets.consolePanel
+    if consolePanel then
+        g_keyboard.unbindKeyDown('Enter', chatPopup)
+        g_keyboard.unbindKeyDown('Escape', chatPopup)
+        g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
+        g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
+        consolePanel:show()
+    end
+    -- Keep savedWidgets intact so forceRestoreAndClose() can
+    -- still find contentPanel/consolePanel to restore on gameEnd
 end
 
 -- Restore everything and clean up. Called by terminate() and onGameEnd().
