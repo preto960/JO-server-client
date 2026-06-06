@@ -1,8 +1,14 @@
+// CharacterList - Electric Blue Theme - Rubinot Style
+// Panel izquierdo con lista de personajes (nombre, level, vocacion, mundo, pvp)
+// Panel derecho con preview del outfit del personaje seleccionado (UICreature)
+// Sin bordes de ventana, sin tabla de sort visible, sin premium visible
+// Todos los IDs se mantienen para compatibilidad con characterlist.lua
+
 CharacterWidget < UIWidget
-  height: 64
-  background-color: #0A0A1A
-  border-width: 1
-  border-color: #1A1A3A
+  height: 50
+  background-color: #0A0A1A00
+  border-width: 0
+  border-color: #00000000
   &updateOnStates: |
     function(self)
       local focused = self:isFocused()
@@ -12,12 +18,8 @@ CharacterWidget < UIWidget
       end
       if focused then
         self:setBackgroundColor("#00B4D830")
-        self:setBorderWidth(1)
-        self:setBorderColor("#00B4D8")
       else
-        self:setBackgroundColor("#0A0A1A")
-        self:setBorderWidth(1)
-        self:setBorderColor("#1A1A3A")
+        self:setBackgroundColor("#0A0A1A00")
       end
       local pin = self:getChildById('pin')
       if pin then
@@ -28,35 +30,31 @@ CharacterWidget < UIWidget
   @onSetup: |
     self:updateOnStates()
     if g_game.getFeature(GameEnterGameShowAppearance) then
-      self:setHeight(64)
+      self:setHeight(50)
     end
 
+  // Hidden outfit creature box (outfits shown in preview panel on the right)
   UICreature
     id: outfitCreatureBox
-    size: 64 64
+    size: 0 0
+    visible: false
     anchors.top: parent.top
     anchors.left: parent.left
-    padding-left: 6
-    padding-bottom: 5
-    fixed-creature-size: true
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
 
+  // === First row: Name + Level ===
   Label
     id: name
     color: #FFFFFFDD
     anchors.top: parent.top
     anchors.left: parent.left
+    margin-left: 10
+    margin-top: 6
     font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
     @onSetup: |
-      if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setMarginLeft(65)
-      end
+      self:setMarginLeft(10)
 
     $on:
       color: #00B4D8
@@ -66,30 +64,23 @@ CharacterWidget < UIWidget
     size: 9 8
     anchors.top: parent.top
     anchors.left: prev.right
-    margin-left: 6
-    margin-top: 2
+    margin-left: 4
+    margin-top: 8
     image-source: /images/game/entergame/maincharacter
     image-clip: 0 0 9 8
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
+    visible: false
 
+  // === Hidden widgets (IDs required by Lua) ===
   CheckBoxButton
     id: pin
     size: 12 12
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-left: 236
-    margin-top: 2
     visible: false
     tooltip: Pin this character to have it always shown at the top of the list.
     icon-source: /game_questlog/images/icon-pin
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
-    @onCheckChange: onPinCharacter(self, self:isChecked())
+    @onSetup: onPinCharacter(self, self:isChecked())
+
     $checked:
       tooltip: Remove pin from this character.
       image-color: red
@@ -97,63 +88,45 @@ CharacterWidget < UIWidget
   Label
     id: statusDailyReward
     size: 11 19
-    anchors.top: parent.top
-    anchors.left: parent.left
-    margin-left: 252
-    margin-top: 2
+    visible: false
     image-source: /images/game/entergame/dailyreward_collected
     image-clip: 0 0 11 19
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
 
   Label
     id: statusHidden
     size: 11 19
-    anchors.top: parent.top
-    anchors.left: parent.left
-    margin-left: 267
-    margin-top: 2
+    visible: false
     image-source: /images/game/entergame/hidden
     image-clip: 0 0 11 19
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
 
+  // === Level (first row, right side) ===
   Label
     id: level
     color: #AAAAAA
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-left: 350
+    margin-left: 240
+    margin-top: 6
     font: verdana-11px-antialised
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
 
     $on:
       color: #ffffff
 
+  // === Second row: Vocation + World ===
   Label
     id: vocation
     color: #AAAAAA
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-left: 410
+    margin-left: 10
+    margin-top: 24
     font: verdana-11px-antialised
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
 
     $on:
       color: #ffffff
@@ -162,30 +135,25 @@ CharacterWidget < UIWidget
     id: worldName
     color: #00B4D8
     anchors.top: parent.top
+    anchors.left: parent.left
+    margin-left: 140
+    margin-top: 24
     font: verdana-11px-antialised
     text-auto-resize: true
     text-wrap: true
     background-color: alpha
-    &baseText: '(%s)'
-    @onSetup: |
-      if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        self:setMarginLeft(502)
-        self:setWidth(225)
-        self:setHeight(26)
-        self.baseText = '%s'
-      else
-        self:addAnchor(AnchorRight, 'parent', AnchorRight)
-        self:setMarginRight(5)
-      end
+    width: 220
 
     $on:
       color: #00D4F8
 
 MainWindow
   id: charactersWindow
-  !text: tr('Character List')
+  !text: ''
   visible: false
+  border-width: 0
+  size: 720 450
+  background-color: #0A0A1AE0
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.hide(true)
   @onSetup: |
@@ -193,276 +161,178 @@ MainWindow
     g_keyboard.bindKeyPress('Down', function() self:getChildById('characters'):focusNextChild(KeyboardFocusReason) end, self)
     if g_game.getFeature(GamePreviewState) then
       if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setSize({width = 745, height = 430})
-        self:setText(tr('Select Character'))
-        self:setColor("#00B4D8")
+        self:setSize({width = 720, height = 450})
+        self:setText('')
+        self:setColor("#0A0A1AE0")
       else
-        self:setSize({width = 350, height = 400})
-        self:setText(tr('Character List'))
-        self:setColor("#00B4D8")
+        self:setSize({width = 380, height = 450})
+        self:setText('')
+        self:setColor("#0A0A1AE0")
       end
     else
       self:setSize({width = 250, height = 248})
     end
+    -- Remove title bar
+    local headWidget = self:getChildById('miniwindowContent')
+    if headWidget then
+      local parent = headWidget:getParent()
+      local head = parent:getChildById('head')
+      if head then head:setHeight(0) head:setVisible(false) end
+    end
 
-  TextList
-    id: characters
-    background-color: #00000099
-    border-width: 1
-    border-color: #00B4D840
-    padding: 4
+  // ============================================
+  // RIGHT PANEL - Outfit Preview
+  // ============================================
+  Panel
+    id: rightPanel
     anchors.top: parent.top
     anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 385
+    background-color: #0A0A1A90
+    border-width: 1
+    border-color: #00B4D820
+
+    UICreature
+      id: outfitPreview
+      size: 128 128
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.horizontalCenter: parent.horizontalCenter
+      fixed-creature-size: true
+
+  // ============================================
+  // TITLE
+  // ============================================
+  Label
+    id: titleLabel
+    !text: tr('Select Character')
+    color: #FFFFFFCC
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-left: 15
+    margin-top: 12
+    font: Verdana Bold-12px
+    text-auto-resize: true
+
+  // ============================================
+  // CHARACTER LIST
+  // ============================================
+  TextList
+    id: characters
+    background-color: #00000070
+    border-width: 1
+    border-color: #00B4D830
+    padding: 4
+    anchors.top: titleLabel.bottom
+    anchors.left: parent.left
     anchors.right: characterListScrollBar.left
-    anchors.bottom: accountStatusCaption.top
-    margin-bottom: 5
+    anchors.bottom: accountStatusLabel.top
+    margin-left: 15
+    margin-top: 8
+    margin-bottom: 8
     focusable: false
     vertical-scrollbar: characterListScrollBar
     auto-focus: first
     @onSetup: |
-      if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setBackgroundColor("#00000099")
-        self:setPaddingTop(20)
-      else
-        self:setBackgroundColor("#00000099")
-      end
+      self:setBackgroundColor("#00000070")
 
-  UIWidget
-    id: characterTable
-    anchors.left: parent.left
-    anchors.right: characterListScrollBar.left
-    anchors.top: characters.top
-    height: 19
-    border-width: 1
-    border-color-top: #00B4D840
-    border-color-left: #00B4D840
-    border-color-right: #00B4D840
-    border-color-bottom: #00B4D840
-    background-color: #0A0A1A
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
-
-    UIButton
-      id: characterSort
-      size: 250 14
-      anchors.top: parent.top
-      anchors.left: parent.left
-      margin-top: 2
-      !text: tr('Character')
-      text-offset: -30 0
-      font: verdana-11px-antialised
-      color: #AAAAAA
-      image-source: /images/game/entergame/sort-button
-      image-clip: 0 0 7 4
-      image-size: 7 4
-      image-offset: 242 5
-      @onClick: onSortButtonClick(self, 1)
-      $pressed:
-        color: #00B4D8
-        image-clip: 0 4 7 4
-      $checked:
-        image-clip: 0 4 7 4
-      $!on:
-        image-source:
-      $on:
-        image-source: /images/game/entergame/sort-button
-
-    UIButton
-      id: statusSort
-      size: 100 14
-      anchors.top: parent.top
-      anchors.left: parent.left
-      margin-left: 250
-      margin-top: 2
-      !text: tr('Status')
-      text-offset: -20 0
-      font: verdana-11px-antialised
-      color: #AAAAAA
-      image-source: /images/game/entergame/sort-button
-      image-clip: 0 0 7 4
-      image-size: 7 4
-      image-offset: 92 5
-      @onClick: onSortButtonClick(self, 2)
-      $pressed:
-        color: #00B4D8
-        image-clip: 0 4 7 4
-      $checked:
-        image-clip: 0 4 7 4
-      $!on:
-        image-source:
-      $on:
-        image-source: /images/game/entergame/sort-button
-
-    UIButton
-      id: levelSort
-      size: 60 14
-      anchors.top: parent.top
-      anchors.left: parent.left
-      margin-left: 350
-      margin-top: 2
-      !text: tr('Level')
-      text-offset: -8 0
-      font: verdana-11px-antialised
-      color: #AAAAAA
-      image-source: /images/game/entergame/sort-button
-      image-clip: 0 0 7 4
-      image-size: 7 4
-      image-offset: 52 5
-      @onClick: onSortButtonClick(self, 3)
-      $pressed:
-        color: #00B4D8
-        image-clip: 0 4 7 4
-      $checked:
-        image-clip: 0 4 7 4
-      $!on:
-        image-source:
-      $on:
-        image-source: /images/game/entergame/sort-button
-
-    UIButton
-      id: vocationSort
-      size: 90 14
-      anchors.top: parent.top
-      anchors.left: parent.left
-      margin-left: 410
-      margin-top: 2
-      !text: tr('Vocation')
-      text-offset: -10 0
-      font: verdana-11px-antialised
-      color: #AAAAAA
-      image-source: /images/game/entergame/sort-button
-      image-clip: 0 0 7 4
-      image-size: 7 4
-      image-offset: 82 5
-      @onClick: onSortButtonClick(self, 4)
-      $pressed:
-        color: #00B4D8
-        image-clip: 0 4 7 4
-      $checked:
-        image-clip: 0 4 7 4
-      $!on:
-        image-source:
-      $on:
-        image-source: /images/game/entergame/sort-button
-
-    UIButton
-      id: worldSort
-      size: 230 14
-      anchors.top: parent.top
-      anchors.left: parent.left
-      margin-left: 500
-      margin-top: 2
-      !text: tr('World')
-      text-offset: -85 0
-      font: verdana-11px-antialised
-      color: #AAAAAA
-      image-source: /images/game/entergame/sort-button
-      image-clip: 0 0 7 4
-      image-size: 7 4
-      image-offset: 212 5
-      @onClick: onSortButtonClick(self, 5)
-      $pressed:
-        color: #00B4D8
-        image-clip: 0 4 7 4
-      $checked:
-        image-clip: 0 4 7 4
-      $!on:
-        image-source:
-      $on:
-        image-source: /images/game/entergame/sort-button
-
+  // ============================================
+  // SCROLLBAR
+  // ============================================
   VerticalScrollBar
     id: characterListScrollBar
-    anchors.top: parent.top
-    anchors.bottom: accountStatusCaption.top
-    anchors.right: parent.right
-    margin-bottom: 5
+    anchors.top: characters.top
+    anchors.bottom: characters.bottom
+    anchors.right: rightPanel.left
+    margin-right: 8
     step: 14
     pixels-scroll: true
 
+  // ============================================
+  // HIDDEN SORT TABLE - IDs needed by Lua
+  // ============================================
+  UIWidget
+    id: characterTable
+    visible: false
+    height: 0
+
+    UIButton
+      id: characterSort
+      visible: false
+      @onClick: onSortButtonClick(self, 1)
+
+    UIButton
+      id: statusSort
+      visible: false
+      @onClick: onSortButtonClick(self, 2)
+
+    UIButton
+      id: levelSort
+      visible: false
+      @onClick: onSortButtonClick(self, 3)
+
+    UIButton
+      id: vocationSort
+      visible: false
+      @onClick: onSortButtonClick(self, 4)
+
+    UIButton
+      id: worldSort
+      visible: false
+      @onClick: onSortButtonClick(self, 5)
+
+  // Hidden separators
   VerticalSeparator
-    anchors.left: parent.left
-    anchors.top: parent.top
-    anchors.bottom: prev.bottom
-    margin-left: 249
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
+    visible: false
+    @onSetup: self:hide()
 
   VerticalSeparator
-    anchors.left: parent.left
-    anchors.top: parent.top
-    anchors.bottom: prev.bottom
-    margin-left: 349
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
+    visible: false
+    @onSetup: self:hide()
 
   VerticalSeparator
-    anchors.left: parent.left
-    anchors.top: parent.top
-    anchors.bottom: prev.bottom
-    margin-left: 409
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
+    visible: false
+    @onSetup: self:hide()
 
   VerticalSeparator
-    anchors.left: parent.left
-    anchors.top: parent.top
-    anchors.bottom: prev.bottom
-    margin-left: 500
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
+    visible: false
+    @onSetup: self:hide()
 
+  // ============================================
+  // HIDDEN ACCOUNT STATUS WIDGETS
+  // ============================================
   Label
     id: accountStatusCaption
     !text: tr('Account Status') .. ':'
+    visible: false
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: next.top
-    @onSetup: |
-      if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setMarginBottom(5)
-      else
-        self:setMarginBottom(1)
-      end
+    anchors.bottom: parent.bottom
+    height: 0
 
   Label
     id: accountStatusIcon
     size: 22 20
-    anchors.left: parent.left
-    anchors.bottom: next.bottom
+    visible: false
     image-source: /images/game/entergame/premium
     image-clip: 0 0 22 20
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:hide()
-      end
+    @onSetup: self:hide()
 
+  // ============================================
+  // VISIBLE ACCOUNT STATUS LABEL (FREE ACCOUNT)
+  // ============================================
   Label
     id: accountStatusLabel
     !text: tr('Free Account')
+    visible: true
     anchors.left: parent.left
+    anchors.bottom: buttonOk.top
+    margin-left: 15
+    margin-bottom: 8
+    color: #888888
+    font: verdana-11px-antialised
     text-auto-resize: true
-    @onSetup: |
-      if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setMarginBottom(15)
-        self:setPaddingBottom(2)
-        self:setTextOffset({x = 25, y = 0})
-        self:addAnchor(AnchorBottom, 'separator', AnchorBottom)
-      else
-        self:setMarginBottom(5)
-        self:addAnchor(AnchorRight, 'parent', AnchorRight)
-        self:addAnchor(AnchorBottom, 'separator', AnchorTop)
-      end
 
     $on:
       color: #00B4D8
@@ -470,244 +340,77 @@ MainWindow
   Button
     id: premiumButton
     !text: tr('Get Premium')
-    anchors.right: parent.right
-    text-auto-resize: true
-    image-color: #00B4D8
+    visible: false
     @onClick: onPremiumButtonClick(self)
-    @onSetup: |
-      if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setMarginBottom(15)
-        self:setPaddingBottom(2)
-        self:addAnchor(AnchorBottom, 'separator', AnchorBottom)
-      end
-
+    @onSetup: self:hide()
 
   HorizontalSeparator
     id: separator
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.bottom: premiumBenefitsPanel.top
-    height: 2
-    @onSetup: |
-      if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setMarginBottom(6)
-      else
-        self:setMarginBottom(10)
-      end
+    visible: false
+    height: 0
+    @onSetup: self:hide()
 
   Panel
     id: premiumBenefitsPanel
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.bottom: buttonHidden.top
-
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:setHeight(0)
-        self:setMarginBottom(0)
-        self:hide()
-      end
-
-
-    Label
-      id: premiumBenefitsTitle
-      !text: tr('Premium Benefits include:')
-      anchors.top: parent.top
-      anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 2
-      padding-left: 6
-      padding-right: 6
-      color: #AAAAAA
-      font: verdana-11px-antialised
-      text-auto-resize: true
-
-    UIWidget
-      id: premiumBenefitSpells
-      size: 210 52
-      anchors.left: parent.left
-      anchors.top: parent.top
-      margin-top: 22
-      margin-left: 12
-
-      UIWidget
-        id: premiumBenefitSpellsIcon
-        size: 32 32
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        image-source: /images/game/entergame/premium-icons-32x32
-        image-clip: 32 0 32 32
-
-      Label
-        id: premiumBenefitSpellsText
-        !text: tr('No level cap while training your skills offline')
-        anchors.top: premiumBenefitSpellsIcon.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        margin-top: 2
-        font: verdana-11px-antialised
-        color: #AAAAAA
-        width: 160
-        text-wrap: true
-        text-align: center
-        text-vertical-auto-resize: true
-
-    UIWidget
-      id: premiumBenefitMounts
-      size: 210 52
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: parent.top
-      margin-top: 22
-
-      UIWidget
-        id: premiumBenefitMountsIcon
-        size: 32 32
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        image-source: /images/game/entergame/premium-icons-32x32
-        image-clip: 96 0 32 32
-
-      Label
-        id: premiumBenefitMountsText
-        !text: tr('Tame mounts to travel faster')
-        anchors.top: premiumBenefitMountsIcon.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        margin-top: 2
-        text-auto-resize: true
-        font: verdana-11px-antialised
-        color: #AAAAAA
-
-    UIWidget
-      id: premiumBenefitVip
-      size: 210 52
-      anchors.right: parent.right
-      anchors.top: parent.top
-      margin-top: 22
-      margin-right: 12
-
-      UIWidget
-        id: premiumBenefitVipIcon
-        size: 32 32
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        image-source: /images/game/entergame/premium-icons-32x32
-        image-clip: 512 0 32 32
-
-      Label
-        id: premiumBenefitVipText
-        !text: tr('Imbue items with stronger effect')
-        anchors.top: premiumBenefitVipIcon.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        margin-top: 2
-        width: 190
-        text-wrap: true
-        text-align: center
-        text-vertical-auto-resize: true
-        font: verdana-11px-antialised
-        color: #AAAAAA
-
-    Label
-      id: premiumBenefitsFooter
-      !text: tr('... and many more!')
-      anchors.left: parent.left
-      anchors.bottom: parent.bottom
-      margin-left: 8
-      text-auto-resize: true
-      font: verdana-11px-antialised
-      color: #AAAAAA
-
-    HorizontalSeparator
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.bottom: parent.bottom
-      margin-left: 8
-      margin-right: 8
-      height: 2
+    visible: false
+    height: 0
+    @onSetup: self:hide()
 
   Panel
     id: buttonHidden
-    anchors.left: parent.left
-    anchors.bottom: autoReconnect.top
-    margin-bottom: 6
-    size: 165 22
-    background-color: #0A0A1A
-    border-width: 1
-    border-color: #00B4D840
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:setHeight(0)
-        self:setMarginBottom(0)
-        self:hide()
-      else
-        self:setHeight(22)
-        self:setMarginBottom(6)
-      end
+    visible: false
+    height: 0
+    @onSetup: self:hide()
     CheckBox
       id: checkBoxHidden
-      anchors.left: parent.left
-      anchors.verticalCenter: parent.verticalCenter
-      margin-left: 6
-      checked: true
-      !text: tr('Show Hidden Characters')
-      text-auto-resize: true
-      color: #AAAAAA
+      visible: false
       @onCheckChange: onShowHiddenCharacters(self, self:isChecked())
-
 
   Panel
     id: buttonOutfit
-    anchors.left: buttonHidden.right
-    anchors.verticalCenter: buttonHidden.verticalCenter
-    margin-left: 10
-    size: 100 22
-    background-color: #0A0A1A
-    border-width: 1
-    border-color: #00B4D840
-    padding: 1 1 1 1
-    @onSetup: |
-      if not(g_game.getFeature(GameEnterGameShowAppearance)) then
-        self:setHeight(0)
-        self:hide()
-      else
-        self:setHeight(22)
-      end
+    visible: false
+    height: 0
+    @onSetup: self:hide()
     CheckBox
       id: checkBoxOutfit
-      anchors.left: parent.left
-      anchors.verticalCenter: parent.verticalCenter
-      margin-left: 6      
-      !text: tr('Show Outfit')
-      text-auto-resize: true
-      color: #AAAAAA
+      visible: false
       @onCheckChange: onShowOutfits(self, self:isChecked())
 
   Button
     id: autoReconnect
+    visible: false
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    @onSetup: |
-      if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setWidth(140)
-      else
-        self:setWidth(75)
-        self:setFont('small-9px')
-      end
+    @onSetup: self:hide()
     $!on:
       image-color: red
     $on:
       image-color: #00B4D8
 
+  // ============================================
+  // BUTTONS - ENTER / EXIT
+  // ============================================
   Button
     id: buttonOk
     !text: tr('Ok')
-    width: 64
-    anchors.right: next.left
+    width: 120
+    height: 36
+    anchors.right: buttonCancel.left
     anchors.bottom: parent.bottom
-    margin-right: 10
+    margin-right: 8
+    margin-bottom: 14
     @onClick: CharacterList.doLogin()
+
+    $hover:
+      background-color: #00D4F8
 
   Button
     id: buttonCancel
     !text: tr('Cancel')
-    width: 64
-    anchors.right: parent.right
+    width: 120
+    height: 36
+    anchors.right: rightPanel.left
     anchors.bottom: parent.bottom
+    margin-right: 15
+    margin-bottom: 14
     @onClick: CharacterList.hide(true)

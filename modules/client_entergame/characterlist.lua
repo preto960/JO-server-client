@@ -51,7 +51,7 @@ local PINNED_CHARACTERS_SETTING = 'characterlist-pinned-characters'
     true  -> panel is displayed
     false -> panel is hidden
 ]]
-local SHOW_PREMIUM_WIDGETS = true
+local SHOW_PREMIUM_WIDGETS = false
 
 -- autoReconnect Button
 local autoReconnectButton
@@ -138,7 +138,7 @@ local function setShowOutfits(value)
 end
 
 local function getSortColumn()
-    local sortColumn = g_settings.getNumber(SORT_COLUMN_SETTING, SORT_COLUMN.Character)
+    local sortColumn = g_settings.getNumber(SORT_COLUMN_SETTING, SORT_COLUMN.Level)
     if sortColumn < SORT_COLUMN.Character or sortColumn > SORT_COLUMN.World then
         sortColumn = SORT_COLUMN.Character
     end
@@ -146,7 +146,7 @@ local function getSortColumn()
 end
 
 local function getSortAscending()
-    return g_settings.getBoolean(SORT_ASCENDING_SETTING, true)
+    return g_settings.getBoolean(SORT_ASCENDING_SETTING, false)
 end
 
 local function getCharacterStatusValue(characterInfo)
@@ -709,6 +709,7 @@ function CharacterList.create(characters, account, otui)
         if focusedChild then
             focusedChild:updateOnStates()
             self:ensureChildVisible(focusedChild)
+            CharacterList.updateOutfitPreview(focusedChild)
         end
     end
 
@@ -862,6 +863,11 @@ function CharacterList.rebuildCharactersList()
         addEvent(function()
             characterList:ensureChildVisible(focusLabel)
         end)
+        if shouldShowAppearance() then
+            scheduleEvent(function()
+                CharacterList.updateOutfitPreview(focusLabel)
+            end)
+        end
     end
     updateSortButtons()
 end
@@ -1012,14 +1018,16 @@ function CharacterList.updateCharactersAppearance(widget, characterInfo, showOut
             creature:setDirection(2)
             creatureDisplay:setCreature(creature)
             creatureDisplay:setPadding(0)
+        else
+            creatureDisplay:setSize('0 0')
         end
     end
 
     if nameLabel then
-        nameLabel:setMarginLeft(showOutfits and 65 or 5)
+        nameLabel:setMarginLeft(showOutfits and 65 or 10)
     end
 
-    widget:setHeight(showOutfits and 64 or 29)
+    widget:setHeight(showOutfits and 64 or 50)
 
     if mainCharacter then
         mainCharacter:setImageSource(characterInfo.main and '/images/game/entergame/maincharacter' or '')
@@ -1058,6 +1066,31 @@ function CharacterList.updateCharactersAppearances(showOutfits)
             CharacterList.updateCharactersAppearance(widget, widget.characterInfo, showOutfits)
         end
     end
+end
+
+function CharacterList.updateOutfitPreview(widget)
+    if not shouldShowAppearance() then return end
+    local preview = charactersWindow and charactersWindow:recursiveGetChildById('outfitPreview')
+    if not preview then return end
+
+    if not widget or not widget.characterInfo then
+        preview:setCreature(nil)
+        return
+    end
+
+    local characterInfo = widget.characterInfo
+    local creature = Creature.create()
+    local outfit = {
+        type = characterInfo.outfitid or 0,
+        head = characterInfo.headcolor or 0,
+        body = characterInfo.torsocolor or 0,
+        legs = characterInfo.legscolor or 0,
+        feet = characterInfo.detailcolor or 0,
+        addons = characterInfo.addonsflags or 0
+    }
+    creature:setOutfit(outfit)
+    creature:setDirection(2)
+    preview:setCreature(creature)
 end
 
 function onLogout()
