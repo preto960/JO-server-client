@@ -144,12 +144,19 @@ function setup()
         end, 200)
     end
 
-    local gw = g_window
-    if gw and customWindow then
-        local x = (gw.getWidth() - customWindow:getWidth()) / 2
-        local y = (gw.getHeight() - customWindow:getHeight()) / 2 - 20
-        customWindow:setPosition({ x = x, y = y })
-    end
+    scheduleEvent(function()
+        local gw = g_window
+        if gw and customWindow then
+            local ww = gw.getWidth()
+            local wh = gw.getHeight()
+            local cw = customWindow:getWidth()
+            local ch = customWindow:getHeight()
+            local x = (ww - cw) / 2
+            local y = (wh - ch) / 2 - 20
+            customWindow:setPosition({ x = x, y = y })
+            customWindow:raise()
+        end
+    end, 300)
 
     pcall(function()
         connect(g_game, {
