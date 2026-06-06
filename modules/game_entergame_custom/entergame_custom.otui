@@ -2,7 +2,7 @@ UIWidget
   id: enterGameCustomWindow
   visible: false
   focusable: true
-  size: 380 440
+  size: 380 340
   background-color: #000000DD
   border-width: 2
   border-color: #00B4D8
@@ -11,114 +11,76 @@ UIWidget
     id: logoArea
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    height: 80
+    height: 90
     width: 340
 
-  Label
-    id: logoLabel
-    !text: 'JO'
-    font: Verdana Bold-13px
-    color: #00B4D8
-    anchors.horizontalCenter: logoArea.horizontalCenter
-    anchors.bottom: logoArea.bottom
-    margin-bottom: 14
+  UIWidget
+    id: logoImageWidget
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.verticalCenter: logoArea.verticalCenter
+    size: 120 60
+    image-source: /game_entergame_custom/JO_logo
+    image-auto-resize: true
 
   UIWidget
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: logoArea.bottom
     height: 1
-    background-color: #00B4D840
+    background-color: #00B4D860
     margin-left: 30
     margin-right: 30
-
-  Label
-    id: nameLabel
-    !text: tr('E-MAIL')
-    font: verdana-11px-rounded
-    color: #FFFFFFCC
-    anchors.left: parent.left
-    anchors.top: logoArea.bottom
-    margin-top: 22
-    margin-left: 30
 
   TextEdit
     id: customAccountName
-    height: 38
+    height: 0
+    visible: false
     anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: nameLabel.bottom
-    margin-top: 6
+    anchors.top: logoArea.bottom
     margin-left: 30
-    margin-right: 30
     background-color: #0A0A1AFF
     color: #FFFFFFFF
     font: verdana-11px-antialised
-    text-vertical-alignment: center
-    placeholder: "your@email.com"
-    placeholder-color: #3A3A5A80
-    image-source: none
-    selection-color: #000000FF
-    selection-background-color: #00B4D8CC
-    border-width: 1
-    border-color: #1A1A3A
-    padding-left: 12
-    padding-right: 12
 
-  Label
-    id: passLabel
-    !text: tr('PASSWORD')
-    font: verdana-11px-rounded
-    color: #FFFFFFCC
+  UIWidget
     anchors.left: parent.left
-    anchors.top: customAccountName.bottom
-    margin-top: 16
+    anchors.right: parent.right
+    anchors.top: logoArea.bottom
+    height: 1
+    background-color: #00B4D830
     margin-left: 30
+    margin-right: 30
+    margin-top: 30
 
   TextEdit
     id: customPassword
-    height: 38
+    height: 0
+    visible: false
     anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: passLabel.bottom
-    margin-top: 6
+    anchors.top: logoArea.bottom
     margin-left: 30
-    margin-right: 30
     background-color: #0A0A1AFF
     color: #FFFFFFFF
     font: verdana-11px-antialised
-    text-vertical-alignment: center
-    placeholder: "password"
-    placeholder-color: #3A3A5A80
-    image-source: none
-    selection-color: #000000FF
-    selection-background-color: #00B4D8CC
-    border-width: 1
-    border-color: #1A1A3A
-    padding-left: 12
-    padding-right: 12
     text-hidden: true
+
+  UIWidget
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: logoArea.bottom
+    height: 1
+    background-color: #00B4D830
+    margin-left: 30
+    margin-right: 30
+    margin-top: 60
 
   UIButton
     id: customRememberBox
-    size: 16 16
+    size: 0 0
+    visible: false
     anchors.left: parent.left
-    anchors.top: customPassword.bottom
-    margin-top: 16
-    margin-left: 30
-    background-color: #0A0A1A
-    border-width: 1
-    border-color: #1A1A3A
+    anchors.top: logoArea.bottom
     @onClick: modules.game_entergame_custom.toggleRemember()
-
-  Label
-    id: rememberText
-    !text: tr('Remember me')
-    font: verdana-11px-rounded
-    color: #AAAAAA
-    anchors.left: customRememberBox.right
-    anchors.verticalCenter: customRememberBox.verticalCenter
-    margin-left: 6
 
   UIButton
     id: loginButton
@@ -127,8 +89,8 @@ UIWidget
     color: #0A0A1A
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: customRememberBox.bottom
-    margin-top: 16
+    anchors.top: logoArea.bottom
+    margin-top: 80
     margin-left: 30
     margin-right: 30
     height: 38
@@ -143,6 +105,16 @@ UIWidget
     $pressed:
       background-color: #008AA8
 
+  UIWidget
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: loginButton.bottom
+    height: 1
+    background-color: #00B4D830
+    margin-left: 30
+    margin-right: 30
+    margin-top: 16
+
   UIButton
     id: forgotPassBtn
     !text: tr('Forgot password')
@@ -150,7 +122,7 @@ UIWidget
     color: #AAAAAA
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: loginButton.bottom
-    margin-top: 14
+    margin-top: 20
     @onClick: modules.game_entergame_custom.onForgotPassword()
 
     $hover:
