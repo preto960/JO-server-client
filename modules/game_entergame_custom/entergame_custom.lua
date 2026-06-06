@@ -1,5 +1,6 @@
 -- entergame_custom.lua - Custom login screen for JO Server
 -- Electric Blue Theme - Logo outside panel, line inputs, footer bar
+-- All elements use anchors for auto-resize on resolution change
 
 local customWindow = nil
 local footerBar = nil
@@ -58,9 +59,10 @@ function setup()
     if versionLabelWidget then versionLabelWidget:hide() end
 
     local root = g_ui.getRootWidget()
+    if not root then return end
 
     local ok = pcall(function()
-        customWindow = g_ui.loadUI('entergame_custom')
+        customWindow = g_ui.loadUI('entergame_custom', root)
     end)
     if not ok or not customWindow then
         originalWindow:show()
@@ -68,28 +70,25 @@ function setup()
         return
     end
 
-    if not customWindow:getParent() and root then
-        root:addChild(customWindow)
-    end
-
-    logoWidget = g_ui.createWidget('UIWidget', root)
-    if logoWidget then
-        logoWidget:setId('loginLogoWidget')
-        logoWidget:setSize({ width = 200, height = 100 })
-        logoWidget:setImageSource('/game_entergame_custom/JO_logo')
-        logoWidget:setImageAutoResize(true)
-    end
+    pcall(function()
+        logoWidget = g_ui.loadUIFromString([[
+UIWidget
+  id: loginLogoWidget
+  size: 200 100
+  image-source: /game_entergame_custom/JO_logo
+  image-auto-resize: true
+  anchors.horizontalCenter: parent.horizontalCenter
+  anchors.bottom: enterGameCustomWindow.top
+  margin-bottom: 20
+        ]], root)
+    end)
 
     local ok2 = pcall(function()
-        footerBar = g_ui.loadUI('login_footer')
+        footerBar = g_ui.loadUI('login_footer', root)
     end)
     if not ok2 or not footerBar then
         g_logger.warning('[Custom Login] Could not load footer bar')
     else
-        if root then
-            root:addChild(footerBar)
-        end
-        positionFooter()
         footerBar:show()
         footerBar:raise()
         updatePlayersOnline()
@@ -124,7 +123,12 @@ function setup()
     end
 
     scheduleEvent(function()
-        positionAll()
+        if customWindow then
+            customWindow:raise()
+        end
+        if logoWidget then
+            logoWidget:raise()
+        end
     end, 300)
 
     pcall(function()
@@ -133,90 +137,6 @@ function setup()
             onGameEnd = onGameEnd
         })
     end)
-
-    pcall(function()
-        connect(g_window, {
-            onResize = onWindowResize
-        })
-    end)
-end
-
-function onWindowResize()
-    if not customWindow then return end
-    if customWindow:isVisible() then
-        positionAll()
-    end
-end
-
-function positionAll()
-    local gw = g_window
-    if not gw then return end
-    local ww = gw.getWidth()
-    local wh = gw.getHeight()
-
-    if logoWidget then
-        local logoW = logoWidget:getWidth()
-        local logoH = logoWidget:getHeight()
-        logoWidget:setPosition({ x = (ww - logoW) / 2, y = (wh - 500) / 2 - 60 })
-        logoWidget:raise()
-    end
-
-    if customWindow then
-        local cw = customWindow:getWidth()
-        local ch = customWindow:getHeight()
-        local x = (ww - cw) / 2
-        local y = (wh - ch) / 2 - 10
-        customWindow:setPosition({ x = x, y = y })
-        customWindow:raise()
-    end
-
-    if footerBar then
-        positionFooter()
-        footerBar:raise()
-    end
-end
-
-function positionFooter()
-    local gw = g_window
-    if not gw or not footerBar then return end
-    local ww = gw.getWidth()
-    local wh = gw.getHeight()
-    local fh = 36
-
-    footerBar:setWidth(ww)
-    footerBar:setHeight(fh)
-    footerBar:setPosition({ x = 0, y = wh - fh })
-
-    local sep = footerBar:recursiveGetChildById('footerSeparator')
-    if sep then
-        sep:setPosition({ x = 0, y = 0 })
-        sep:setWidth(ww)
-    end
-
-    local audioBtn = footerBar:recursiveGetChildById('footerAudioBtn')
-    if audioBtn then
-        audioBtn:setPosition({ x = 12, y = 4 })
-    end
-
-    local optBtn = footerBar:recursiveGetChildById('footerOptionsBtn')
-    if optBtn then
-        optBtn:setPosition({ x = 46, y = 4 })
-    end
-
-    local playersLabel = footerBar:recursiveGetChildById('footerPlayersLabel')
-    if playersLabel then
-        playersLabel:setPosition({ x = (ww - playersLabel:getWidth()) / 2, y = 10 })
-    end
-
-    local ytBtn = footerBar:recursiveGetChildById('footerYoutubeBtn')
-    if ytBtn then
-        ytBtn:setPosition({ x = ww - 72, y = 4 })
-    end
-
-    local discBtn = footerBar:recursiveGetChildById('footerDiscordBtn')
-    if discBtn then
-        discBtn:setPosition({ x = ww - 40, y = 4 })
-    end
 end
 
 function terminate()
@@ -229,12 +149,6 @@ function terminate()
         disconnect(g_game, {
             onGameStart = onGameStart,
             onGameEnd = onGameEnd
-        })
-    end)
-
-    pcall(function()
-        disconnect(g_window, {
-            onResize = onWindowResize
         })
     end)
 

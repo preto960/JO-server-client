@@ -18,6 +18,9 @@ UIWidget
   border-width: 1
   border-color: #00B4D840
   padding: 25 30 25 30
+  anchors.horizontalCenter: parent.horizontalCenter
+  anchors.verticalCenter: parent.verticalCenter
+  margin-top: 10
 
   UIWidget
     id: topSeparator

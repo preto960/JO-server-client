@@ -3,15 +3,20 @@ UIWidget
   visible: false
   focusable: false
   height: 36
-  width: 100
   background-color: #000000CC
   border-width: 0
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.bottom: parent.bottom
 
   UIWidget
     id: footerSeparator
     height: 1
     width: 100
     background-color: #00B4D830
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
 
   UIButton
     id: footerAudioBtn
@@ -21,6 +26,9 @@ UIWidget
     image-clip: 0 0 28 28
     image-border: 0
     cursor: pointer
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 12
 
     $hover:
       image-color: #00B4D8
@@ -35,6 +43,9 @@ UIWidget
     image-clip: 0 0 28 28
     image-border: 0
     cursor: pointer
+    anchors.left: footerAudioBtn.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 6
 
     $hover:
       image-color: #00B4D8
@@ -47,6 +58,8 @@ UIWidget
     font: verdana-11px-rounded
     color: #00B4D8
     text-auto-resize: true
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.verticalCenter: parent.verticalCenter
 
   UIButton
     id: footerYoutubeBtn
@@ -56,6 +69,9 @@ UIWidget
     image-clip: 0 0 28 28
     image-border: 0
     cursor: pointer
+    anchors.right: footerDiscordBtn.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 6
 
     $hover:
       image-color: #00B4D8
@@ -70,6 +86,9 @@ UIWidget
     image-clip: 0 0 28 28
     image-border: 0
     cursor: pointer
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 12
 
     $hover:
       image-color: #00B4D8
