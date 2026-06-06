@@ -212,7 +212,7 @@ MainWindow
     anchors.left: parent.left
     margin-left: 15
     margin-top: 12
-    font: Verdana Bold-12px
+    font: Verdana Bold-13px
     text-auto-resize: true
 
   // ============================================
@@ -242,10 +242,12 @@ MainWindow
   // ============================================
   VerticalScrollBar
     id: characterListScrollBar
-    anchors.top: characters.top
-    anchors.bottom: characters.bottom
+    anchors.top: titleLabel.bottom
+    anchors.bottom: accountStatusLabel.top
     anchors.right: rightPanel.left
     margin-right: 8
+    margin-top: 8
+    margin-bottom: 8
     step: 14
     pixels-scroll: true
 
