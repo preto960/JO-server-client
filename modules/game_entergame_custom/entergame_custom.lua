@@ -79,12 +79,38 @@ function setup()
     if not ok2 or not footerBar then
         g_logger.warning('[Custom Login] Could not load footer bar')
     else
-        if not footerBar:getParent() then
-            local root = g_ui.getRootWidget()
-            if root then
-                root:addChild(footerBar)
-            end
+        local root = g_ui.getRootWidget()
+        if root then
+            root:addChild(footerBar)
         end
+
+        local gw = g_window
+        if gw and footerBar then
+            footerBar:setWidth(gw.getWidth())
+            footerBar:setPosition({ x = 0, y = gw.getHeight() - 36 })
+        end
+
+        local audioBtn = footerBar:recursiveGetChildById('footerAudioBtn')
+        if audioBtn then
+            audioBtn:setPosition({ x = 8, y = 4 })
+        end
+        local optBtn = footerBar:recursiveGetChildById('footerOptionsBtn')
+        if optBtn then
+            optBtn:setPosition({ x = 40, y = 4 })
+        end
+        local playersLabel = footerBar:recursiveGetChildById('footerPlayersLabel')
+        if playersLabel and gw then
+            playersLabel:setPosition({ x = (gw.getWidth() - playersLabel:getWidth()) / 2, y = 10 })
+        end
+        local discBtn = footerBar:recursiveGetChildById('footerDiscordBtn')
+        if discBtn and gw then
+            discBtn:setPosition({ x = gw.getWidth() - 36, y = 4 })
+        end
+        local ytBtn = footerBar:recursiveGetChildById('footerYoutubeBtn')
+        if ytBtn and gw then
+            ytBtn:setPosition({ x = gw.getWidth() - 68, y = 4 })
+        end
+
         footerBar:show()
         footerBar:raise()
         updatePlayersOnline()
