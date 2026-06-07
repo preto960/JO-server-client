@@ -825,8 +825,8 @@ function CharacterList.rebuildCharactersList()
     for i, characterInfo in ipairs(characters) do
         local widget = g_ui.createWidget('CharacterWidget', characterList)
         widget.charIndex = i - 1
-        widget:setX((i - 1) * (CARD_WIDTH + CARD_MARGIN))
-        widget:setY(yOffset)
+        widget:setMarginLeft((i - 1) * (CARD_WIDTH + CARD_MARGIN))
+        widget:setMarginTop(yOffset)
         widget:setWidth(CARD_WIDTH)
         widget:setHeight(CARD_HEIGHT)
         widget:setBackgroundColor('#0A0A1A99')
@@ -877,6 +877,14 @@ function CharacterList.rebuildCharactersList()
             focusLabel = widget
         end
         widget:updateOnStates()
+    end
+
+    -- CRITICAL: Set cardContainer width explicitly so OTClient doesn't clip children.
+    -- Without this, cardContainer has width=0 (only anchors.left, no right anchor)
+    -- and ALL card children are outside bounds and invisible.
+    local totalCardsWidth = #characters * (CARD_WIDTH + CARD_MARGIN)
+    if totalCardsWidth > 0 then
+        characterList:setWidth(totalCardsWidth)
     end
 
     -- Show/hide arrows based on whether all cards fit
@@ -1106,20 +1114,20 @@ function CharacterList.ensureCardVisible(focusedChild)
     local CARD_WIDTH = 155
     local CARD_MARGIN = 10
     local children = characterList:getChildren()
-    local totalCardsWidth = #children * (CARD_WIDTH + CARD_MARGIN) - CARD_MARGIN
+    local totalCardsWidth = #children * (CARD_WIDTH + CARD_MARGIN)
 
     if totalCardsWidth <= viewportWidth then
-        characterList:setX(0)
+        characterList:setMarginLeft(0)
         return
     end
 
     -- Calculate target offset to center the focused card
-    local cardX = focusedChild:getX()
-    local maxOffset = totalCardsWidth - viewportWidth
-    local targetOffset = cardX - (viewportWidth - CARD_WIDTH) / 2
+    local cardMarginLeft = focusedChild:getMarginLeft()
+    local maxOffset = totalCardsWidth - CARD_MARGIN - viewportWidth
+    local targetOffset = cardMarginLeft - (viewportWidth - CARD_WIDTH) / 2
     targetOffset = math.max(0, math.min(targetOffset, maxOffset))
 
-    characterList:setX(-targetOffset)
+    characterList:setMarginLeft(-targetOffset)
 end
 
 function CharacterList.scrollLeft()
