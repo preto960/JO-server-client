@@ -712,8 +712,10 @@ function CharacterList.create(characters, account, otui)
     premiumBenefitsPanel = charactersWindow:recursiveGetChildById('premiumBenefitsPanel')
     premiumButton = charactersWindow:recursiveGetChildById('premiumButton')
 
-    -- Note: OTClient UIWidget has no setClip method.
-    -- The MainWindow itself clips children to its bounds, so no extra clipping needed.
+    -- Enable clipping on viewport so cards don't overflow boundaries
+    pcall(function()
+        carouselViewport:setClipping(true)
+    end)
 
     characterList.onChildFocusChange = function(self, focusedChild, oldFocusedChild)
         removeAutoReconnectEvent()
@@ -877,14 +879,18 @@ function CharacterList.rebuildCharactersList()
         widget:updateOnStates()
     end
 
-    -- Debug: verify cards were created
-    print('[CharacterList] Created ' .. #characters .. ' cards, CARD_WIDTH=' .. CARD_WIDTH .. ', viewport=' .. tostring(carouselViewport and carouselViewport:getWidth() or 'nil'))
+    -- Set explicit content width so scrolling/clipping works correctly
+    local CARD_WIDTH = 155
+    local CARD_MARGIN = 10
+    local totalContentWidth = #characters * CARD_WIDTH + math.max(0, #characters - 1) * CARD_MARGIN
+    characterList:setWidth(totalContentWidth)
+
+    print('[CharacterList] Created ' .. #characters .. ' cards, contentWidth=' .. totalContentWidth .. ', viewport=' .. tostring(carouselViewport and carouselViewport:getWidth() or 'nil'))
 
     -- Show/hide arrows based on whether all cards fit
     if leftArrowBtn and rightArrowBtn and carouselViewport then
         local viewportWidth = carouselViewport:getWidth()
-        local totalCardsWidth = #characters * (CARD_WIDTH + CARD_MARGIN) - CARD_MARGIN
-        if totalCardsWidth <= viewportWidth then
+        if totalContentWidth <= viewportWidth then
             leftArrowBtn:hide()
             rightArrowBtn:hide()
         else

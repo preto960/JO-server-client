@@ -265,6 +265,7 @@ MainWindow
     background-color: #0A0A1A60
     border-width: 1
     border-color: #00B4D820
+    clip: true
 
     // Card Container uses horizontalBox layout.
     // Scroll by adjusting marginLeft on this container.
