@@ -825,8 +825,8 @@ function CharacterList.rebuildCharactersList()
     for i, characterInfo in ipairs(characters) do
         local widget = g_ui.createWidget('CharacterWidget', characterList)
         widget.charIndex = i - 1
-        widget:setMarginLeft((i - 1) * (CARD_WIDTH + CARD_MARGIN))
-        widget:setMarginTop(yOffset)
+        widget:setX((i - 1) * (CARD_WIDTH + CARD_MARGIN))
+        widget:setY(yOffset)
         widget:setWidth(CARD_WIDTH)
         widget:setHeight(CARD_HEIGHT)
         widget:setBackgroundColor('#0A0A1A99')
@@ -886,6 +886,7 @@ function CharacterList.rebuildCharactersList()
     if totalCardsWidth > 0 then
         characterList:setWidth(totalCardsWidth)
     end
+    print('[CharacterList] Created ' .. #characters .. ' cards, container width=' .. tostring(totalCardsWidth) .. ', viewport=' .. tostring(carouselViewport and carouselViewport:getWidth() or 'nil'))
 
     -- Show/hide arrows based on whether all cards fit
     if leftArrowBtn and rightArrowBtn and carouselViewport then
@@ -1121,10 +1122,11 @@ function CharacterList.ensureCardVisible(focusedChild)
         return
     end
 
-    -- Calculate target offset to center the focused card
-    local cardMarginLeft = focusedChild:getMarginLeft()
+    -- Use charIndex to calculate position (more reliable than getX/getMarginLeft)
+    local cardIndex = focusedChild.charIndex or 0
+    local cardPos = cardIndex * (CARD_WIDTH + CARD_MARGIN)
     local maxOffset = totalCardsWidth - CARD_MARGIN - viewportWidth
-    local targetOffset = cardMarginLeft - (viewportWidth - CARD_WIDTH) / 2
+    local targetOffset = cardPos - (viewportWidth - CARD_WIDTH) / 2
     targetOffset = math.max(0, math.min(targetOffset, maxOffset))
 
     characterList:setMarginLeft(-targetOffset)
