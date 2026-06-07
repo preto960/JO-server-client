@@ -879,14 +879,8 @@ function CharacterList.rebuildCharactersList()
         widget:updateOnStates()
     end
 
-    -- CRITICAL: Set cardContainer width explicitly so OTClient doesn't clip children.
-    -- Without this, cardContainer has width=0 (only anchors.left, no right anchor)
-    -- and ALL card children are outside bounds and invisible.
-    local totalCardsWidth = #characters * (CARD_WIDTH + CARD_MARGIN)
-    if totalCardsWidth > 0 then
-        characterList:setWidth(totalCardsWidth)
-    end
-    print('[CharacterList] Created ' .. #characters .. ' cards, container width=' .. tostring(totalCardsWidth) .. ', viewport=' .. tostring(carouselViewport and carouselViewport:getWidth() or 'nil'))
+    -- Debug: verify cards were created
+    print('[CharacterList] Created ' .. #characters .. ' cards, CARD_WIDTH=' .. CARD_WIDTH .. ', viewport=' .. tostring(carouselViewport and carouselViewport:getWidth() or 'nil'))
 
     -- Show/hide arrows based on whether all cards fit
     if leftArrowBtn and rightArrowBtn and carouselViewport then
