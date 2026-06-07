@@ -827,7 +827,7 @@ function CharacterList.rebuildCharactersList()
         widget.charIndex = i - 1
         -- Let horizontalBox layout handle positioning automatically
         widget:setHeight(CARD_HEIGHT)
-        widget:setBackgroundColor('#0A0A1A99')
+        widget:setBackgroundColor('#0A0A1ABB')
         widget.characterInfo = characterInfo
         for key, value in pairs(characterInfo) do
             local subWidget = widget:getChildById(key)

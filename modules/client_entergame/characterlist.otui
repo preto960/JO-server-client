@@ -9,9 +9,9 @@
 CharacterWidget < UIWidget
   width: 155
   height: 370
-  background-color: #0A0A1A99
-  border-width: 1
-  border-color: #00B4D830
+  background-color: #0A0A1ABB
+  border-width: 2
+  border-color: #00B4D880
   &updateOnStates: |
     function(self)
       local focused = self:isFocused()
@@ -20,11 +20,11 @@ CharacterWidget < UIWidget
         children[i]:setOn(focused)
       end
       if focused then
-        self:setBackgroundColor("#00B4D830")
-        self:setBorderColor("#00B4D8")
+        self:setBackgroundColor("#00B4D840")
+        self:setBorderColor("#00D4F8")
       else
-        self:setBackgroundColor("#0A0A1A99")
-        self:setBorderColor("#00B4D830")
+        self:setBackgroundColor("#0A0A1ABB")
+        self:setBorderColor("#00B4D880")
       end
       local pin = self:getChildById('pin')
       if pin then
