@@ -152,7 +152,6 @@ MainWindow
   visible: false
   border-width: 0
   size: 780 520
-  image-source: ''
   image-border: 0
   padding: 0
   background-color: #00000000

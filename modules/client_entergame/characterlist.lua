@@ -712,10 +712,8 @@ function CharacterList.create(characters, account, otui)
     premiumBenefitsPanel = charactersWindow:recursiveGetChildById('premiumBenefitsPanel')
     premiumButton = charactersWindow:recursiveGetChildById('premiumButton')
 
-    -- Enable clipping on carousel viewport
-    if carouselViewport then
-        carouselViewport:setClip(true)
-    end
+    -- Note: OTClient UIWidget has no setClip method.
+    -- The MainWindow itself clips children to its bounds, so no extra clipping needed.
 
     characterList.onChildFocusChange = function(self, focusedChild, oldFocusedChild)
         removeAutoReconnectEvent()
