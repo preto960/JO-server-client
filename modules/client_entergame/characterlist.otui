@@ -266,14 +266,17 @@ MainWindow
     border-width: 1
     border-color: #00B4D820
 
-    // Card Container fills viewport; cards positioned with setX by Lua.
-    // setMarginLeft on this container scrolls the carousel.
+    // Card Container uses horizontalBox layout.
+    // Scroll by adjusting marginLeft on this container.
     UIWidget
       id: cardContainer
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       anchors.right: parent.right
+      layout: horizontalBox
+      spacing: 10
+      padding: 10
 
   // ============================================
   // RIGHT ARROW BUTTON

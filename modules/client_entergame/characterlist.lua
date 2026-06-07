@@ -825,9 +825,7 @@ function CharacterList.rebuildCharactersList()
     for i, characterInfo in ipairs(characters) do
         local widget = g_ui.createWidget('CharacterWidget', characterList)
         widget.charIndex = i - 1
-        widget:setX((i - 1) * (CARD_WIDTH + CARD_MARGIN))
-        widget:setY(yOffset)
-        widget:setWidth(CARD_WIDTH)
+        -- Let horizontalBox layout handle positioning automatically
         widget:setHeight(CARD_HEIGHT)
         widget:setBackgroundColor('#0A0A1A99')
         widget.characterInfo = characterInfo
