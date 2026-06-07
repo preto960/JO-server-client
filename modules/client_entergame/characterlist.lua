@@ -815,14 +815,8 @@ function CharacterList.rebuildCharactersList()
     local focusLabel
     characterList:destroyChildren()
 
-    -- Carousel: set card container width and position cards horizontally
-    local cardWidth = 155
-    local cardGap = 12
-    local cardStep = cardWidth + cardGap
-
     for i, characterInfo in ipairs(characters) do
         local widget = g_ui.createWidget('CharacterWidget', characterList)
-        widget:setMarginLeft((i - 1) * cardStep)
         widget.charIndex = i - 1
         widget:setBackgroundColor('#0A0A1A99')
         widget.characterInfo = characterInfo
@@ -874,16 +868,11 @@ function CharacterList.rebuildCharactersList()
         widget:updateOnStates()
     end
 
-    -- Set container total width for horizontal scrolling
-    if #characters > 0 then
-        characterList:setWidth(#characters * cardStep - cardGap)
-    end
-
     -- Show/hide arrows based on whether all cards fit
     if leftArrowBtn and rightArrowBtn and carouselViewport then
         local viewportWidth = carouselViewport:getWidth()
-        local maxVisible = math.floor((viewportWidth + cardGap) / cardStep)
-        if #characters <= maxVisible then
+        local containerWidth = characterList:getWidth()
+        if containerWidth <= viewportWidth then
             leftArrowBtn:hide()
             rightArrowBtn:hide()
         else
@@ -1102,22 +1091,21 @@ end
 
 function CharacterList.ensureCardVisible(focusedChild)
     if not focusedChild or not characterList or not carouselViewport then return end
-    local index = focusedChild.charIndex
-    if index == nil then return end
-
-    local cardWidth = 155
-    local cardGap = 12
-    local cardStep = cardWidth + cardGap
     local viewportWidth = carouselViewport:getWidth()
-    local totalWidth = characterList:getWidth()
+    local containerWidth = characterList:getWidth()
 
-    if totalWidth <= viewportWidth then return end
+    if containerWidth <= viewportWidth then
+        characterList:setVirtualOffset({x = 0, y = 0})
+        return
+    end
 
-    local maxOffset = totalWidth - viewportWidth
-    local targetOffset = index * cardStep - (viewportWidth - cardWidth) / 2
+    local cardX = focusedChild:getX()
+    local cardWidth = focusedChild:getWidth()
+    local maxOffset = containerWidth - viewportWidth
+    local targetOffset = cardX - (viewportWidth - cardWidth) / 2
     targetOffset = math.max(0, math.min(targetOffset, maxOffset))
 
-    characterList:setMarginLeft(-targetOffset)
+    characterList:setVirtualOffset({x = -targetOffset, y = 0})
 end
 
 function CharacterList.scrollLeft()
