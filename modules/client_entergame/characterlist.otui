@@ -1,15 +1,17 @@
-// CharacterList - Electric Blue Theme - Rubinot Style
-// Two separate blocks: left (character list) and right (outfit preview)
+// CharacterList - Horizontal Carousel - Electric Blue Theme
+// Cards: Name (top) -> Outfit (center) -> Level/Vocation/World (bottom)
+// Arrow buttons ◀ ▶ for navigation
 // Same visual style as login screen (entergame_custom.otui)
 
 // ============================================
-// CHARACTER WIDGET - Two line entry
+// CHARACTER WIDGET - Vertical Card for Carousel
 // ============================================
 CharacterWidget < UIWidget
-  height: 50
-  background-color: #0A0A1A00
-  border-width: 0
-  border-color: #00000000
+  width: 155
+  height: 370
+  background-color: #0A0A1A99
+  border-width: 1
+  border-color: #00B4D830
   &updateOnStates: |
     function(self)
       local focused = self:isFocused()
@@ -18,9 +20,11 @@ CharacterWidget < UIWidget
         children[i]:setOn(focused)
       end
       if focused then
-        self:setBackgroundColor("#00B4D818")
+        self:setBackgroundColor("#00B4D830")
+        self:setBorderColor("#00B4D8")
       else
-        self:setBackgroundColor("#0A0A1A00")
+        self:setBackgroundColor("#0A0A1A99")
+        self:setBorderColor("#00B4D830")
       end
       local pin = self:getChildById('pin')
       if pin then
@@ -31,44 +35,22 @@ CharacterWidget < UIWidget
   @onSetup: |
     self:updateOnStates()
     if g_game.getFeature(GameEnterGameShowAppearance) then
-      self:setHeight(50)
+      self:setHeight(370)
     end
 
-  UICreature
-    id: outfitCreatureBox
-    size: 0 0
-    visible: false
-    anchors.top: parent.top
-    anchors.left: parent.left
-
-  // Row 1: Name
+  // === TOP: Character Name ===
   Label
     id: name
     color: #FFFFFFFF
     anchors.top: parent.top
-    anchors.left: parent.left
-    margin-left: 12
-    margin-top: 8
-    font: verdana-11px-rounded
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 10
+    font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
-    text-offset: 2 0
-    @onSetup: |
-      self:setMarginLeft(12)
 
     $on:
       color: #00B4D8
-
-  Label
-    id: mainCharacter
-    size: 9 8
-    anchors.top: parent.top
-    anchors.left: prev.right
-    margin-left: 4
-    margin-top: 10
-    image-source: /images/game/entergame/maincharacter
-    image-clip: 0 0 9 8
-    visible: false
 
   // Hidden widgets (IDs required by Lua)
   CheckBoxButton
@@ -86,6 +68,17 @@ CharacterWidget < UIWidget
       image-color: red
 
   Label
+    id: mainCharacter
+    size: 9 8
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-left: 4
+    margin-top: 4
+    image-source: /images/game/entergame/maincharacter
+    image-clip: 0 0 9 8
+    visible: false
+
+  Label
     id: statusDailyReward
     size: 11 19
     visible: false
@@ -99,51 +92,53 @@ CharacterWidget < UIWidget
     image-source: /images/game/entergame/hidden
     image-clip: 0 0 11 19
 
-  // Row 1: Level (right)
+  // === CENTER: Outfit Preview ===
+  UICreature
+    id: outfitCreatureBox
+    size: 80 80
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.verticalCenter: parent.verticalCenter
+    margin-top: -10
+    fixed-creature-size: true
+
+  // === BOTTOM: Level, Vocation, World ===
   Label
     id: level
-    color: #FFFFFFBB
-    anchors.top: parent.top
-    anchors.right: parent.right
-    margin-right: 12
-    margin-top: 8
+    color: #FFFFFFCC
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 48
     font: verdana-11px-rounded
     text-auto-resize: true
     background-color: alpha
-    text-offset: 2 0
 
     $on:
       color: #FFFFFFFF
 
-  // Row 2: Vocation (left)
   Label
     id: vocation
-    color: #FFFFFF99
-    anchors.top: parent.top
-    anchors.left: parent.left
-    margin-left: 12
-    margin-top: 26
+    color: #FFFFFF88
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 30
     font: verdana-11px-rounded
     text-auto-resize: true
     background-color: alpha
-    text-offset: 2 0
 
     $on:
       color: #FFFFFFFF
 
-  // Row 2: World (right)
   Label
     id: worldName
     color: #00B4D8
-    anchors.top: parent.top
-    anchors.right: parent.right
-    margin-right: 12
-    margin-top: 26
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 12
     font: verdana-11px-rounded
     text-auto-resize: true
     text-wrap: true
     background-color: alpha
-    width: 200
+    width: 130
 
     $on:
       color: #00D4F8
@@ -156,25 +151,40 @@ MainWindow
   !text: ''
   visible: false
   border-width: 0
-  size: 720 460
-  image-source: none
+  size: 780 520
+  image-source: ''
   image-border: 0
   padding: 0
   background-color: #00000000
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.hide(true)
   @onSetup: |
-    g_keyboard.bindKeyPress('Up', function() self:getChildById('characters'):focusPreviousChild(KeyboardFocusReason) end, self)
-    g_keyboard.bindKeyPress('Down', function() self:getChildById('characters'):focusNextChild(KeyboardFocusReason) end, self)
+    -- Keyboard navigation (horizontal carousel)
+    g_keyboard.bindKeyPress('Left', function()
+      local container = self:recursiveGetChildById('cardContainer')
+      if container then container:focusPreviousChild(KeyboardFocusReason) end
+    end, self)
+    g_keyboard.bindKeyPress('Right', function()
+      local container = self:recursiveGetChildById('cardContainer')
+      if container then container:focusNextChild(KeyboardFocusReason) end
+    end, self)
+    g_keyboard.bindKeyPress('Up', function()
+      local container = self:recursiveGetChildById('cardContainer')
+      if container then container:focusPreviousChild(KeyboardFocusReason) end
+    end, self)
+    g_keyboard.bindKeyPress('Down', function()
+      local container = self:recursiveGetChildById('cardContainer')
+      if container then container:focusNextChild(KeyboardFocusReason) end
+    end, self)
     if g_game.getFeature(GamePreviewState) then
       if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setSize({width = 720, height = 460})
+        self:setSize({width = 780, height = 520})
         self:setText('')
         self:setColor("#00000000")
         self:setImageSource('')
         self:setImageBorder(0)
       else
-        self:setSize({width = 380, height = 460})
+        self:setSize({width = 380, height = 500})
         self:setText('')
         self:setColor("#00000000")
         self:setImageSource('')
@@ -192,161 +202,166 @@ MainWindow
     end
 
   // ============================================
-  // LEFT BLOCK - Character List Panel
+  // TOP ACCENT LINE
   // ============================================
   UIWidget
-    id: leftPanel
+    id: topSeparator
+    height: 2
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    background-color: #00B4D8
+
+  // ============================================
+  // TITLE
+  // ============================================
+  Label
+    id: titleLabel
+    !text: tr('SELECT CHARACTER')
+    color: #FFFFFFBB
     anchors.top: parent.top
     anchors.left: parent.left
-    anchors.bottom: parent.bottom
-    width: 370
-    background-color: #00000099
-    border-width: 1
-    border-color: #00B4D840
     margin-left: 15
-
-    // Top accent line
-    UIWidget
-      id: topSeparator
-      height: 2
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: parent.top
-      background-color: #00B4D8
-
-    // Title
-    Label
-      id: titleLabel
-      !text: tr('SELECT CHARACTER')
-      color: #FFFFFFBB
-      anchors.top: parent.top
-      anchors.left: parent.left
-      margin-left: 15
-      margin-top: 12
-      font: verdana-11px-rounded
-      text-auto-resize: true
-
-    // Character list
-    TextList
-      id: characters
-      background-color: #00000000
-      border-width: 0
-      border-color: #00000000
-      padding: 4
-      anchors.top: titleLabel.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.bottom: accountStatusLabel.top
-      margin-left: 8
-      margin-top: 8
-      margin-right: 22
-      margin-bottom: 4
-      focusable: false
-      auto-focus: first
-      @onSetup: |
-        self:setBackgroundColor("#00000000")
-
-    // Scrollbar (fixed position, no anchor to characters to avoid circular ref)
-    VerticalScrollBar
-      id: characterListScrollBar
-      anchors.top: titleLabel.bottom
-      anchors.bottom: accountStatusLabel.top
-      anchors.right: parent.right
-      margin-top: 8
-      margin-bottom: 4
-      margin-right: 8
-      step: 14
-      pixels-scroll: true
-
-    // Free Account label
-    Label
-      id: accountStatusLabel
-      !text: tr('Free Account')
-      visible: true
-      anchors.left: parent.left
-      anchors.bottom: buttonOk.top
-      margin-left: 15
-      margin-bottom: 8
-      color: #FFFFFF99
-      font: verdana-11px-rounded
-      text-auto-resize: true
-
-      $on:
-        color: #00B4D8
-
-    // OK button
-    UIButton
-      id: buttonOk
-      !text: tr('OK')
-      font: Verdana Bold-11px
-      color: #0A0A1A
-      width: 130
-      height: 34
-      anchors.right: buttonCancel.left
-      anchors.bottom: parent.bottom
-      margin-right: 8
-      margin-bottom: 12
-      background-color: #00B4D8
-      border-width: 1
-      border-color: #0090B0
-      @onClick: CharacterList.doLogin()
-
-      $hover:
-        background-color: #00D4F8
-
-      $pressed:
-        background-color: #008AA8
-
-    // Cancel button
-    UIButton
-      id: buttonCancel
-      !text: tr('Cancel')
-      font: verdana-11px-rounded
-      color: #FFFFFF99
-      width: 130
-      height: 34
-      anchors.right: parent.right
-      anchors.bottom: parent.bottom
-      margin-right: 15
-      margin-bottom: 12
-      background-color: #00000000
-      border-width: 1
-      border-color: #00B4D840
-      @onClick: CharacterList.hide(true)
-
-      $hover:
-        color: #00B4D8
-        border-color: #00B4D8
+    margin-top: 12
+    font: verdana-11px-rounded
+    text-auto-resize: true
 
   // ============================================
-  // RIGHT BLOCK - Outfit Preview Panel
+  // LEFT ARROW BUTTON
+  // ============================================
+  UIButton
+    id: leftArrow
+    !text: '◀'
+    font: verdana-11px-rounded
+    color: #00B4D8
+    width: 36
+    height: 36
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 15
+    background-color: #00000080
+    border-width: 1
+    border-color: #00B4D840
+    @onClick: CharacterList.scrollLeft()
+
+    $hover:
+      background-color: #00B4D830
+      color: #00D4F8
+
+    $pressed:
+      background-color: #00B4D860
+
+  // ============================================
+  // CAROUSEL VIEWPORT (clips overflow)
   // ============================================
   UIWidget
-    id: rightPanel
-    anchors.top: parent.top
+    id: carouselViewport
+    anchors.left: parent.left
     anchors.right: parent.right
+    anchors.top: titleLabel.bottom
     anchors.bottom: parent.bottom
-    width: 300
-    background-color: #00000099
+    margin-left: 59
+    margin-right: 59
+    margin-top: 8
+    margin-bottom: 70
+
+    // Card Container (inner, scrollable via marginLeft)
+    UIWidget
+      id: cardContainer
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+
+  // ============================================
+  // RIGHT ARROW BUTTON
+  // ============================================
+  UIButton
+    id: rightArrow
+    !text: '▶'
+    font: verdana-11px-rounded
+    color: #00B4D8
+    width: 36
+    height: 36
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 15
+    background-color: #00000080
     border-width: 1
     border-color: #00B4D840
+    @onClick: CharacterList.scrollRight()
+
+    $hover:
+      background-color: #00B4D830
+      color: #00D4F8
+
+    $pressed:
+      background-color: #00B4D860
+
+  // ============================================
+  // BOTTOM: Account Status
+  // ============================================
+  Label
+    id: accountStatusLabel
+    !text: tr('Free Account')
+    visible: true
+    anchors.left: parent.left
+    anchors.bottom: buttonOk.top
+    margin-left: 15
+    margin-bottom: 8
+    color: #FFFFFF99
+    font: verdana-11px-rounded
+    text-auto-resize: true
+
+    $on:
+      color: #00B4D8
+
+  // ============================================
+  // OK Button
+  // ============================================
+  UIButton
+    id: buttonOk
+    !text: tr('OK')
+    font: Verdana Bold-11px
+    color: #0A0A1A
+    width: 130
+    height: 34
+    anchors.right: buttonCancel.left
+    anchors.bottom: parent.bottom
+    margin-right: 8
+    margin-bottom: 15
+    background-color: #00B4D8
+    border-width: 1
+    border-color: #0090B0
+    @onClick: CharacterList.doLogin()
+
+    $hover:
+      background-color: #00D4F8
+
+    $pressed:
+      background-color: #008AA8
+
+  // ============================================
+  // Cancel Button
+  // ============================================
+  UIButton
+    id: buttonCancel
+    !text: tr('Cancel')
+    font: verdana-11px-rounded
+    color: #FFFFFF99
+    width: 130
+    height: 34
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
     margin-right: 15
+    margin-bottom: 15
+    background-color: #00000000
+    border-width: 1
+    border-color: #00B4D840
+    @onClick: CharacterList.hide(true)
 
-    // Top accent line
-    UIWidget
-      id: rightTopSeparator
-      height: 2
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: parent.top
-      background-color: #00B4D8
-
-    UICreature
-      id: outfitPreview
-      size: 128 128
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.horizontalCenter: parent.horizontalCenter
-      fixed-creature-size: true
+    $hover:
+      color: #00B4D8
+      border-color: #00B4D8
 
   // ============================================
   // HIDDEN SORT TABLE - IDs needed by Lua
