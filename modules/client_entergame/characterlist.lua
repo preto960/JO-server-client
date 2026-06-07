@@ -815,9 +815,20 @@ function CharacterList.rebuildCharactersList()
     local focusLabel
     characterList:destroyChildren()
 
+    local CARD_WIDTH = 155
+    local CARD_HEIGHT = 370
+    local CARD_MARGIN = 10
+    local viewportHeight = carouselViewport and carouselViewport:getHeight() or 400
+    -- Center cards vertically in viewport
+    local yOffset = math.max(0, (viewportHeight - CARD_HEIGHT - 20) / 2) -- 20 for viewport padding
+
     for i, characterInfo in ipairs(characters) do
         local widget = g_ui.createWidget('CharacterWidget', characterList)
         widget.charIndex = i - 1
+        widget:setX((i - 1) * (CARD_WIDTH + CARD_MARGIN))
+        widget:setY(yOffset)
+        widget:setWidth(CARD_WIDTH)
+        widget:setHeight(CARD_HEIGHT)
         widget:setBackgroundColor('#0A0A1A99')
         widget.characterInfo = characterInfo
         for key, value in pairs(characterInfo) do
@@ -871,8 +882,8 @@ function CharacterList.rebuildCharactersList()
     -- Show/hide arrows based on whether all cards fit
     if leftArrowBtn and rightArrowBtn and carouselViewport then
         local viewportWidth = carouselViewport:getWidth()
-        local containerWidth = characterList:getWidth()
-        if containerWidth <= viewportWidth then
+        local totalCardsWidth = #characters * (CARD_WIDTH + CARD_MARGIN) - CARD_MARGIN
+        if totalCardsWidth <= viewportWidth then
             leftArrowBtn:hide()
             rightArrowBtn:hide()
         else
@@ -1092,20 +1103,23 @@ end
 function CharacterList.ensureCardVisible(focusedChild)
     if not focusedChild or not characterList or not carouselViewport then return end
     local viewportWidth = carouselViewport:getWidth()
-    local containerWidth = characterList:getWidth()
+    local CARD_WIDTH = 155
+    local CARD_MARGIN = 10
+    local children = characterList:getChildren()
+    local totalCardsWidth = #children * (CARD_WIDTH + CARD_MARGIN) - CARD_MARGIN
 
-    if containerWidth <= viewportWidth then
-        characterList:setVirtualOffset({x = 0, y = 0})
+    if totalCardsWidth <= viewportWidth then
+        characterList:setX(0)
         return
     end
 
+    -- Calculate target offset to center the focused card
     local cardX = focusedChild:getX()
-    local cardWidth = focusedChild:getWidth()
-    local maxOffset = containerWidth - viewportWidth
-    local targetOffset = cardX - (viewportWidth - cardWidth) / 2
+    local maxOffset = totalCardsWidth - viewportWidth
+    local targetOffset = cardX - (viewportWidth - CARD_WIDTH) / 2
     targetOffset = math.max(0, math.min(targetOffset, maxOffset))
 
-    characterList:setVirtualOffset({x = -targetOffset, y = 0})
+    characterList:setX(-targetOffset)
 end
 
 function CharacterList.scrollLeft()

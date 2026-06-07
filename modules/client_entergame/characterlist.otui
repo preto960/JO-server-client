@@ -99,7 +99,6 @@ CharacterWidget < UIWidget
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
     margin-top: -10
-    fixed-creature-size: true
 
   // === BOTTOM: Level, Vocation, World ===
   Label
