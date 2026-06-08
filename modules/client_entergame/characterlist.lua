@@ -735,8 +735,26 @@ function CharacterList.create(characters, account, otui)
     -- Create logo widget above the character list
     if not charListLogo then
         pcall(function()
-            charListLogo = g_ui.loadUIFromString([[\nUIWidget\n  id: charListLogoWidget\n  size: 300 200\n  image-source: /game_entergame_custom/JO_logo\n  image-auto-resize: true\n  anchors.horizontalCenter: parent.horizontalCenter\n  anchors.bottom: charactersWindow.top\n  margin-bottom: 10\n            ]], g_ui.getRootWidget())
+            local root = g_ui.getRootWidget()
+            if root then
+                charListLogo = g_ui.loadUIFromString(
+                    'UIWidget\n' ..
+                    '  id: charListLogoWidget\n' ..
+                    '  size: 300 200\n' ..
+                    '  image-source: /game_entergame_custom/JO_logo\n' ..
+                    '  image-auto-resize: true\n' ..
+                    '  anchors.horizontalCenter: parent.horizontalCenter\n' ..
+                    '  anchors.bottom: charactersWindow.top\n' ..
+                    '  margin-bottom: 10',
+                    root
+                )
+            end
         end)
+        if charListLogo then
+            print('[CharacterList] Logo widget created successfully')
+        else
+            print('[CharacterList] WARNING: Logo widget failed to create')
+        end
     end
 
     characterList.onChildFocusChange = function(self, focusedChild, oldFocusedChild)
@@ -1077,6 +1095,8 @@ function CharacterList.updateCharactersAppearance(widget, characterInfo, showOut
         showOutfits = getShowOutfits()
     end
 
+    print('[CharAppearance] showOutfits=' .. tostring(showOutfits) .. ' outfitid=' .. tostring(characterInfo.outfitid))
+
     local creatureDisplay = widget:getChildById('outfitCreatureBox')
     local nameLabel = widget:getChildById('name')
     local mainCharacter = widget:getChildById('mainCharacter')
@@ -1087,26 +1107,43 @@ function CharacterList.updateCharactersAppearance(widget, characterInfo, showOut
         creatureDisplay:setVisible(showOutfits)
         if showOutfits then
             creatureDisplay:setSize('80 80')
-            local creature = widget.cachedOutfitCreature
-            if not creature then
+            -- Always create a fresh creature to avoid stale references after gameplay
+            if widget.cachedOutfitCreature then
+                pcall(function() widget.cachedOutfitCreature = nil end)
+            end
+            local creature = nil
+            pcall(function()
                 creature = Creature.create()
                 widget.cachedOutfitCreature = creature
+            end)
+            if creature then
+                local outfit = {
+                    type = characterInfo.outfitid or 0,
+                    head = characterInfo.headcolor or 0,
+                    body = characterInfo.torsocolor or 0,
+                    legs = characterInfo.legscolor or 0,
+                    feet = characterInfo.detailcolor or 0,
+                    addons = characterInfo.addonsflags or 0
+                }
+                local ok, err = pcall(function()
+                    creature:setOutfit(outfit)
+                    creature:setDirection(2)
+                    creatureDisplay:setCreature(creature)
+                    creatureDisplay:setPadding(0)
+                end)
+                if not ok then
+                    print('[CharAppearance] ERROR setting creature: ' .. tostring(err))
+                else
+                    print('[CharAppearance] Creature set OK for ' .. tostring(characterInfo.name))
+                end
+            else
+                print('[CharAppearance] ERROR: Creature.create() returned nil')
             end
-            local outfit = {
-                type = characterInfo.outfitid or 0,
-                head = characterInfo.headcolor or 0,
-                body = characterInfo.torsocolor or 0,
-                legs = characterInfo.legscolor or 0,
-                feet = characterInfo.detailcolor or 0,
-                addons = characterInfo.addonsflags or 0
-            }
-            creature:setOutfit(outfit)
-            creature:setDirection(2)
-            creatureDisplay:setCreature(creature)
-            creatureDisplay:setPadding(0)
         else
             creatureDisplay:setSize('0 0')
         end
+    else
+        print('[CharAppearance] ERROR: outfitCreatureBox not found!')
     end
 
     if nameLabel then
