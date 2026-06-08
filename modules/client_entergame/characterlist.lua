@@ -837,7 +837,7 @@ function CharacterList.rebuildCharactersList()
     end
 
     local showAppearance = shouldShowAppearance()
-    local showOutfits = showAppearance and getShowOutfits()
+    local showOutfits = showAppearance and true  -- Always show outfits in carousel mode
     local oddRowColor = showAppearance and '#0D0D1A' or '#0A0A1A'
     local evenRowColor = showAppearance and '#0A0A1A' or '#0A0A1A'
     local focused = characterList:getFocusedChild()
