@@ -278,7 +278,7 @@ MainWindow
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       layout: horizontalBox
-      spacing: 10
+      spacing: 40
       padding: 5
 
   // ============================================

@@ -921,7 +921,7 @@ function CharacterList.rebuildCharactersList()
 
     -- Set explicit content width so scrolling/clipping works correctly
     local CARD_WIDTH = 155
-    local CARD_MARGIN = 10
+    local CARD_MARGIN = 40
     local CONTAINER_PADDING = 10  -- 5px padding on each side
     local totalContentWidth = CONTAINER_PADDING + #characters * CARD_WIDTH + math.max(0, #characters - 1) * CARD_MARGIN + CONTAINER_PADDING
     characterList:setWidth(totalContentWidth)
@@ -1199,7 +1199,7 @@ function CharacterList.ensureCardVisible(focusedChild)
     if not focusedChild or not characterList or not carouselViewport then return end
     local viewportWidth = carouselViewport:getWidth()
     local CARD_WIDTH = 155
-    local CARD_MARGIN = 10
+    local CARD_MARGIN = 40
     local children = characterList:getChildren()
     local totalCardsWidth = #children * (CARD_WIDTH + CARD_MARGIN)
 
