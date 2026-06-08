@@ -922,8 +922,7 @@ function CharacterList.rebuildCharactersList()
     -- Set explicit content width so scrolling/clipping works correctly
     local CARD_WIDTH = 155
     local CARD_MARGIN = 40
-    local CONTAINER_PADDING = 10  -- 5px padding on each side
-    local totalContentWidth = CONTAINER_PADDING + #characters * CARD_WIDTH + math.max(0, #characters - 1) * CARD_MARGIN + CONTAINER_PADDING
+    local totalContentWidth = #characters * CARD_WIDTH + math.max(0, #characters - 1) * CARD_MARGIN
     characterList:setWidth(totalContentWidth)
 
     print('[CharacterList] Created ' .. #characters .. ' cards, contentWidth=' .. totalContentWidth .. ', viewport=' .. tostring(carouselViewport and carouselViewport:getWidth() or 'nil'))
