@@ -723,6 +723,11 @@ function CharacterList.create(characters, account, otui)
         carouselViewport:setClipping(true)
     end)
 
+    -- Disable dragging on viewport and container so user cannot drag the card area
+    pcall(function()
+        carouselViewport:setDraggable(false)
+    end)
+
     -- Hide MainWindow title bar (look for 'head' directly on MainWindow, not via miniwindowContent)
     pcall(function()
         local head = charactersWindow:getChildById('head')
@@ -1023,9 +1028,9 @@ end
 
 function CharacterList.showAgain()
     if characterList and characterList:hasChildren() then
-        -- Refresh outfit creatures (may have been invalidated during gameplay)
+        -- Force showOutfits=true (client option may have changed during gameplay)
         pcall(function()
-            CharacterList.updateCharactersAppearances()
+            CharacterList.updateCharactersAppearances(true)
         end)
         CharacterList.show()
         scheduleAutoReconnect()

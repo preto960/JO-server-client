@@ -52,6 +52,34 @@ CharacterWidget < UIWidget
     $on:
       color: #00B4D8
 
+  // === BELOW NAME: Level ===
+  Label
+    id: level
+    color: #FFFFFFCC
+    anchors.top: name.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 2
+    font: verdana-11px-rounded
+    text-auto-resize: true
+    background-color: alpha
+
+    $on:
+      color: #FFFFFFFF
+
+  // === BELOW LEVEL: Vocation ===
+  Label
+    id: vocation
+    color: #FFFFFF88
+    anchors.top: level.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 1
+    font: verdana-11px-rounded
+    text-auto-resize: true
+    background-color: alpha
+
+    $on:
+      color: #FFFFFFFF
+
   // Hidden widgets (IDs required by Lua)
   CheckBoxButton
     id: pin
@@ -99,33 +127,6 @@ CharacterWidget < UIWidget
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
     margin-top: -10
-
-  // === BOTTOM: Level, Vocation, World ===
-  Label
-    id: level
-    color: #FFFFFFCC
-    anchors.bottom: parent.bottom
-    anchors.horizontalCenter: parent.horizontalCenter
-    margin-bottom: 48
-    font: verdana-11px-rounded
-    text-auto-resize: true
-    background-color: alpha
-
-    $on:
-      color: #FFFFFFFF
-
-  Label
-    id: vocation
-    color: #FFFFFF88
-    anchors.bottom: parent.bottom
-    anchors.horizontalCenter: parent.horizontalCenter
-    margin-bottom: 30
-    font: verdana-11px-rounded
-    text-auto-resize: true
-    background-color: alpha
-
-    $on:
-      color: #FFFFFFFF
 
   Label
     id: worldName
@@ -236,16 +237,16 @@ MainWindow
   UIButton
     id: leftArrow
     !text: ''
-    width: 36
-    height: 36
+    width: 28
+    height: 28
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
     margin-left: 15
     image-source: /images/game/entergame/arrow_left
-    image-auto-resize: true
     background-color: #00000080
     border-width: 1
     border-color: #00B4D840
+    image-clip: 6 6 16 16
     @onClick: CharacterList.scrollLeft()
 
     $hover:
@@ -278,6 +279,7 @@ MainWindow
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       layout: horizontalBox
+      draggable: false
 
   // ============================================
   // RIGHT ARROW BUTTON
@@ -285,16 +287,16 @@ MainWindow
   UIButton
     id: rightArrow
     !text: ''
-    width: 36
-    height: 36
+    width: 28
+    height: 28
     anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
     margin-right: 15
     image-source: /images/game/entergame/arrow_right
-    image-auto-resize: true
     background-color: #00000080
     border-width: 1
     border-color: #00B4D840
+    image-clip: 6 6 16 16
     @onClick: CharacterList.scrollRight()
 
     $hover:
