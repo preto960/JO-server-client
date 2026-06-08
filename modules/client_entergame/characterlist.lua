@@ -60,6 +60,7 @@ local SHOW_PREMIUM_WIDGETS = false
 local autoReconnectButton
 local autoReconnectEvent
 local lastLogout = 0
+local charListLogo = nil
 local function removeAutoReconnectEvent() --prevent
     if autoReconnectEvent then
         removeEvent(autoReconnectEvent)
@@ -659,6 +660,11 @@ function CharacterList.terminate()
         charactersWindow = nil
     end
 
+    if charListLogo then
+        charListLogo:destroy()
+        charListLogo = nil
+    end
+
     if loadBox then
         g_game.cancelLogin()
         loadBox:destroy()
@@ -716,6 +722,22 @@ function CharacterList.create(characters, account, otui)
     pcall(function()
         carouselViewport:setClipping(true)
     end)
+
+    -- Hide MainWindow title bar (look for 'head' directly on MainWindow, not via miniwindowContent)
+    pcall(function()
+        local head = charactersWindow:getChildById('head')
+        if head then
+            head:setHeight(0)
+            head:setVisible(false)
+        end
+    end)
+
+    -- Create logo widget above the character list
+    if not charListLogo then
+        pcall(function()
+            charListLogo = g_ui.loadUIFromString([[\nUIWidget\n  id: charListLogoWidget\n  size: 300 200\n  image-source: /game_entergame_custom/JO_logo\n  image-auto-resize: true\n  anchors.horizontalCenter: parent.horizontalCenter\n  anchors.bottom: charactersWindow.top\n  margin-bottom: 10\n            ]], g_ui.getRootWidget())
+        end)
+    end
 
     characterList.onChildFocusChange = function(self, focusedChild, oldFocusedChild)
         removeAutoReconnectEvent()
@@ -911,6 +933,11 @@ end
 function CharacterList.destroy()
     CharacterList.hide(true)
 
+    if charListLogo then
+        charListLogo:destroy()
+        charListLogo = nil
+    end
+
     if charactersWindow then
         resetUIReferences()
         charactersWindow:destroy()
@@ -922,6 +949,17 @@ function CharacterList.show()
     if loadBox or errorBox or not charactersWindow then
         return
     end
+    -- Also hide original UI (topMenu/bottomMenu) to prevent overlap
+    pcall(function()
+        local root = g_ui.getRootWidget()
+        if root then
+            local topMenu = root:recursiveGetChildById('topMenu')
+            local bottomMenu = root:recursiveGetChildById('bottomMenu')
+            if topMenu then topMenu:hide() end
+            if bottomMenu then bottomMenu:hide() end
+        end
+    end)
+
     charactersWindow:show()
     charactersWindow:raise()
     charactersWindow:focus()
@@ -948,6 +986,11 @@ end
 
 function CharacterList.hide(showLogin)
     removeAutoReconnectEvent()
+
+    if charListLogo then
+        charListLogo:hide()
+    end
+
     charactersWindow:hide()
 
     if showLogin and EnterGame and not g_game.isOnline() then
@@ -957,6 +1000,10 @@ end
 
 function CharacterList.showAgain()
     if characterList and characterList:hasChildren() then
+        -- Refresh outfit creatures (may have been invalidated during gameplay)
+        pcall(function()
+            CharacterList.updateCharactersAppearances()
+        end)
         CharacterList.show()
         scheduleAutoReconnect()
     end
@@ -980,6 +1027,9 @@ function CharacterList.doLogin()
             characterName = selected.characterName
         }
         charactersWindow:hide()
+        if charListLogo then
+            charListLogo:hide()
+        end
         if loginEvent then
             removeEvent(loginEvent)
             loginEvent = nil

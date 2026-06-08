@@ -191,12 +191,18 @@ MainWindow
     else
       self:setSize({width = 250, height = 248})
     end
-    -- Remove title bar
+    -- Remove title bar (MainWindow head widget)
+    local head = self:getChildById('head')
+    if head then
+        head:setHeight(0)
+        head:setVisible(false)
+    end
+    -- Also try miniwindowContent path (some OTClient forks)
     local headWidget = self:getChildById('miniwindowContent')
     if headWidget then
-      local parent = headWidget:getParent()
-      local head = parent:getChildById('head')
-      if head then head:setHeight(0) head:setVisible(false) end
+        local parent = headWidget:getParent()
+        local head2 = parent:getChildById('head')
+        if head2 then head2:setHeight(0) head2:setVisible(false) end
     end
 
   // ============================================

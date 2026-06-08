@@ -200,6 +200,9 @@ function onGameStart()
 end
 
 function onGameEnd()
+    -- Hide original top/bottom menus that were shown during gameplay
+    hideOriginalUI()
+
     if customWindow then
         customWindow:hide()
     end
