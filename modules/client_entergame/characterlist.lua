@@ -860,6 +860,7 @@ function CharacterList.rebuildCharactersList()
     local CARD_WIDTH = 155
     local CARD_HEIGHT = 370
     local CARD_MARGIN = 10
+    local CARD_SPACING = 40
     local viewportHeight = carouselViewport and carouselViewport:getHeight() or 400
     -- Center cards vertically in viewport
     local yOffset = math.max(0, (viewportHeight - CARD_HEIGHT - 20) / 2) -- 20 for viewport padding
@@ -870,6 +871,10 @@ function CharacterList.rebuildCharactersList()
         -- Let horizontalBox layout handle positioning automatically
         widget:setHeight(CARD_HEIGHT)
         widget:setBackgroundColor('#0A0A1ABB')
+        -- Add right margin for spacing between cards (except last card)
+        if i < #characters then
+            widget:setMarginRight(CARD_SPACING)
+        end
         widget.characterInfo = characterInfo
         for key, value in pairs(characterInfo) do
             local subWidget = widget:getChildById(key)
