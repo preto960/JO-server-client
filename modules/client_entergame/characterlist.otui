@@ -277,10 +277,9 @@ MainWindow
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.left: parent.left
-      anchors.right: parent.right
       layout: horizontalBox
       spacing: 10
-      padding: 10
+      padding: 5
 
   // ============================================
   // RIGHT ARROW BUTTON
