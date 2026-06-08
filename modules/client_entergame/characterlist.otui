@@ -153,7 +153,7 @@ MainWindow
   size: 780 520
   image-border: 0
   padding: 0
-  background-color: #00000000
+  background-color: #0A0A1AE8
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.hide(true)
   @onSetup: |
