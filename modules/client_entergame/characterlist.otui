@@ -246,7 +246,6 @@ MainWindow
     background-color: #00000080
     border-width: 1
     border-color: #00B4D840
-    image-clip: 6 6 16 16
     @onClick: CharacterList.scrollLeft()
 
     $hover:
@@ -296,7 +295,6 @@ MainWindow
     background-color: #00000080
     border-width: 1
     border-color: #00B4D840
-    image-clip: 6 6 16 16
     @onClick: CharacterList.scrollRight()
 
     $hover:
