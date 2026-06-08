@@ -1106,7 +1106,7 @@ function CharacterList.updateCharactersAppearance(widget, characterInfo, showOut
     if creatureDisplay then
         creatureDisplay:setVisible(showOutfits)
         if showOutfits then
-            creatureDisplay:setSize('80 80')
+            creatureDisplay:setSize('108 108')
             -- Always create a fresh creature to avoid stale references after gameplay
             if widget.cachedOutfitCreature then
                 pcall(function() widget.cachedOutfitCreature = nil end)

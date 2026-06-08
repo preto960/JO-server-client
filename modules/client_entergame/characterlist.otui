@@ -95,7 +95,7 @@ CharacterWidget < UIWidget
   // === CENTER: Outfit Preview ===
   UICreature
     id: outfitCreatureBox
-    size: 80 80
+    size: 108 108
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
     margin-top: -10
@@ -268,7 +268,7 @@ MainWindow
     margin-right: 59
     margin-top: 8
     margin-bottom: 70
-    background-color: #0A0A1A60
+    background-color: #0A0A1AE8
     border-width: 1
     border-color: #00B4D820
     clip: true
