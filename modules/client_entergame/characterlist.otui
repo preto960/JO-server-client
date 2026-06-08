@@ -235,14 +235,14 @@ MainWindow
   // ============================================
   UIButton
     id: leftArrow
-    !text: '◀'
-    font: verdana-11px-rounded
-    color: #00B4D8
+    !text: ''
     width: 36
     height: 36
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
     margin-left: 15
+    image-source: /images/game/entergame/arrow_left
+    image-auto-resize: true
     background-color: #00000080
     border-width: 1
     border-color: #00B4D840
@@ -250,7 +250,7 @@ MainWindow
 
     $hover:
       background-color: #00B4D830
-      color: #00D4F8
+      image-color: #00D4F8
 
     $pressed:
       background-color: #00B4D860
@@ -284,14 +284,14 @@ MainWindow
   // ============================================
   UIButton
     id: rightArrow
-    !text: '▶'
-    font: verdana-11px-rounded
-    color: #00B4D8
+    !text: ''
     width: 36
     height: 36
     anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
     margin-right: 15
+    image-source: /images/game/entergame/arrow_right
+    image-auto-resize: true
     background-color: #00000080
     border-width: 1
     border-color: #00B4D840
@@ -299,7 +299,7 @@ MainWindow
 
     $hover:
       background-color: #00B4D830
-      color: #00D4F8
+      image-color: #00D4F8
 
     $pressed:
       background-color: #00B4D860
