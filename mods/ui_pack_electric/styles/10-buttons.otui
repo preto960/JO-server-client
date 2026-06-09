@@ -135,27 +135,28 @@ ImageButton < UIButton
   color: #CAF0F8
 
 QtButton < UIButton
-  font: cipsoftFont
+  font: Verdana Bold-11px
   size: 106 23
   text-offset: 0 0
-  background-color: #0D1B2A
-  border-width: 2
-  border-color: #1A3A5C
+  background-color: #00B4D8
+  border-width: 1
+  border-color: #0090B0
   padding: 5 10 5 10
   opacity: 1.0
-  color: #90E0EFFF
+  color: #0A0A1A
 
   $hover !disabled:
-    background-color: #1B3A5C
+    background-color: #00D4F8
     border-color: #00B4D8
 
   $pressed:
-    background-color: #0A1628
-    border-color: #1A3A5C
+    background-color: #008AA8
+    border-color: #0090B0
     text-offset: 1 1
 
   $disabled:
-    color: #CAF0F888
+    color: #0A0A1A88
+    background-color: #1A1A3A
     opacity: 0.8
 
 BigPremiumButton < UIButton

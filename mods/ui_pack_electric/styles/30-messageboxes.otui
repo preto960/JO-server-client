@@ -2,15 +2,24 @@
 MessageBoxWindow < UIMessageBox
   icon-rect: 4 4 16 16
   size: 246 116
-  background-color: #0A0A1A
-  border-width: 3
-  border-color: #1A3A5C
+  background-color: #00000099
+  border-width: 1
+  border-color: #00B4D840
   &minimizedHeight: 17
   anchors.centerIn: parent
   draggable: false
 
   $on:
     border-color: #00B4D8
+
+  // Top accent line (like login/select character)
+  UIWidget
+    id: topAccentLine
+    height: 2
+    background-color: #00B4D8
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
 
   UIWidget
     id: miniwindowTopBar
@@ -25,15 +34,15 @@ MessageBoxWindow < UIMessageBox
 
   Label
     id: title
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
+    color: #FFFFFFBB
     text-offset: 0 2
     text-align: top
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    opacity: 0.5
-    margin-top: 3
+    margin-top: 6
 
   Label
     id: content
@@ -54,6 +63,7 @@ MessageBoxWindow < UIMessageBox
     margin-top: 10
     margin-right: 15
     margin-left: 15
+    background-color: #00B4D830
 
   UIWidget
     id: holder
@@ -66,15 +76,24 @@ MessageBoxWindow < UIMessageBox
 MessageBoxShopWindow < UIMessageBox
   icon-rect: 4 4 16 16
   size: 246 116
-  background-color: #0A0A1A
-  border-width: 3
-  border-color: #1A3A5C
+  background-color: #00000099
+  border-width: 1
+  border-color: #00B4D840
   &minimizedHeight: 17
   anchors.centerIn: parent
   draggable: false
 
   $on:
     border-color: #00B4D8
+
+  // Top accent line
+  UIWidget
+    id: topAccentLine
+    height: 2
+    background-color: #00B4D8
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
 
   UIWidget
     id: miniwindowTopBar
@@ -89,7 +108,8 @@ MessageBoxShopWindow < UIMessageBox
 
   Label
     id: title
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
+    color: #FFFFFFBB
     text-offset: 0 2
     text-align: top
     anchors.top: parent.top
@@ -97,7 +117,7 @@ MessageBoxShopWindow < UIMessageBox
     anchors.left: parent.left
     anchors.right: parent.right
     text-vertical-auto-resize: true
-    opacity: 0.5
+    margin-top: 6
     margin-right: 10
 
   Label
@@ -118,9 +138,9 @@ MessageBoxShopWindow < UIMessageBox
     anchors.top: content.bottom
     margin-top: 10
     margin-left: 10
-    background-color: #060612
+    background-color: #0A0A1A80
     border-width: 1
-    border-color: #12263A
+    border-color: #00B4D840
 
   Label
     id: additionalLabel
@@ -130,9 +150,9 @@ MessageBoxShopWindow < UIMessageBox
     anchors.top: content.bottom
     margin-top: 10
     margin-left: 100
-    background-color: #060612
+    background-color: #0A0A1A80
     border-width: 1
-    border-color: #12263A
+    border-color: #00B4D840
     text-wrap: true
     margin-right: 10
 
@@ -142,6 +162,7 @@ MessageBoxShopWindow < UIMessageBox
     anchors.top: additionalLabel.bottom
     margin-top: 10
     margin-right: 10
+    background-color: #00B4D830
 
   UIWidget
     id: holder

@@ -1,45 +1,89 @@
 MainWindow
   id: waitingWindow
   !text: tr('Waiting List')
-  size: 260 180
+  size: 320 200
+  background-color: #00000099
+  border-width: 1
+  border-color: #00B4D840
   draggable: false
   @onEscape: CharacterList.cancelWait()
 
+  // Top accent line
+  UIWidget
+    id: topAccentLine
+    height: 2
+    background-color: #00B4D8
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+
   Label
     id: infoLabel
+    font: verdana-11px-rounded
+    color: #FFFFFFBB
     anchors.top: parent.top
     anchors.bottom: progressBar.top
     anchors.left: parent.left
     anchors.right: parent.right
     text-wrap: true
+    margin-top: 14
+    margin-left: 15
+    margin-right: 15
 
   ProgressBar
     id: progressBar
-    height: 15
-    background-color: #4444ff
+    height: 16
+    background-color: #0A0A1A80
+    border-width: 1
+    border-color: #00B4D840
     anchors.bottom: timeLabel.top
     anchors.left: parent.left
     anchors.right: parent.right
     margin-bottom: 10
+    margin-left: 15
+    margin-right: 15
 
   Label
     id: timeLabel
+    font: verdana-11px-rounded
+    color: #00B4D8
     anchors.bottom: separator.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     margin-bottom: 10
+    margin-left: 15
+    margin-right: 15
 
-  HorizontalSeparator
+  UIWidget
     id: separator
+    height: 1
+    background-color: #00B4D830
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
     margin-bottom: 10
+    margin-left: 15
+    margin-right: 15
 
-  Button
+  UIButton
     id: buttonCancel
     !text: tr('Cancel')
-    width: 64
+    font: Verdana Bold-11px
+    color: #0A0A1A
+    width: 90
+    height: 28
     anchors.right: parent.right
     anchors.bottom: parent.bottom
+    margin-right: 15
+    margin-bottom: 15
+    background-color: #00B4D8
+    border-width: 1
+    border-color: #0090B0
     @onClick: CharacterList.cancelWait()
+
+    $hover:
+      background-color: #00D4F8
+      border-color: #00B4D8
+
+    $pressed:
+      background-color: #008AA8
