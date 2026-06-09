@@ -228,6 +228,7 @@ MainWindow
     anchors.left: parent.left
     margin-left: 15
     margin-top: 12
+    margin-bottom: 6
     font: verdana-11px-rounded
     text-auto-resize: true
 
@@ -243,17 +244,10 @@ MainWindow
     anchors.verticalCenter: parent.verticalCenter
     margin-left: 15
     image-source: /images/game/entergame/arrow_left
-    background-color: #00000080
-    border-width: 1
-    border-color: #00B4D840
     @onClick: CharacterList.scrollLeft()
 
     $hover:
-      background-color: #00B4D830
       image-color: #00D4F8
-
-    $pressed:
-      background-color: #00B4D860
 
   // ============================================
   // CAROUSEL VIEWPORT (clips overflow)
@@ -292,17 +286,10 @@ MainWindow
     anchors.verticalCenter: parent.verticalCenter
     margin-right: 15
     image-source: /images/game/entergame/arrow_right
-    background-color: #00000080
-    border-width: 1
-    border-color: #00B4D840
     @onClick: CharacterList.scrollRight()
 
     $hover:
-      background-color: #00B4D830
       image-color: #00D4F8
-
-    $pressed:
-      background-color: #00B4D860
 
   // ============================================
   // BOTTOM: Account Status
@@ -314,7 +301,7 @@ MainWindow
     anchors.left: parent.left
     anchors.bottom: buttonOk.top
     margin-left: 15
-    margin-bottom: 8
+    margin-bottom: 14
     color: #FFFFFF99
     font: verdana-11px-rounded
     text-auto-resize: true

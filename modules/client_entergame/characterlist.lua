@@ -1028,7 +1028,32 @@ end
 
 function CharacterList.showAgain()
     if characterList and characterList:hasChildren() then
-        -- Force showOutfits=true (client option may have changed during gameplay)
+        -- Update outfit data from the local player (outfit may have changed in-game)
+        pcall(function()
+            local player = g_game.getLocalPlayer()
+            if player then
+                local currentOutfit = player:getOutfit()
+                if currentOutfit and currentOutfit.type then
+                    -- Find the matching character in G.characters and update outfit info
+                    local playerName = player:getName()
+                    if playerName and G.characters then
+                        for _, charInfo in ipairs(G.characters) do
+                            if charInfo.name == playerName then
+                                print('[CharAppearance] Updating outfit for ' .. playerName .. ' from player: outfitid=' .. tostring(currentOutfit.type))
+                                charInfo.outfitid = currentOutfit.type
+                                charInfo.headcolor = currentOutfit.head or 0
+                                charInfo.torsocolor = currentOutfit.body or 0
+                                charInfo.legscolor = currentOutfit.legs or 0
+                                charInfo.detailcolor = currentOutfit.feet or 0
+                                charInfo.addonsflags = currentOutfit.addons or 0
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+        -- Force showOutfits=true to refresh creature displays
         pcall(function()
             CharacterList.updateCharactersAppearances(true)
         end)
