@@ -3,7 +3,14 @@ SkillFirstWidget < UIWidget
 SkillButton < UIButton
   height: 21
   margin-bottom: 2
+  background-color: #0D1B2A
+  border-width: 1
+  border-color: #1A3A5C
   &onClick: onSkillButtonClick
+
+  $hover:
+    border-color: #00B4D8
+    background-color: #1B3A5C
 
 SmallSkillButton < SkillButton
   height: 14
@@ -13,7 +20,7 @@ SkillNameLabel < GameLabel
   anchors.left: parent.left
   anchors.top: parent.top
   anchors.bottom: parent.bottom
-  color: #C0C0C0
+  color: #CAF0F8
 
 SkillValueLabel < GameLabel
   id: value
@@ -23,7 +30,7 @@ SkillValueLabel < GameLabel
   anchors.top: parent.top
   anchors.bottom: parent.bottom
   anchors.left: prev.left
-  color: #C0C0C0
+  color: #00B4D8
 
 ImageSkill < UIWidget
   id: icon
@@ -45,7 +52,7 @@ ImageAbsorb < UIWidget
 
 RedPercentPanel < ProgressBar
   id: percent
-  background-color: red
+  background-color: #00B4D8
   height: 5
   margin-top: 15
   anchors.left: parent.left
@@ -55,7 +62,7 @@ RedPercentPanel < ProgressBar
 
 SkillPercentPanel < ProgressBar
   id: percent
-  background-color: green
+  background-color: #00B4D8
   height: 5
   margin-top: 15
   margin-left: 15
@@ -113,7 +120,7 @@ MiniWindow
     font: verdana-11px-monochrome
     height: 13
     !text: tr('Skills')
-    color: #9d9d9dff
+    color: #CAF0F8
 
   MiniWindowContents
     padding-left: 5
@@ -613,30 +620,30 @@ MiniWindow
 SkillsSubMenuOption < ThickCheckBox
   text-offset: 18 1
   text-align: left
-  color: white
+  color: #CAF0F8
   background-color: alpha
   font: verdana-11px-rounded
   padding: 3 6
 
   $hover:
-    background-color: #ffffff1a
+    background-color: #00B4D830
 
   $disabled:
-    color: #c0c0c0ff
+    color: #CAF0F888
 
 SkillsListOption < UIButton
   text-align: left
-  color: white
+  color: #CAF0F8
   background-color: alpha
   font: verdana-11px-rounded
   padding: 3 6
   margin-left: 5
 
   $hover:
-    background-color: #ffffff1a
+    background-color: #00B4D830
 
   $disabled:
-    color: #c0c0c0ff
+    color: #CAF0F888
 
 SkillsListSubMenu < PopupMenu
   id: skillsListSubMenu

@@ -3,10 +3,19 @@ UIWidget
   visible: false
   focusable: true
   size: 250 400
-  background-color: #1E1E2EDD
+  background-color: #0A0A1AEE
   border-width: 1
-  border-color: #5A5A7AAA
+  border-color: #00B4D840
   @onEscape: modules.game_skills_custom.close()
+
+  // Top accent line
+  UIWidget
+    id: topAccentLine
+    height: 2
+    background-color: #00B4D8
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
 
   UIWidget
     id: titleBar
@@ -14,13 +23,13 @@ UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    background-color: #151525EE
+    background-color: #060612EE
     margin-bottom: 1
 
     Label
       !text: 'Habilidades'
-      font: verdana-11px-rounded
-      color: #DFE4E8
+      font: Verdana Bold-11px
+      color: #FFFFFFBB
       anchors.verticalCenter: parent.verticalCenter
       anchors.horizontalCenter: parent.horizontalCenter
 
@@ -28,7 +37,7 @@ UIWidget
       id: closeButton
       !text: 'X'
       font: verdana-11px-rounded
-      color: #AAAAAA
+      color: #FFFFFF88
       anchors.right: parent.right
       anchors.top: parent.top
       width: 25
@@ -36,7 +45,7 @@ UIWidget
       margin-right: 5
       @onClick: modules.game_skills_custom.close()
       $hover:
-        color: #FF5555
+        color: #00B4D8
 
   UIWidget
     id: contentPanel
@@ -53,121 +62,127 @@ UIWidget
     Label
       !text: '-- Personaje --'
       font: verdana-11px-rounded
-      color: #7777AA
+      color: #00B4D8
       height: 18
 
     Label
       id: lblLevel
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblXP
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblMagic
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     HorizontalSeparator
       margin-top: 4
       margin-bottom: 4
+      image-source: none
+      image-border: 0
+      background-color: #00B4D830
 
     Label
       !text: '-- Vida --'
       font: verdana-11px-rounded
-      color: #7777AA
+      color: #00B4D8
       height: 18
 
     Label
       id: lblHP
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblMP
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblCap
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblSpeed
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblSoul
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblStamina
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     HorizontalSeparator
       margin-top: 4
       margin-bottom: 4
+      image-source: none
+      image-border: 0
+      background-color: #00B4D830
 
     Label
       !text: '-- Habilidades --'
       font: verdana-11px-rounded
-      color: #7777AA
+      color: #00B4D8
       height: 18
 
     Label
       id: lblFist
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblClub
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblSword
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblAxe
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblDistance
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblShielding
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
 
     Label
       id: lblFishing
       font: verdana-11px-monochrome
-      color: #C0C0C0
+      color: #CAF0F8
       height: 16
