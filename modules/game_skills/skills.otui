@@ -104,21 +104,28 @@ MiniWindow
   @onClose: modules.game_skills.onMiniWindowClose()
   &save: true
 
+  // Top accent line (same as MessageBox)
+  UIWidget
+    id: topAccentLine
+    height: 2
+    background-color: #00B4D8
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+
   UIWidget
     id: miniwindowHeader
     image-source: none
     image-border: 0
-    background-color: #0D1F35
-    border-width-bottom: 1
-    border-color-bottom: #00B4D8
+    background-color: #00000060
 
   UIWidget
     id: miniwindowHeaderBevel
-    background-color: #00B4D830
+    background-color: #00000000
 
   UIWidget
     id: miniwindowHeaderBorder
-    background-color: #1A3A5C
+    background-color: #00B4D830
 
   UIWidget
     id: miniwindowIcon
@@ -141,67 +148,70 @@ MiniWindow
     font: verdana-11px-monochrome
     height: 13
     !text: tr('Skills')
-    color: #CAF0F8
+    color: #FFFFFFBB
 
   UIButton
     id: closeButton
     image-source: none
-    background-color: #1A3A5C
+    background-color: #00B4D8
     border-width: 1
-    border-color: #1A3A5C
+    border-color: #0090B0
+    color: #0A0A1A
 
     $hover:
-      background-color: #FF2E63
+      background-color: #00D4F8
       border-color: #00B4D8
 
     $pressed:
-      background-color: #0A1628
+      background-color: #008AA8
 
   UIButton
     id: minimizeButton
     image-source: none
-    background-color: #1A3A5C
+    background-color: #0A0A1A80
     border-width: 1
-    border-color: #1A3A5C
+    border-color: #00B4D840
 
     $hover:
-      background-color: #1B3A5C
+      background-color: #00B4D840
       border-color: #00B4D8
 
     $pressed:
-      background-color: #0A1628
+      background-color: #0A0A1A
 
     $on:
       background-color: #00B4D8
+      color: #0A0A1A
 
     $on hover:
-      background-color: #00B4D8
+      background-color: #00D4F8
 
     $on pressed:
-      background-color: #1A3A5C
+      background-color: #008AA8
 
   UIButton
     id: lockButton
     image-source: none
-    background-color: #0D1B2A
+    background-color: #0A0A1A80
     border-width: 1
-    border-color: #1A3A5C
+    border-color: #00B4D840
 
     $hover:
-      background-color: #1B3A5C
+      background-color: #00B4D840
       border-color: #00B4D8
 
     $pressed:
-      background-color: #0A1628
+      background-color: #0A0A1A
 
     $on:
       background-color: #00B4D8
+      color: #0A0A1A
 
     $on hover:
-      background-color: #00B4D8
+      background-color: #00D4F8
 
     $on pressed:
-      background-color: #1A3A5C
+      background-color: #008AA8
 
   ResizeBorder
     id: bottomResizeBorder
