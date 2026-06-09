@@ -2,92 +2,101 @@ UIWidget
   id: chatCustomWindow
   visible: false
   focusable: true
-  size: 560 400
-  background-color: #0A0A1499
-  border-width: 1
-  border-color: #00B4D840
+  size: 656 400
 
-  // Top accent line
-  UIWidget
-    id: topAccentLine
-    height: 2
-    background-color: #00B4D8
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: parent.top
-
-  UIWidget
-    id: chatHeader
-    height: 28
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
-    background-color: alpha
-
-    Label
-      !text: 'Chat'
-      font: Verdana Bold-11px
-      color: #FFFFFFBB
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.left: parent.left
-      margin-left: 12
-
-    UIButton
-      id: chatCloseButton
-      !text: 'X'
-      font: verdana-11px-rounded
-      color: #FFFFFF88
-      anchors.right: parent.right
-      anchors.top: parent.top
-      width: 25
-      height: 25
-      margin-right: 5
-      $hover:
-        color: #00B4D8
-
+  // Tab sidebar - outside the frame, to the left
   UIWidget
     id: chatTabSidebar
     width: 96
     anchors.top: parent.top
     anchors.left: parent.left
-    anchors.bottom: chatInputPanel.top
-    margin-left: -96
-    background-color: #0A0A14CC
+    anchors.bottom: parent.bottom
+    background-color: #1A1A2ECC
     border-width: 1
     border-right: #00B4D830
 
+  // Main frame with border - offset right by sidebar width
   UIWidget
-    id: chatContentSlot
-    anchors.top: chatHeader.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.bottom: chatInputPanel.top
-    background-color: #0A0A14BB
-
-  UIWidget
-    id: chatInputPanel
-    height: 36
+    id: chatFrame
+    anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin: 1 1 1 1
-    background-color: #0A0A14CC
+    margin-left: 96
+    background-color: #1A1A2E99
+    border-width: 1
+    border-color: #00B4D840
 
-    TextEdit
-      id: chatInput
-      anchors.fill: parent
-      margin: 4
-      shift-navigation: true
-      max-length: 255
-      background-color: #0A0A14EE
-      color: #CAF0F8
-      font: verdana-11px-antialised
-      text-align: left
-      text-vertical-alignment: center
-      placeholder: "Escribe un mensaje..."
-      placeholder-color: #00B4D850
-      selection-color: #CAF0F8FF
-      selection-background-color: #00B4D840
-      border-width: 1
-      border-color: #00B4D830
-      image-source: none
+    // Top accent line
+    UIWidget
+      id: topAccentLine
+      height: 2
+      background-color: #00B4D8
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: parent.top
+
+    UIWidget
+      id: chatHeader
+      height: 28
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      background-color: alpha
+
+      Label
+        !text: 'Chat'
+        font: Verdana Bold-11px
+        color: #FFFFFFBB
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        margin-left: 12
+
+      UIButton
+        id: chatCloseButton
+        !text: 'X'
+        font: verdana-11px-rounded
+        color: #FFFFFF88
+        anchors.right: parent.right
+        anchors.top: parent.top
+        width: 25
+        height: 25
+        margin-right: 5
+        $hover:
+          color: #00B4D8
+
+    UIWidget
+      id: chatContentSlot
+      anchors.top: chatHeader.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: chatInputPanel.top
+      background-color: #1A1A2EBB
+
+    UIWidget
+      id: chatInputPanel
+      height: 36
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      margin: 1 1 1 1
+      background-color: #1A1A2ECC
+
+      TextEdit
+        id: chatInput
+        anchors.fill: parent
+        margin: 4
+        shift-navigation: true
+        max-length: 255
+        background-color: #12122AEE
+        color: #CAF0F8
+        font: verdana-11px-antialised
+        text-align: left
+        text-vertical-alignment: center
+        placeholder: "Escribe un mensaje..."
+        placeholder-color: #00B4D850
+        selection-color: #CAF0F8FF
+        selection-background-color: #00B4D840
+        border-width: 1
+        border-color: #00B4D830
+        image-source: none

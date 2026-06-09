@@ -11,15 +11,15 @@ local tabChangeHooked = false
 local sidebarButtons = {}
 
 local THEME = {
-    tabBg = '#0A0A14CC',
+    tabBg = '#1A1A2ECC',
     tabSelectedBg = '#00B4D830',
     tabSelectedBorder = '#00B4D8',
-    tabText = '#FFFFFF60',
+    tabText = '#FFFFFF80',
     tabSelectedText = '#00B4D8',
-    contentBg = '#0A0A14BB',
-    bufferBg = '#0A0A14EE',
-    scrollThumb = '#00B4D860',
-    scrollBg = '#00B4D818',
+    contentBg = '#1A1A2EBB',
+    bufferBg = '#12122AEE',
+    scrollThumb = '#00B4D880',
+    scrollBg = '#00B4D820',
 }
 
 function init()
