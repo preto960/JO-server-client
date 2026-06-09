@@ -63,41 +63,17 @@ UIWidget
         $hover:
           color: #00B4D8
 
-    // Separator: header -> messages (70% width, centered)
     UIWidget
-      id: separatorTop
-      height: 1
+      id: chatContentSlot
       anchors.top: chatHeader.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-left: 85
-      margin-right: 85
-      margin-top: 2
-      background-color: #00B4D840
-
-    UIWidget
-      id: chatContentSlot
-      anchors.top: separatorTop.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
+      anchors.bottom: chatInputPanel.top
       background-color: alpha
-
-    // Separator: messages -> input (70% width, centered)
-    UIWidget
-      id: separatorBottom
-      height: 1
-      anchors.top: chatContentSlot.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
-      margin-left: 85
-      margin-right: 85
-      margin-top: 2
-      background-color: #00B4D840
 
     UIWidget
       id: chatInputPanel
       height: 36
-      anchors.top: separatorBottom.bottom
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.bottom: parent.bottom

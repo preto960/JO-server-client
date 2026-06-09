@@ -38,6 +38,54 @@ function init()
         chatPopup:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
         chatPopup:hide()
 
+        -- Create separator lines (70% width, centered) inside chatFrame
+        local chatFrame = chatPopup:recursiveGetChildById('chatFrame')
+        if chatFrame then
+            local frameWidth = chatFrame:getWidth()
+            local sideMargin = math.floor(frameWidth * 0.15)
+
+            -- Top separator: between header and content
+            local chatHeader = chatFrame:getChildById('chatHeader')
+            local chatContentSlot = chatFrame:getChildById('chatContentSlot')
+            local chatInputPanel = chatFrame:getChildById('chatInputPanel')
+
+            if chatHeader and chatContentSlot then
+                local sepTop = g_ui.createWidget('UIWidget', chatFrame)
+                sepTop:setHeight(1)
+                sepTop:setMarginLeft(sideMargin)
+                sepTop:setMarginRight(sideMargin)
+                sepTop:setBackgroundColor('#00B4D840')
+                sepTop:addAnchor(AnchorTop, chatHeader, AnchorBottom)
+                sepTop:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                sepTop:addAnchor(AnchorRight, 'parent', AnchorRight)
+
+                -- Reposition contentSlot below separator
+                chatContentSlot:breakAnchors()
+                chatContentSlot:addAnchor(AnchorTop, sepTop, AnchorBottom)
+                chatContentSlot:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                chatContentSlot:addAnchor(AnchorRight, 'parent', AnchorRight)
+                chatContentSlot:addAnchor(AnchorBottom, chatInputPanel, AnchorTop)
+            end
+
+            if chatContentSlot and chatInputPanel then
+                local sepBot = g_ui.createWidget('UIWidget', chatFrame)
+                sepBot:setHeight(1)
+                sepBot:setMarginLeft(sideMargin)
+                sepBot:setMarginRight(sideMargin)
+                sepBot:setBackgroundColor('#00B4D840')
+                sepBot:addAnchor(AnchorTop, chatContentSlot, AnchorBottom)
+                sepBot:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                sepBot:addAnchor(AnchorRight, 'parent', AnchorRight)
+
+                -- Reposition inputPanel below separator
+                chatInputPanel:breakAnchors()
+                chatInputPanel:addAnchor(AnchorTop, sepBot, AnchorBottom)
+                chatInputPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                chatInputPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+                chatInputPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+            end
+        end
+
         -- ESC to close via onKeyPress (same approach as skills window)
         chatPopup.onKeyPress = function(widget, keyCode, keyboardModifiers)
             if keyboardModifiers == KeyboardNoModifier and keyCode == KeyEscape then
