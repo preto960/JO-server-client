@@ -15,8 +15,8 @@ local THEME = {
     tabSelectedBorder = '#00B4D8',
     tabText = '#FFFFFF90',
     tabSelectedText = '#00B4D8',
-    contentBg = '#00000099',
-    bufferBg = '#00000099',
+    contentBg = 'alpha',
+    bufferBg = 'alpha',
     scrollThumb = '#00B4D890',
     scrollBg = '#00B4D818',
 }
@@ -152,7 +152,7 @@ function openChatPopup()
             contentPanel:setPadding(0)
         end
         pcall(function()
-            contentPanel:setBackgroundColor(THEME.contentBg)
+            contentPanel:setBackgroundColor('alpha')
             contentPanel:setBorderWidth(0)
             contentPanel:setBorderColor('transparent')
             contentPanel:setImageSource('')
