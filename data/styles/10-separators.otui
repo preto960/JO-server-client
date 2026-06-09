@@ -1,13 +1,11 @@
 HorizontalSeparator < UIWidget
-  image-source: /images/ui/separator_horizontal
-  image-border: 1
+  background-color: #00B4D830
   height: 2
   phantom: true
   focusable: false
 
 VerticalSeparator < UIWidget
-  image-source: /images/ui/separator_vertical
-  image-border: 1
+  background-color: #00B4D840
   width: 2
   phantom: true
   focusable: false

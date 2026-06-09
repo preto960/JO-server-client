@@ -2,15 +2,14 @@ MiniWindow < UIMiniWindow
   font: verdana-11px-antialised
   width: 192
   height: 200
-  image-source: /images/ui/miniwindow_body
-  image-border: 4
-  image-border-top: 4
-  image-border-bottom: 4
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #1A3A5C
   focusable: false
   &minimizedHeight: 20
-  
+
   $on:
-    image-border-bottom: 2
+    border-color: #00B4D8
 
   UIWidget
     id: miniwindowHeader
@@ -18,10 +17,9 @@ MiniWindow < UIMiniWindow
     anchors.right: parent.right
     anchors.left: parent.left
     height: 15
-    image-source: /images/ui/miniwindow_header
-    image-border: 4
-    image-border-top: 4
-    image-border-bottom: 4
+    background-color: #0D1F35
+    border-width-bottom: 1
+    border-color-bottom: #00B4D8
     phantom: true
 
   UIWidget
@@ -40,7 +38,7 @@ MiniWindow < UIMiniWindow
       anchors.left: parent.left
       anchors.right: parent.right
       height: 1
-      background-color: #66666640
+      background-color: #00B4D860
       phantom: true
 
     UIWidget
@@ -49,7 +47,7 @@ MiniWindow < UIMiniWindow
       anchors.left: parent.left
       anchors.right: parent.right
       height: 1
-      background-color: #31313160
+      background-color: #0A162860
       phantom: true
 
   UIWidget
@@ -60,7 +58,7 @@ MiniWindow < UIMiniWindow
     height: 1
     margin-left: 3
     margin-right: 3
-    background-color: #2a2a2a
+    background-color: #1A3A5C
     phantom: true
 
   UIWidget
@@ -81,15 +79,16 @@ MiniWindow < UIMiniWindow
     margin-top: 2
     margin-right: 3
     size: 12 12
-    image-size: 14 14
-    image-source: /images/ui/miniwindow_buttons
-    image-clip: 28 0 14 14
+    background-color: #1A3A5C
+    border-width: 1
+    border-color: #1A3A5C
 
     $hover:
-      image-clip: 28 14 14 14
+      background-color: #FF2E63
+      border-color: #00B4D8
 
     $pressed:
-      image-clip: 28 28 14 14
+      background-color: #0A1628
 
   UIButton
     id: minimizeButton
@@ -97,24 +96,25 @@ MiniWindow < UIMiniWindow
     anchors.right: closeButton.left
     margin-right: 1
     size: 12 12
-    image-size: 14 14
-    image-source: /images/ui/miniwindow_buttons
-    image-clip: 0 0 14 14
+    background-color: #1A3A5C
+    border-width: 1
+    border-color: #1A3A5C
 
     $hover:
-      image-clip: 0 14 14 14
+      background-color: #1B3A5C
+      border-color: #00B4D8
 
     $pressed:
-      image-clip: 0 28 14 14
+      background-color: #0A1628
 
     $on:
-      image-clip: 14 0 14 14
+      background-color: #00B4D8
 
     $on hover:
-      image-clip: 14 14 14 14
+      background-color: #00B4D8
 
     $on pressed:
-      image-clip: 14 28 14 14
+      background-color: #1A3A5C
 
   UIButton
     id: toggleFilterButton
@@ -123,24 +123,25 @@ MiniWindow < UIMiniWindow
     margin-right: 7
     margin-top: 0
     size: 12 12
-    image-size: 14 14
-    image-source: /images/ui/miniwindow_buttons
-    image-clip: 56 0 14 14
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
 
     $hover:
-      image-clip: 56 14 14 14
+      background-color: #1B3A5C
+      border-color: #00B4D8
 
     $pressed:
-      image-clip: 56 28 14 14
+      background-color: #0A1628
 
     $on:
-      image-clip: 56 28 14 14
+      background-color: #0A1628
 
     $on hover:
-      image-clip: 56 28 14 14
+      background-color: #0A1628
 
     $on pressed:
-      image-clip: 56 0 14 14
+      background-color: #1B3A5C
 
   UIButton
     id: contextMenuButton
@@ -149,15 +150,16 @@ MiniWindow < UIMiniWindow
     margin-right: 2
     margin-top: 0
     size: 12 12
-    image-size: 14 14
-    image-source: /images/ui/miniwindow_buttons
-    image-clip: 112 0 14 14
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
 
     $hover:
-      image-clip: 112 14 14 14
+      background-color: #1B3A5C
+      border-color: #00B4D8
 
     $pressed:
-      image-clip: 112 28 14 14
+      background-color: #0A1628
 
   UIButton
     id: newWindowButton
@@ -166,18 +168,19 @@ MiniWindow < UIMiniWindow
     margin-right: 2
     margin-top: 0
     size: 12 12
-    image-size: 14 14
-    image-source: /images/ui/miniwindow_buttons
-    image-clip: 126 0 14 14
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
 
     $hover:
-      image-clip: 126 14 14 14
+      background-color: #1B3A5C
+      border-color: #00B4D8
 
     $pressed:
-      image-clip: 126 28 14 14
+      background-color: #0A1628
 
     $on:
-      image-clip: 126 0 14 14
+      background-color: #0D1B2A
 
   UIButton
     id: lockButton
@@ -186,24 +189,25 @@ MiniWindow < UIMiniWindow
     margin-right: 2
     margin-top: 0
     size: 12 12
-    image-size: 14 14
-    image-source: /images/ui/miniwindow_buttons
-    image-clip: 98 0 14 14
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
 
     $hover:
-      image-clip: 98 14 14 14
+      background-color: #1B3A5C
+      border-color: #00B4D8
 
     $pressed:
-      image-clip: 98 28 14 14
+      background-color: #0A1628
 
     $on:
-      image-clip: 84 0 14 14
+      background-color: #00B4D8
 
     $on hover:
-      image-clip: 84 14 14 14
+      background-color: #00B4D8
 
     $on pressed:
-      image-clip: 84 28 14 14
+      background-color: #1A3A5C
 
   VerticalScrollBar
     id: miniwindowScrollBar
@@ -228,7 +232,7 @@ MiniWindow < UIMiniWindow
     minimum: 48
     margin-left: 3
     margin-right: 3
-    background: #ffffff88
+    background: #00B4D840
 
 MiniWindowContents < ScrollablePanel
   id: contentsPanel
@@ -251,15 +255,14 @@ MiniQtScrollableWindow < UIMiniWindow
   icon-rect: 4 4 16 16
   width: 192
   height: 200
-  image-source: /images/ui/window_new
-  image-border: 4
-  image-border-top: 16
-  image-border-bottom: 4
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #1A3A5C
   focusable: false
   &minimizedHeight: 17
 
   $on:
-    image-border-bottom: 2
+    border-color: #00B4D8
 
   UIWidget
     id: miniwindowTopBar
@@ -297,15 +300,14 @@ MiniQtWindow < UIMiniWindow
   icon-rect: 4 4 16 16
   width: 192
   height: 200
-  image-source: /images/ui/window_new
-  image-border: 4
-  image-border-top: 16
-  image-border-bottom: 4
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #1A3A5C
   &minimizedHeight: 17
   draggable: true
 
   $on:
-    image-border-bottom: 2
+    border-color: #00B4D8
 
   UIWidget
     id: miniwindowTopBar
@@ -346,20 +348,20 @@ FloatingInputWindow < UIWindow
   font: verdana-11px-antialised
   size: 200 200
   opacity: 1
-  color: #dfdfdf
+  color: #CAF0F8
   text-offset: 0 6
   text-align: top
-  image-source:   /images/ui/window_new
-  image-border: 6
-  image-border-top: 27
-  padding-top: 36
-  padding-left: 16
-  padding-right: 16
-  padding-bottom: 16
+  background-color: #0A0A1A
+  border-width: 3
+  border-color: #1A3A5C
+  padding-top: 30
+  padding-left: 12
+  padding-right: 12
+  padding-bottom: 12
   visible: false
 
   $disabled:
-    color: #dfdfdf88
+    color: #CAF0F888
 
   $dragging:
     opacity: 0.8
