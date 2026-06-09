@@ -144,7 +144,6 @@ function customToggle()
         end
 
         populateSkills()
-        centerWindow()
         customWindow:show()
         customWindow:raise()
         customWindow:focus()
