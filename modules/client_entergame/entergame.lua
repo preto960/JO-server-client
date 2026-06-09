@@ -107,11 +107,8 @@ local function onCharacterList(protocol, characters, account, otui)
         end
     end
 
-    print('[EnterGame] Calling CharacterList.create()')
     CharacterList.create(characters, account, otui)
-    print('[EnterGame] CharacterList.create() returned, calling show()')
     CharacterList.show()
-    print('[EnterGame] CharacterList.show() returned')
 
     if motdEnabled then
         local lastMotdNumber = g_settings.getNumber('motd')

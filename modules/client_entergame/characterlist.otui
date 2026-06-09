@@ -1,7 +1,7 @@
 // CharacterList - Horizontal Carousel - Electric Blue Theme
 // Cards: Name (top) -> Outfit (center) -> Level/Vocation/World (bottom)
-// Arrow buttons for navigation
-// Events panel on the right side
+// Arrow buttons ◀ ▶ for navigation
+// Same visual style as login screen (entergame_custom.otui)
 
 // ============================================
 // CHARACTER WIDGET - Vertical Card for Carousel
@@ -144,7 +144,7 @@ CharacterWidget < UIWidget
       color: #00D4F8
 
 // ============================================
-// MAIN CONTAINER
+// MAIN CONTAINER (invisible, just for positioning)
 // ============================================
 MainWindow
   id: charactersWindow
@@ -152,7 +152,7 @@ MainWindow
   visible: false
   border-width: 1
   border-color: #00B4D840
-  size: 960 520
+  size: 780 520
   image-border: 0
   padding: 0
   background-color: #00000099
@@ -178,7 +178,7 @@ MainWindow
     end, self)
     if g_game.getFeature(GamePreviewState) then
       if g_game.getFeature(GameEnterGameShowAppearance) then
-        self:setSize({width = 960, height = 520})
+        self:setSize({width = 780, height = 520})
         self:setText('')
         self:setColor("#00000000")
         self:setImageSource('')
@@ -234,99 +234,6 @@ MainWindow
     text-auto-resize: true
 
   // ============================================
-  // EVENTS PANEL (right side)
-  // ============================================
-  UIWidget
-    id: eventsPanel
-    visible: false
-    anchors.right: parent.right
-    anchors.top: titleLabel.bottom
-    anchors.bottom: parent.bottom
-    margin-top: 8
-    margin-bottom: 70
-    margin-right: 15
-    width: 220
-    background-color: #0A0A1A60
-    border-width: 1
-    border-color: #00B4D830
-
-    // Events title
-    Label
-      id: eventsTitle
-      !text: tr('ACTIVE EVENTS')
-      color: #00B4D8
-      anchors.top: parent.top
-      anchors.left: parent.left
-      anchors.right: parent.right
-      margin-top: 10
-      margin-left: 12
-      margin-right: 12
-      font: Verdana Bold-11px
-      text-auto-resize: true
-      text-align: center
-
-    // Separator under title
-    UIWidget
-      height: 1
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: eventsTitle.bottom
-      margin-top: 6
-      margin-left: 10
-      margin-right: 10
-      background-color: #00B4D830
-
-    // Active events container
-    UIWidget
-      id: activeEventsContainer
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: prev.bottom
-      margin-top: 8
-      margin-left: 10
-      margin-right: 10
-      layout: verticalBox
-
-    // Upcoming title
-    Label
-      id: upcomingTitle
-      !text: tr('UPCOMING')
-      color: #FFFFFF99
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: activeEventsContainer.bottom
-      margin-top: 10
-      margin-left: 12
-      margin-right: 12
-      font: verdana-11px-rounded
-      text-auto-resize: true
-      text-align: center
-
-    // Separator under upcoming title
-    UIWidget
-      height: 1
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: upcomingTitle.bottom
-      margin-top: 6
-      margin-left: 10
-      margin-right: 10
-      background-color: #00B4D820
-
-    // Upcoming events container
-    UIWidget
-      id: upcomingEventsContainer
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: prev.bottom
-      anchors.bottom: parent.bottom
-      margin-top: 8
-      margin-left: 10
-      margin-right: 10
-      margin-bottom: 10
-      layout: verticalBox
-
-  // ============================================
   // LEFT ARROW BUTTON
   // ============================================
   UIButton
@@ -345,19 +252,18 @@ MainWindow
 
   // ============================================
   // CAROUSEL VIEWPORT (clips overflow)
-  // Right edge anchored to eventsPanel left
   // ============================================
   UIWidget
     id: carouselViewport
     anchors.left: parent.left
-    anchors.right: eventsPanel.left
+    anchors.right: parent.right
     anchors.top: titleLabel.bottom
     anchors.bottom: parent.bottom
     margin-left: 59
-    margin-right: 15
+    margin-right: 59
     margin-top: 8
     margin-bottom: 70
-    clipping: true
+    clip: true
 
     // Card Container uses horizontalBox layout.
     // Scroll by adjusting marginLeft on this container.
@@ -370,16 +276,16 @@ MainWindow
       draggable: false
 
   // ============================================
-  // RIGHT ARROW BUTTON (just before events panel)
+  // RIGHT ARROW BUTTON
   // ============================================
   UIButton
     id: rightArrow
     !text: ''
     width: 28
     height: 28
-    anchors.right: eventsPanel.left
+    anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
-    margin-right: 8
+    margin-right: 15
     image-source: /images/game/entergame/arrow_right
     @onClick: CharacterList.scrollRight()
 
@@ -460,30 +366,30 @@ MainWindow
     visible: false
     height: 0
 
-  UIButton
-    id: characterSort
-    visible: false
-    @onClick: onSortButtonClick(self, 1)
+    UIButton
+      id: characterSort
+      visible: false
+      @onClick: onSortButtonClick(self, 1)
 
-  UIButton
-    id: statusSort
-    visible: false
-    @onClick: onSortButtonClick(self, 2)
+    UIButton
+      id: statusSort
+      visible: false
+      @onClick: onSortButtonClick(self, 2)
 
-  UIButton
-    id: levelSort
-    visible: false
-    @onClick: onSortButtonClick(self, 3)
+    UIButton
+      id: levelSort
+      visible: false
+      @onClick: onSortButtonClick(self, 3)
 
-  UIButton
-    id: vocationSort
-    visible: false
-    @onClick: onSortButtonClick(self, 4)
+    UIButton
+      id: vocationSort
+      visible: false
+      @onClick: onSortButtonClick(self, 4)
 
-  UIButton
-    id: worldSort
-    visible: false
-    @onClick: onSortButtonClick(self, 5)
+    UIButton
+      id: worldSort
+      visible: false
+      @onClick: onSortButtonClick(self, 5)
 
   // Hidden separators
   VerticalSeparator
