@@ -7,7 +7,7 @@ UIWidget
   // Tab sidebar - no frame, just tabs floating outside the main window
   UIWidget
     id: chatTabSidebar
-    width: 110
+    width: 130
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
@@ -20,7 +20,7 @@ UIWidget
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-left: 110
+    margin-left: 130
     background-color: #0A0A1A99
     border-width: 1
     border-color: #00B4D840

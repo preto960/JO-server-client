@@ -8,6 +8,7 @@ local isOpen = false
 local savedWidgets = {}
 local originalOnTabChange = nil
 local sidebarButtons = {}
+local separatorsCreated = false
 
 local THEME = {
     tabBg = '#0A0A1ACC',
@@ -37,54 +38,6 @@ function init()
         chatPopup:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
         chatPopup:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
         chatPopup:hide()
-
-        -- Create separator lines (70% width, centered) inside chatFrame
-        local chatFrame = chatPopup:recursiveGetChildById('chatFrame')
-        if chatFrame then
-            local frameWidth = chatFrame:getWidth()
-            local sideMargin = math.floor(frameWidth * 0.15)
-
-            -- Top separator: between header and content
-            local chatHeader = chatFrame:getChildById('chatHeader')
-            local chatContentSlot = chatFrame:getChildById('chatContentSlot')
-            local chatInputPanel = chatFrame:getChildById('chatInputPanel')
-
-            if chatHeader and chatContentSlot then
-                local sepTop = g_ui.createWidget('UIWidget', chatFrame)
-                sepTop:setHeight(1)
-                sepTop:setMarginLeft(sideMargin)
-                sepTop:setMarginRight(sideMargin)
-                sepTop:setBackgroundColor('#00B4D840')
-                sepTop:addAnchor(AnchorTop, chatHeader, AnchorBottom)
-                sepTop:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-                sepTop:addAnchor(AnchorRight, 'parent', AnchorRight)
-
-                -- Reposition contentSlot below separator
-                chatContentSlot:breakAnchors()
-                chatContentSlot:addAnchor(AnchorTop, sepTop, AnchorBottom)
-                chatContentSlot:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-                chatContentSlot:addAnchor(AnchorRight, 'parent', AnchorRight)
-                chatContentSlot:addAnchor(AnchorBottom, chatInputPanel, AnchorTop)
-            end
-
-            if chatContentSlot and chatInputPanel then
-                local sepBot = g_ui.createWidget('UIWidget', chatFrame)
-                sepBot:setHeight(1)
-                sepBot:setMarginLeft(sideMargin)
-                sepBot:setMarginRight(sideMargin)
-                sepBot:setBackgroundColor('#00B4D840')
-                sepBot:addAnchor(AnchorTop, chatContentSlot, AnchorBottom)
-                sepBot:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-                sepBot:addAnchor(AnchorRight, 'parent', AnchorRight)
-
-                -- Reposition inputPanel below separator
-                chatInputPanel:breakAnchors()
-                chatInputPanel:addAnchor(AnchorTop, sepBot, AnchorBottom)
-                chatInputPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-                chatInputPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-                chatInputPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-            end
-        end
 
         -- ESC to close via onKeyPress (same approach as skills window)
         chatPopup.onKeyPress = function(widget, keyCode, keyboardModifiers)
@@ -164,6 +117,54 @@ function onGameEnd()
     forceRestoreAndClose()
 end
 
+function createSeparators()
+    local chatFrame = chatPopup:recursiveGetChildById('chatFrame')
+    if not chatFrame then return end
+
+    local chatHeader = chatFrame:getChildById('chatHeader')
+    local chatContentSlot = chatFrame:getChildById('chatContentSlot')
+    local chatInputPanel = chatFrame:getChildById('chatInputPanel')
+    if not chatHeader or not chatContentSlot or not chatInputPanel then return end
+
+    -- Use parent width minus sidebar margin (130px)
+    local popupWidth = chatPopup:getWidth()
+    local frameWidth = popupWidth - 130
+    local sideMargin = math.floor(frameWidth * 0.15)
+
+    -- Top separator: between header and content
+    local sepTop = g_ui.createWidget('UIWidget', chatFrame)
+    sepTop:setHeight(1)
+    sepTop:setMarginLeft(sideMargin)
+    sepTop:setMarginRight(sideMargin)
+    sepTop:setBackgroundColor('#00B4D840')
+    sepTop:addAnchor(AnchorTop, chatHeader, AnchorBottom)
+    sepTop:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    sepTop:addAnchor(AnchorRight, 'parent', AnchorRight)
+
+    -- Bottom separator: between content and input
+    local sepBot = g_ui.createWidget('UIWidget', chatFrame)
+    sepBot:setHeight(1)
+    sepBot:setMarginLeft(sideMargin)
+    sepBot:setMarginRight(sideMargin)
+    sepBot:setBackgroundColor('#00B4D840')
+    sepBot:addAnchor(AnchorTop, chatContentSlot, AnchorBottom)
+    sepBot:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    sepBot:addAnchor(AnchorRight, 'parent', AnchorRight)
+
+    -- Reposition contentSlot and inputPanel around separators
+    chatContentSlot:breakAnchors()
+    chatContentSlot:addAnchor(AnchorTop, sepTop, AnchorBottom)
+    chatContentSlot:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    chatContentSlot:addAnchor(AnchorRight, 'parent', AnchorRight)
+    chatContentSlot:addAnchor(AnchorBottom, sepBot, AnchorTop)
+
+    chatInputPanel:breakAnchors()
+    chatInputPanel:addAnchor(AnchorTop, sepBot, AnchorBottom)
+    chatInputPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    chatInputPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+    chatInputPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+end
+
 function openChatPopup()
     local root = g_ui.getRootWidget()
     if not root then return end
@@ -209,6 +210,12 @@ function openChatPopup()
 
     restyleAllTabPanels(tabBar)
     buildSidebar()
+
+    -- Create separator lines on first open (when widget size is computed)
+    if not separatorsCreated then
+        createSeparators()
+        separatorsCreated = true
+    end
 
     if tabBar and not originalOnTabChange then
         originalOnTabChange = tabBar.onTabChange
