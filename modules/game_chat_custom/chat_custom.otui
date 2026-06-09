@@ -2,20 +2,19 @@ UIWidget
   id: chatCustomWindow
   visible: false
   focusable: true
-  size: 656 400
+  size: 660 400
 
-  // Tab sidebar - outside the frame, to the left
+  // Tab sidebar - no frame, just tabs floating outside
   UIWidget
     id: chatTabSidebar
     width: 96
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    background-color: #1A1A2ECC
-    border-width: 1
-    border-right: #00B4D830
+    background-color: alpha
+    margin-left: 0
 
-  // Main frame with border - offset right by sidebar width
+  // Main frame
   UIWidget
     id: chatFrame
     anchors.top: parent.top
@@ -23,7 +22,7 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin-left: 96
-    background-color: #1A1A2E99
+    background-color: #1E1E3899
     border-width: 1
     border-color: #00B4D840
 
@@ -71,7 +70,7 @@ UIWidget
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.bottom: chatInputPanel.top
-      background-color: #1A1A2EBB
+      background-color: #1E1E38BB
 
     UIWidget
       id: chatInputPanel
@@ -80,7 +79,7 @@ UIWidget
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       margin: 1 1 1 1
-      background-color: #1A1A2ECC
+      background-color: #1E1E38CC
 
       TextEdit
         id: chatInput
@@ -88,7 +87,7 @@ UIWidget
         margin: 4
         shift-navigation: true
         max-length: 255
-        background-color: #12122AEE
+        background-color: #16162AEE
         color: #CAF0F8
         font: verdana-11px-antialised
         text-align: left

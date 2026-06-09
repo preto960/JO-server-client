@@ -11,15 +11,15 @@ local tabChangeHooked = false
 local sidebarButtons = {}
 
 local THEME = {
-    tabBg = '#1A1A2ECC',
-    tabSelectedBg = '#00B4D830',
+    tabBg = '#00B4D818',
+    tabSelectedBg = '#00B4D840',
     tabSelectedBorder = '#00B4D8',
-    tabText = '#FFFFFF80',
+    tabText = '#FFFFFF90',
     tabSelectedText = '#00B4D8',
-    contentBg = '#1A1A2EBB',
-    bufferBg = '#12122AEE',
-    scrollThumb = '#00B4D880',
-    scrollBg = '#00B4D820',
+    contentBg = '#1E1E38BB',
+    bufferBg = '#16162AEE',
+    scrollThumb = '#00B4D890',
+    scrollBg = '#00B4D818',
 }
 
 function init()
@@ -39,7 +39,7 @@ function init()
         chatPopup:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
         chatPopup:hide()
 
-        -- ESC to close via onKeyPress (works regardless of focus bindings)
+        -- ESC to close via onKeyPress (same approach as skills window)
         chatPopup.onKeyPress = function(widget, keyCode, keyboardModifiers)
             if keyboardModifiers == KeyboardNoModifier and keyCode == KeyEscape then
                 if isOpen then
@@ -65,7 +65,6 @@ function init()
         g_keyboard.unbindKeyDown('Enter', consolePanel)
         g_keyboard.unbindKeyDown('Escape', consolePanel)
         g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
-        g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
 
         pcall(function()
             connect(g_game, { onGameEnd = onGameEnd })
@@ -81,10 +80,8 @@ function terminate()
         local consolePanel = root:recursiveGetChildById('consolePanel')
         if consolePanel then
             g_keyboard.unbindKeyDown('Enter', consolePanel)
-            g_keyboard.unbindKeyDown('Escape', consolePanel)
             pcall(function()
                 g_keyboard.bindKeyDown('Enter', modules.game_console.switchChatOnCall, consolePanel)
-                g_keyboard.bindKeyDown('Escape', modules.game_console.disableChatOnCall, consolePanel)
             end)
         end
     end
@@ -119,13 +116,6 @@ function onEnterPressed()
     end
 end
 
-function onEscapePressed()
-    if not g_game.isOnline() then return end
-    if isOpen then
-        addEvent(closeChatPopup)
-    end
-end
-
 function onGameEnd()
     forceRestoreAndClose()
 end
@@ -148,10 +138,9 @@ function openChatPopup()
 
     consolePanel:hide()
 
+    -- Only rebind Enter (ESC is handled by onKeyPress)
     g_keyboard.unbindKeyDown('Enter', consolePanel)
-    g_keyboard.unbindKeyDown('Escape', consolePanel)
     g_keyboard.bindKeyDown('Enter', onEnterPressed, chatPopup)
-    g_keyboard.bindKeyDown('Escape', onEscapePressed, chatPopup)
 
     -- Move contentPanel into popup only on first open
     -- On subsequent opens, contentPanel is already inside popup
@@ -197,6 +186,7 @@ function openChatPopup()
     end
     chatPopup:show()
     chatPopup:raise()
+    chatPopup:focus()
 
     local input = chatPopup:recursiveGetChildById('chatInput')
     if input then
@@ -213,13 +203,11 @@ function closeChatPopup()
     -- Hide popup
     chatPopup:hide()
 
-    -- Rebind keys back to consolePanel so Enter can reopen
+    -- Rebind Enter back to consolePanel so Enter can reopen
     local consolePanel = savedWidgets.consolePanel
     if consolePanel then
         g_keyboard.unbindKeyDown('Enter', chatPopup)
-        g_keyboard.unbindKeyDown('Escape', chatPopup)
         g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
-        g_keyboard.bindKeyDown('Escape', onEscapePressed, consolePanel)
         consolePanel:show()
     end
     -- Keep savedWidgets intact so forceRestoreAndClose() can
@@ -268,7 +256,6 @@ function forceRestoreAndClose()
     end
 
     pcall(function() g_keyboard.unbindKeyDown('Enter', chatPopup) end)
-    pcall(function() g_keyboard.unbindKeyDown('Escape', chatPopup) end)
 
     destroySidebarButtons()
     restoreTabStyles(tabBar)
@@ -339,10 +326,9 @@ function buildSidebar()
                 btn:setBorderColor('transparent')
                 btn:setPaddingLeft(8)
                 btn:setPaddingRight(6)
-                -- Force dark background to override TabButton default style
-                btn:setBackgroundColor(THEME.tabBg)
+                -- Transparent bg so tabs float without a frame
+                btn:setBackgroundColor('transparent')
                 btn:setColor(THEME.tabText)
-                -- Use parent anchor + marginTop (no 'prev' reference)
                 btn:addAnchor(AnchorTop, 'parent', AnchorTop)
                 btn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
                 btn:addAnchor(AnchorRight, 'parent', AnchorRight)
@@ -389,12 +375,12 @@ function updateSidebarHighlight(selectedTab)
         pcall(function()
             local isSel = (tab == selectedTab)
             if isSel then
-                btn:setBackgroundColor('#00B4D830')
-                btn:setBorderColor('#00B4D8')
+                btn:setBackgroundColor(THEME.tabSelectedBg)
+                btn:setBorderColor(THEME.tabSelectedBorder)
                 btn:setBorderWidth(1)
-                btn:setColor('#00B4D8')
+                btn:setColor(THEME.tabSelectedText)
             else
-                btn:setBackgroundColor(THEME.tabBg)
+                btn:setBackgroundColor('transparent')
                 btn:setBorderWidth(0)
                 btn:setBorderColor('transparent')
                 btn:setColor(THEME.tabText)
