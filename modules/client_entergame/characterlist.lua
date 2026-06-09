@@ -978,6 +978,13 @@ function CharacterList.destroy()
         charListLogo = nil
     end
 
+    if charListFooterBar then
+        charListFooterBar:destroy()
+        charListFooterBar = nil
+    end
+
+    CharacterList.destroyEventsPanel()
+
     if charactersWindow then
         resetUIReferences()
         charactersWindow:destroy()
