@@ -3,11 +3,12 @@ Module
   description: Fantasy UI Theme - Golden warm tones with ornate medieval fantasy feel
   author: JO Dev
   version: 1.0
-  dependOnClient: true
   autoLoad: false
   loadLater: true
+  dependOnClient: true
+  sandboxed: false
 
-  onLoad: |
+  @onLoad: |
     -- Only load if medieval pack is NOT active
     if g_modules.getModule('ui_pack_medieval') and g_modules.getModule('ui_pack_medieval'):isLoaded() then
       g_logger.warning('[Fantasy Theme] Medieval theme is already active, skipping fantasy theme.')

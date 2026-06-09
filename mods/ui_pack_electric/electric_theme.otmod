@@ -4,6 +4,9 @@ Module
   author: JO Dev
   version: 1.0
   autoLoad: true
+  loadLater: true
+  dependOnClient: true
+  sandboxed: false
 
   dependencies:
     - client_styles

@@ -2,9 +2,13 @@ MainWindow
   id: waitingWindow
   !text: tr('Waiting List')
   size: 320 200
-  background-color: #00000099
+  image-source: none
+  image-border: 0
+  padding: 0
+  background-color: #0A0A1AE0
   border-width: 1
   border-color: #00B4D840
+  border-radius: 8
   draggable: false
   @onEscape: CharacterList.cancelWait()
 
@@ -20,12 +24,13 @@ MainWindow
   Label
     id: infoLabel
     font: verdana-11px-rounded
-    color: #FFFFFFBB
+    color: #FFFFFFCC
     anchors.top: parent.top
     anchors.bottom: progressBar.top
     anchors.left: parent.left
     anchors.right: parent.right
     text-wrap: true
+    text-align: center
     margin-top: 14
     margin-left: 15
     margin-right: 15
@@ -50,6 +55,7 @@ MainWindow
     anchors.bottom: separator.bottom
     anchors.left: parent.left
     anchors.right: parent.right
+    text-align: center
     margin-bottom: 10
     margin-left: 15
     margin-right: 15
@@ -60,7 +66,7 @@ MainWindow
     background-color: #00B4D830
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: next.top
+    anchors.bottom: buttonCancel.top
     margin-bottom: 10
     margin-left: 15
     margin-right: 15

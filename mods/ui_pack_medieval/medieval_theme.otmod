@@ -3,11 +3,12 @@ Module
   description: Medieval UI Theme - Stone and iron with cold blue-grey tones
   author: JO Dev
   version: 1.0
-  dependOnClient: true
   autoLoad: false
   loadLater: true
+  dependOnClient: true
+  sandboxed: false
 
-  onLoad: |
+  @onLoad: |
     -- Only load if fantasy pack is NOT active
     if g_modules.getModule('ui_pack_fantasy') and g_modules.getModule('ui_pack_fantasy'):isLoaded() then
       g_logger.warning('[Medieval Theme] Fantasy theme is already active, skipping medieval theme.')
