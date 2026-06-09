@@ -1369,7 +1369,8 @@ function CharacterList.createEventsPanel()
 
         -- Create events panel as a SEPARATE floating widget (not inside charactersWindow)
         charListEventsPanel = g_ui.loadUIFromString(
-            'UIWidget id: charEventsPanelWidget\n' ..
+            'UIWidget\n' ..
+            '  id: charEventsPanelWidget\n' ..
             '  visible: false\n' ..
             '  focusable: false\n' ..
             '  width: 210\n' ..
@@ -1380,7 +1381,6 @@ function CharacterList.createEventsPanel()
             '  border-width: 1\n' ..
             '  border-color: #00B4D830\n' ..
             '  height: 440\n' ..
-            -- Title
             '  Label\n' ..
             '    id: evtTitle\n' ..
             '    !text: tr("ACTIVE EVENTS")\n' ..
@@ -1394,7 +1394,6 @@ function CharacterList.createEventsPanel()
             '    font: Verdana Bold-11px\n' ..
             '    text-auto-resize: true\n' ..
             '    text-align: center\n' ..
-            -- Separator under title
             '  UIWidget\n' ..
             '    id: evtTitleSep\n' ..
             '    height: 1\n' ..
@@ -1405,10 +1404,9 @@ function CharacterList.createEventsPanel()
             '    margin-left: 8\n' ..
             '    margin-right: 8\n' ..
             '    background-color: #00B4D830\n' ..
-            -- Active event label 1
             '  Label\n' ..
             '    id: evtActive1\n' ..
-            '    !text: \'\'\n' ..
+            '    !text: \n' ..
             '    color: #FFFFFFFF\n' ..
             '    anchors.top: evtTitleSep.bottom\n' ..
             '    anchors.left: parent.left\n' ..
@@ -1419,10 +1417,9 @@ function CharacterList.createEventsPanel()
             '    font: verdana-11px-rounded\n' ..
             '    text-auto-resize: true\n' ..
             '    text-wrap: true\n' ..
-            -- Active event label 2
             '  Label\n' ..
             '    id: evtActive2\n' ..
-            '    !text: \'\'\n' ..
+            '    !text: \n' ..
             '    color: #FFFFFFCC\n' ..
             '    anchors.top: evtActive1.bottom\n' ..
             '    anchors.left: parent.left\n' ..
@@ -1433,10 +1430,9 @@ function CharacterList.createEventsPanel()
             '    font: verdana-11px-rounded\n' ..
             '    text-auto-resize: true\n' ..
             '    text-wrap: true\n' ..
-            -- Active event label 3
             '  Label\n' ..
             '    id: evtActive3\n' ..
-            '    !text: \'\'\n' ..
+            '    !text: \n' ..
             '    color: #FFFFFF99\n' ..
             '    anchors.top: evtActive2.bottom\n' ..
             '    anchors.left: parent.left\n' ..
@@ -1447,7 +1443,6 @@ function CharacterList.createEventsPanel()
             '    font: verdana-11px-rounded\n' ..
             '    text-auto-resize: true\n' ..
             '    text-wrap: true\n' ..
-            -- Upcoming title
             '  Label\n' ..
             '    id: evtUpcomingTitle\n' ..
             '    !text: tr("UPCOMING")\n' ..
@@ -1461,7 +1456,6 @@ function CharacterList.createEventsPanel()
             '    font: verdana-11px-rounded\n' ..
             '    text-auto-resize: true\n' ..
             '    text-align: center\n' ..
-            -- Separator under upcoming title
             '  UIWidget\n' ..
             '    id: evtUpcomingSep\n' ..
             '    height: 1\n' ..
@@ -1472,10 +1466,9 @@ function CharacterList.createEventsPanel()
             '    margin-left: 8\n' ..
             '    margin-right: 8\n' ..
             '    background-color: #00B4D820\n' ..
-            -- Upcoming event label 1
             '  Label\n' ..
             '    id: evtUpcoming1\n' ..
-            '    !text: \'\'\n' ..
+            '    !text: \n' ..
             '    color: #FFFFFFFF\n' ..
             '    anchors.top: evtUpcomingSep.bottom\n' ..
             '    anchors.left: parent.left\n' ..
@@ -1486,10 +1479,9 @@ function CharacterList.createEventsPanel()
             '    font: verdana-11px-rounded\n' ..
             '    text-auto-resize: true\n' ..
             '    text-wrap: true\n' ..
-            -- Upcoming event label 2
             '  Label\n' ..
             '    id: evtUpcoming2\n' ..
-            '    !text: \'\'\n' ..
+            '    !text: \n' ..
             '    color: #FFFFFFCC\n' ..
             '    anchors.top: evtUpcoming1.bottom\n' ..
             '    anchors.left: parent.left\n' ..
