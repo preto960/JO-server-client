@@ -21,7 +21,7 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin-left: 96
-    background-color: #00000099
+    background-color: #0A0A1A99
     border-width: 1
     border-color: #00B4D840
 
