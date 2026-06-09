@@ -319,9 +319,9 @@ function toggleAudio()
     pcall(function()
         local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
         if topMenu then
-            local leftBtns = topMenu:recursiveGetChildById('leftButtonsPanel')
-            if leftBtns then
-                local children = leftBtns:getChildren()
+            local rightBtns = topMenu:recursiveGetChildById('rightButtonsPanel')
+            if rightBtns then
+                local children = rightBtns:getChildren()
                 for i = 1, #children do
                     if children[i]:getId() == 'audioButton' then
                         children[i]:onClick()

@@ -1406,7 +1406,6 @@ function CharacterList.createEventsPanel()
             '    background-color: #00B4D830\n' ..
             '  Label\n' ..
             '    id: evtActive1\n' ..
-            '    !text: \n' ..
             '    color: #FFFFFFFF\n' ..
             '    anchors.top: evtTitleSep.bottom\n' ..
             '    anchors.left: parent.left\n' ..
@@ -1419,7 +1418,6 @@ function CharacterList.createEventsPanel()
             '    text-wrap: true\n' ..
             '  Label\n' ..
             '    id: evtActive2\n' ..
-            '    !text: \n' ..
             '    color: #FFFFFFCC\n' ..
             '    anchors.top: evtActive1.bottom\n' ..
             '    anchors.left: parent.left\n' ..
@@ -1432,7 +1430,6 @@ function CharacterList.createEventsPanel()
             '    text-wrap: true\n' ..
             '  Label\n' ..
             '    id: evtActive3\n' ..
-            '    !text: \n' ..
             '    color: #FFFFFF99\n' ..
             '    anchors.top: evtActive2.bottom\n' ..
             '    anchors.left: parent.left\n' ..
@@ -1468,7 +1465,6 @@ function CharacterList.createEventsPanel()
             '    background-color: #00B4D820\n' ..
             '  Label\n' ..
             '    id: evtUpcoming1\n' ..
-            '    !text: \n' ..
             '    color: #FFFFFFFF\n' ..
             '    anchors.top: evtUpcomingSep.bottom\n' ..
             '    anchors.left: parent.left\n' ..
@@ -1481,7 +1477,6 @@ function CharacterList.createEventsPanel()
             '    text-wrap: true\n' ..
             '  Label\n' ..
             '    id: evtUpcoming2\n' ..
-            '    !text: \n' ..
             '    color: #FFFFFFCC\n' ..
             '    anchors.top: evtUpcoming1.bottom\n' ..
             '    anchors.left: parent.left\n' ..
