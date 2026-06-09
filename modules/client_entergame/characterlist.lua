@@ -665,6 +665,11 @@ function CharacterList.terminate()
         charListLogo = nil
     end
 
+    if charListFooterBar then
+        charListFooterBar:destroy()
+        charListFooterBar = nil
+    end
+
     if loadBox then
         g_game.cancelLogin()
         loadBox:destroy()
@@ -997,11 +1002,6 @@ function CharacterList.show()
     charactersWindow:raise()
     charactersWindow:focus()
 
-    -- Show logo when character list is visible
-    if charListLogo then
-        charListLogo:show()
-    end
-
     if showHiddenCheckbox then
         setCheckedWithoutCallback(showHiddenCheckbox, getShowHiddenCharacters())
     end
@@ -1021,8 +1021,13 @@ function CharacterList.show()
         autoReconnectButton:setText('Auto reconnect: ' .. reconnectStatus)
     end
 
-    -- Update events panel
-    pcall(function() CharacterList.updateEventsPanel() end)
+    -- Show footer bar
+    pcall(function() CharacterList.showFooterBar() end)
+
+    -- Show logo
+    if charListLogo then
+        charListLogo:show()
+    end
 end
 
 function CharacterList.hide(showLogin)
@@ -1031,6 +1036,8 @@ function CharacterList.hide(showLogin)
     if charListLogo then
         charListLogo:hide()
     end
+
+    CharacterList.hideFooterBar()
 
     charactersWindow:hide()
 
@@ -1092,6 +1099,7 @@ function CharacterList.doLogin()
             worldName = selected.worldName,
             characterName = selected.characterName
         }
+        CharacterList.hideFooterBar()
         charactersWindow:hide()
         if charListLogo then
             charListLogo:hide()
@@ -1341,83 +1349,41 @@ function executeAutoReconnect()
     CharacterList.doLogin()
 end
 
-function CharacterList.updateEventsPanel()
+local charListFooterBar = nil
+
+function CharacterList.showFooterBar()
     if not charactersWindow then return end
 
-    local eventsPanel = charactersWindow:recursiveGetChildById('eventsPanel')
-    if not eventsPanel then return end
-
-    -- Try to get event data from bottommenu module
-    local activeEvents = {}
-    local upcomingEvents = {}
-    pcall(function()
-        if modules.client_bottommenu and modules.client_bottommenu.getActiveEventsInfo then
-            activeEvents, upcomingEvents = modules.client_bottommenu.getActiveEventsInfo()
-        end
-    end)
-
-    -- Populate active events using batch update to prevent C++ layout crash
-    local activeContainer = eventsPanel:recursiveGetChildById('activeEventsContainer')
-    if activeContainer then
-        -- Use disableUpdateTemporarily to batch all layout changes into one pass
-        pcall(function() activeContainer:disableUpdateTemporarily() end)
-        activeContainer:destroyChildren()
-        if #activeEvents == 0 then
-            local noEvents = g_ui.createWidget('Label', activeContainer)
-            noEvents:setText(tr('No active events'))
-            noEvents:setColor('#FFFFFF60')
-            noEvents:setFont('verdana-11px-rounded')
-            noEvents:setMarginTop(4)
-            noEvents:setMarginBottom(4)
-            noEvents:setTextAlign('center')
-        else
-            for i, event in ipairs(activeEvents) do
-                local lbl = g_ui.createWidget('Label', activeContainer)
-                lbl:setColor('#CAF0F8FF')
-                lbl:setFont('verdana-11px-rounded')
-                lbl:setMarginTop(i > 1 and 3 or 2)
-                lbl:setMarginLeft(4)
-                lbl:setText('> ' .. (event.name or 'Unknown'))
-                lbl:setTooltip(event.description or '')
-            end
-        end
+    if not charListFooterBar then
         pcall(function()
-            if activeContainer:getLayout() then
-                activeContainer:getLayout():enableUpdates()
-                activeContainer:updateLayout()
+            local root = g_ui.getRootWidget()
+            if root then
+                charListFooterBar = g_ui.loadUI('charlist_footer', root)
             end
         end)
     end
 
-    -- Populate upcoming events
-    local upcomingContainer = eventsPanel:recursiveGetChildById('upcomingEventsContainer')
-    if upcomingContainer then
-        pcall(function() upcomingContainer:disableUpdateTemporarily() end)
-        upcomingContainer:destroyChildren()
-        if #upcomingEvents == 0 then
-            local noEvents = g_ui.createWidget('Label', upcomingContainer)
-            noEvents:setText(tr('No upcoming events'))
-            noEvents:setColor('#FFFFFF40')
-            noEvents:setFont('verdana-11px-rounded')
-            noEvents:setMarginTop(4)
-            noEvents:setMarginBottom(4)
-            noEvents:setTextAlign('center')
-        else
-            for i, event in ipairs(upcomingEvents) do
-                local lbl = g_ui.createWidget('Label', upcomingContainer)
-                lbl:setColor('#CAF0F8AA')
-                lbl:setFont('verdana-11px-rounded')
-                lbl:setMarginTop(i > 1 and 3 or 2)
-                lbl:setMarginLeft(4)
-                lbl:setText('> ' .. (event.name or 'Unknown'))
-                lbl:setTooltip(event.description or '')
-            end
-        end
+    if charListFooterBar then
+        charListFooterBar:show()
+        charListFooterBar:raise()
+        -- Update players online count
         pcall(function()
-            if upcomingContainer:getLayout() then
-                upcomingContainer:getLayout():enableUpdates()
-                upcomingContainer:updateLayout()
+            local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
+            if topMenu then
+                local onlineLabel = topMenu:recursiveGetChildById('topLeftOnlinePlayersLabel')
+                if onlineLabel then
+                    local playersLabel = charListFooterBar:recursiveGetChildById('charlistPlayersLabel')
+                    if playersLabel then
+                        playersLabel:setText(onlineLabel:getText())
+                    end
+                end
             end
         end)
+    end
+end
+
+function CharacterList.hideFooterBar()
+    if charListFooterBar then
+        charListFooterBar:hide()
     end
 end

@@ -1,0 +1,80 @@
+UIWidget
+  id: charlistFooterBar
+  visible: false
+  focusable: false
+  height: 36
+  background-color: #000000CC
+  border-width: 0
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.bottom: parent.bottom
+
+  // Top accent line
+  UIWidget
+    id: footerSeparator
+    height: 1
+    background-color: #00B4D830
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+
+  // LEFT: Audio button
+  UIButton
+    id: charlistAudioBtn
+    size: 28 28
+    image-source: /images/topbuttons/audio
+    image-color: #FFFFFF60
+    image-auto-resize: true
+    cursor: pointer
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 12
+
+    $hover:
+      image-color: #00B4D8
+
+    @onClick: modules.game_entergame_custom.toggleAudio()
+
+  // LEFT: Options button
+  UIButton
+    id: charlistOptionsBtn
+    size: 28 28
+    image-source: /images/topbuttons/options
+    image-color: #FFFFFF60
+    image-auto-resize: true
+    cursor: pointer
+    anchors.left: charlistAudioBtn.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 6
+
+    $hover:
+      image-color: #00B4D8
+
+    @onClick: modules.game_entergame_custom.openOptions()
+
+  // CENTER: Players online label
+  Label
+    id: charlistPlayersLabel
+    !text: '0 Players Online'
+    font: verdana-11px-rounded
+    color: #00B4D8
+    text-auto-resize: true
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.verticalCenter: parent.verticalCenter
+
+  // RIGHT: Exit door button
+  UIButton
+    id: charlistExitBtn
+    size: 28 28
+    image-source: /images/topbuttons/logout
+    image-color: #FFFFFF60
+    image-auto-resize: true
+    cursor: pointer
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 12
+
+    $hover:
+      image-color: #FF4444
+
+    @onClick: exit()

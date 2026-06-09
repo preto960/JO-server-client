@@ -2,6 +2,8 @@
 MessageBoxWindow < UIMessageBox
   icon-rect: 4 4 16 16
   size: 246 116
+  image-source: none
+  image-border: 0
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840
@@ -76,6 +78,8 @@ MessageBoxWindow < UIMessageBox
 MessageBoxShopWindow < UIMessageBox
   icon-rect: 4 4 16 16
   size: 246 116
+  image-source: none
+  image-border: 0
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840

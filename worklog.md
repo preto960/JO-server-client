@@ -65,3 +65,27 @@ Stage Summary:
 - topMenu/bottomMenu now hidden when character list shows and after game exit
 - Logo visible above character list window
 - Outfits refreshed when character list re-shows after game exit
+---
+Task ID: 1-3
+Agent: main
+Task: Fix crash, logo disappearing, restyle popups, add footer bar to character list
+
+Work Log:
+- Removed events panel from characterlist.otui (was causing C++ crash when creating widgets dynamically)
+- Changed carousel viewport anchors from eventsPanel.left to parent.right
+- Changed rightArrow anchor from eventsPanel.left to parent.right
+- Fixed clip: true -> clipping: true
+- Fixed negative margin-right: -5 -> margin-right: 15 on rightArrow
+- Removed updateEventsPanel() function entirely from characterlist.lua (had invalid Lua syntax dot:anchors.left = nil and invalid AnchorLeft/AnchorVerticalCenter globals causing C++ segfault)
+- Added charListLogo:show() to CharacterList.show() - fixes logo disappearing after showAgain()
+- Added CharacterList.showFooterBar() and CharacterList.hideFooterBar() functions
+- Created charlist_footer.otui with audio/options buttons (left), players online label (center), exit door button (right)
+- Footer buttons call modules.game_entergame_custom.toggleAudio(), openOptions() and exit()
+- Added footer bar cleanup to terminate() and doLogin()
+- Updated MessageBoxWindow and MessageBoxShopWindow in electric theme to explicitly set image-source: none and image-border: 0 (prevents old window skin from showing through)
+
+Stage Summary:
+- Crash fixed: events panel removed from OTUI, updateEventsPanel removed from Lua
+- Logo fixed: charListLogo:show() added to CharacterList.show()
+- Popups restyled: electric theme messagebox styles now explicitly clear image properties
+- Footer bar added: charlist_footer.otui created with all requested buttons
