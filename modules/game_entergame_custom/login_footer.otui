@@ -23,8 +23,7 @@ UIWidget
     size: 28 28
     image-source: /images/topbuttons/audio
     image-color: #FFFFFF60
-    image-clip: 0 0 28 28
-    image-border: 0
+    image-auto-resize: true
     cursor: pointer
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
@@ -40,8 +39,7 @@ UIWidget
     size: 28 28
     image-source: /images/topbuttons/options
     image-color: #FFFFFF60
-    image-clip: 0 0 28 28
-    image-border: 0
+    image-auto-resize: true
     cursor: pointer
     anchors.left: footerAudioBtn.right
     anchors.verticalCenter: parent.verticalCenter
@@ -66,8 +64,7 @@ UIWidget
     size: 28 28
     image-source: /images/icons/icon_youtube
     image-color: #FFFFFF60
-    image-clip: 0 0 28 28
-    image-border: 0
+    image-auto-resize: true
     cursor: pointer
     anchors.right: footerDiscordBtn.left
     anchors.verticalCenter: parent.verticalCenter
@@ -83,8 +80,7 @@ UIWidget
     size: 28 28
     image-source: /images/icons/icon_discord
     image-color: #FFFFFF60
-    image-clip: 0 0 28 28
-    image-border: 0
+    image-auto-resize: true
     cursor: pointer
     anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
