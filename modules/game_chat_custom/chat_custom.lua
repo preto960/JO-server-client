@@ -10,8 +10,8 @@ local originalOnTabChange = nil
 local sidebarButtons = {}
 
 local THEME = {
-    tabBg = '#00B4D825',
-    tabSelectedBg = '#00B4D840',
+    tabBg = '#0A0A1ACC',
+    tabSelectedBg = '#00B4D860',
     tabSelectedBorder = '#00B4D8',
     tabText = '#FFFFFF90',
     tabSelectedText = '#00B4D8',

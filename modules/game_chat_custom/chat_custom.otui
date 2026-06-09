@@ -7,7 +7,7 @@ UIWidget
   // Tab sidebar - no frame, just tabs floating outside the main window
   UIWidget
     id: chatTabSidebar
-    width: 96
+    width: 110
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
@@ -20,7 +20,7 @@ UIWidget
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-left: 96
+    margin-left: 110
     background-color: #0A0A1A99
     border-width: 1
     border-color: #00B4D840
@@ -80,23 +80,24 @@ UIWidget
       anchors.top: separatorTop.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      anchors.bottom: separatorBottom.top
       background-color: alpha
 
     // Separator: messages -> input (70% width, centered)
     UIWidget
       id: separatorBottom
       height: 1
-      anchors.top: prev.bottom
+      anchors.top: chatContentSlot.bottom
       anchors.left: parent.left
       anchors.right: parent.right
       margin-left: 85
       margin-right: 85
+      margin-top: 2
       background-color: #00B4D840
 
     UIWidget
       id: chatInputPanel
       height: 36
+      anchors.top: separatorBottom.bottom
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.bottom: parent.bottom
