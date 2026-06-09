@@ -11,14 +11,14 @@ local tabChangeHooked = false
 local sidebarButtons = {}
 
 local THEME = {
-    tabBg = '#1C1C38',
-    tabSelectedBg = '#282848',
-    tabSelectedBorder = '#3A3A60',
-    tabText = '#686880',
-    tabSelectedText = '#C0C0D0',
-    contentBg = '#101024',
-    bufferBg = '#0E0E20',
-    scrollThumb = '#3A3A5888',
+    tabBg = '#00000066',
+    tabSelectedBg = '#00B4D820',
+    tabSelectedBorder = '#00B4D850',
+    tabText = '#FFFFFF60',
+    tabSelectedText = '#CAF0F8',
+    contentBg = '#00000066',
+    bufferBg = '#000000BB',
+    scrollThumb = '#00B4D850',
 }
 
 function init()
@@ -33,6 +33,9 @@ function init()
         if not chatPopup:getParent() then
             root:addChild(chatPopup)
         end
+        -- Center via anchors (requires parent to be set first)
+        chatPopup:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
+        chatPopup:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
         chatPopup:hide()
 
         -- Close button via Lua (not @onClick in OTUI)
@@ -189,7 +192,6 @@ function openChatPopup()
         input:focus()
     end
 
-    centerWindow()
     isOpen = true
 end
 
@@ -501,17 +503,6 @@ function restoreTabPanelBuffer(panel)
             pcall(function()
                 child:setBackgroundColor('')
             end)
-        end
-    end
-end
-
-function centerWindow()
-    if chatPopup then
-        local gw = g_window
-        if gw then
-            local x = (gw.getWidth() - chatPopup:getWidth()) / 2
-            local y = (gw.getHeight() - chatPopup:getHeight()) / 2
-            chatPopup:setPosition({ x = x, y = y })
         end
     end
 end

@@ -3,9 +3,18 @@ UIWidget
   visible: false
   focusable: true
   size: 560 400
-  background-color: #16162EBB
+  background-color: #00000099
   border-width: 1
-  border-color: #2A2A4066
+  border-color: #00B4D840
+
+  // Top accent line
+  UIWidget
+    id: topAccentLine
+    height: 2
+    background-color: #00B4D8
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
 
   UIWidget
     id: chatHeader
@@ -13,36 +22,36 @@ UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    background-color: #13132ACC
+    background-color: alpha
 
     Label
       !text: 'Chat'
-      font: verdana-11px-rounded
-      color: #7878A0
+      font: Verdana Bold-11px
+      color: #FFFFFFBB
       anchors.verticalCenter: parent.verticalCenter
       anchors.left: parent.left
       margin-left: 12
 
     UIButton
       id: chatCloseButton
-      !text: 'x'
+      !text: 'X'
       font: verdana-11px-rounded
-      color: #505068
+      color: #FFFFFF88
       anchors.right: parent.right
-      anchors.verticalCenter: parent.verticalCenter
-      width: 28
-      height: 28
-      margin-right: 6
+      anchors.top: parent.top
+      width: 25
+      height: 25
+      margin-right: 5
       $hover:
-        color: #A0A0B8
+        color: #00B4D8
 
   UIWidget
     id: chatTabSidebar
     width: 96
-    anchors.top: prev.bottom
+    anchors.top: chatHeader.bottom
     anchors.left: parent.left
     anchors.bottom: chatInputPanel.top
-    background-color: #13132CCC
+    background-color: #00000066
 
   UIWidget
     id: chatContentSlot
@@ -50,7 +59,7 @@ UIWidget
     anchors.left: chatTabSidebar.right
     anchors.right: parent.right
     anchors.bottom: chatInputPanel.top
-    background-color: #101024BB
+    background-color: #00000066
 
   UIWidget
     id: chatInputPanel
@@ -59,7 +68,7 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin: 1 1 1 1
-    background-color: #14142CCC
+    background-color: #00000066
 
     TextEdit
       id: chatInput
@@ -67,15 +76,15 @@ UIWidget
       margin: 4
       shift-navigation: true
       max-length: 255
-      background-color: #1C1C3EEE
-      color: #D0D0DC
+      background-color: #000000BB
+      color: #CAF0F8
       font: verdana-11px-antialised
       text-align: left
       text-vertical-alignment: center
       placeholder: "Escribe un mensaje..."
-      placeholder-color: #505068
-      selection-color: #D0D0DCFF
-      selection-background-color: #3A3A58
+      placeholder-color: #00B4D850
+      selection-color: #CAF0F8FF
+      selection-background-color: #00B4D840
       border-width: 1
-      border-color: #282840AA
+      border-color: #00B4D830
       image-source: none
