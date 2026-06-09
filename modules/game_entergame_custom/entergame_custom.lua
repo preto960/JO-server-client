@@ -319,14 +319,11 @@ function toggleAudio()
     pcall(function()
         local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
         if topMenu then
-            local panel = topMenu:recursiveGetChildById('topLeftTogglesPanel')
+            local panel = topMenu:getChildById('topLeftTogglesPanel')
             if panel then
-                local children = panel:getChildren()
-                for i = 1, #children do
-                    if children[i]:getId() == 'audioButton' then
-                        children[i]:onClick()
-                        break
-                    end
+                local btn = panel:getChildById('audioButton')
+                if btn and btn.onMouseRelease then
+                    btn.onMouseRelease(btn, btn:getPosition(), MouseLeftButton)
                 end
             end
         end
@@ -337,32 +334,13 @@ function openOptions()
     pcall(function()
         local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
         if topMenu then
-            local panel = topMenu:recursiveGetChildById('topLeftTogglesPanel')
+            local panel = topMenu:getChildById('topLeftTogglesPanel')
             if panel then
-                local children = panel:getChildren()
-                for i = 1, #children do
-                    if children[i]:getId() == 'optionsButton' then
-                        children[i]:onClick()
-                        break
-                    end
+                local btn = panel:getChildById('optionsButton')
+                if btn and btn.onMouseRelease then
+                    btn.onMouseRelease(btn, btn:getPosition(), MouseLeftButton)
                 end
             end
-        end
-    end)
-end
-
-function openDiscord()
-    pcall(function()
-        if Services and Services.discord and Services.discord ~= '' then
-            g_platform.openUrl(Services.discord)
-        end
-    end)
-end
-
-function openYoutube()
-    pcall(function()
-        if Services and Services.youtube_link and Services.youtube_link ~= '' then
-            g_platform.openUrl(Services.youtube_link)
         end
     end)
 end

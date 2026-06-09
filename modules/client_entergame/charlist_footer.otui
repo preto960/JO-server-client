@@ -62,40 +62,6 @@ UIWidget
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
 
-  // RIGHT: YouTube button
-  UIButton
-    id: charlistYoutubeBtn
-    size: 28 28
-    image-source: /images/icons/icon_youtube
-    image-color: #FFFFFF60
-    image-auto-resize: true
-    cursor: pointer
-    anchors.right: charlistDiscordBtn.left
-    anchors.verticalCenter: parent.verticalCenter
-    margin-right: 6
-
-    $hover:
-      image-color: #00B4D8
-
-    @onClick: modules.game_entergame_custom.openYoutube()
-
-  // RIGHT: Discord button
-  UIButton
-    id: charlistDiscordBtn
-    size: 28 28
-    image-source: /images/icons/icon_discord
-    image-color: #FFFFFF60
-    image-auto-resize: true
-    cursor: pointer
-    anchors.right: charlistExitBtn.left
-    anchors.verticalCenter: parent.verticalCenter
-    margin-right: 6
-
-    $hover:
-      image-color: #00B4D8
-
-    @onClick: modules.game_entergame_custom.openDiscord()
-
   // RIGHT: Exit door button
   UIButton
     id: charlistExitBtn
