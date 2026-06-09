@@ -22,7 +22,7 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin-left: 96
-    background-color: #1E1E3899
+    background-color: alpha
     border-width: 1
     border-color: #00B4D840
 
@@ -70,7 +70,7 @@ UIWidget
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.bottom: chatInputPanel.top
-      background-color: #1E1E38BB
+      background-color: alpha
 
     UIWidget
       id: chatInputPanel
@@ -78,8 +78,9 @@ UIWidget
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.bottom: parent.bottom
-      margin: 1 1 1 1
-      background-color: #1E1E38CC
+      background-color: #000000AA
+      border-top: 1
+      border-top-color: #00B4D830
 
       TextEdit
         id: chatInput
@@ -87,7 +88,7 @@ UIWidget
         margin: 4
         shift-navigation: true
         max-length: 255
-        background-color: #16162AEE
+        background-color: alpha
         color: #CAF0F8
         font: verdana-11px-antialised
         text-align: left
@@ -96,6 +97,4 @@ UIWidget
         placeholder-color: #00B4D850
         selection-color: #CAF0F8FF
         selection-background-color: #00B4D840
-        border-width: 1
-        border-color: #00B4D830
         image-source: none

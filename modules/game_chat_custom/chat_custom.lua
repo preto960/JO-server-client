@@ -11,13 +11,13 @@ local tabChangeHooked = false
 local sidebarButtons = {}
 
 local THEME = {
-    tabBg = '#00B4D818',
+    tabBg = '#00B4D825',
     tabSelectedBg = '#00B4D840',
     tabSelectedBorder = '#00B4D8',
     tabText = '#FFFFFF90',
     tabSelectedText = '#00B4D8',
-    contentBg = '#1E1E38BB',
-    bufferBg = '#16162AEE',
+    contentBg = 'alpha',
+    bufferBg = 'alpha',
     scrollThumb = '#00B4D890',
     scrollBg = '#00B4D818',
 }
@@ -184,6 +184,7 @@ function openChatPopup()
     if not chatPopup:getParent() then
         root:addChild(chatPopup)
     end
+    -- Focus popup first so onKeyPress works, then focus input
     chatPopup:show()
     chatPopup:raise()
     chatPopup:focus()
@@ -326,8 +327,8 @@ function buildSidebar()
                 btn:setBorderColor('transparent')
                 btn:setPaddingLeft(8)
                 btn:setPaddingRight(6)
-                -- Transparent bg so tabs float without a frame
-                btn:setBackgroundColor('transparent')
+                -- Each tab gets a visible background
+                btn:setBackgroundColor(THEME.tabBg)
                 btn:setColor(THEME.tabText)
                 btn:addAnchor(AnchorTop, 'parent', AnchorTop)
                 btn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
@@ -380,7 +381,7 @@ function updateSidebarHighlight(selectedTab)
                 btn:setBorderWidth(1)
                 btn:setColor(THEME.tabSelectedText)
             else
-                btn:setBackgroundColor('transparent')
+                btn:setBackgroundColor(THEME.tabBg)
                 btn:setBorderWidth(0)
                 btn:setBorderColor('transparent')
                 btn:setColor(THEME.tabText)
