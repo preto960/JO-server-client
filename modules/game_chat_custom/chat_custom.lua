@@ -7,6 +7,7 @@ local chatPopup = nil
 local isOpen = false
 local savedWidgets = {}
 local originalOnTabChange = nil
+local tabChangeHooked = false
 local sidebarButtons = {}
 
 local THEME = {
@@ -59,6 +60,8 @@ function init()
 end
 
 function terminate()
+    tabChangeHooked = false
+    originalOnTabChange = nil
     local root = g_ui.getRootWidget()
     if root then
         local consolePanel = root:recursiveGetChildById('consolePanel')
@@ -161,7 +164,7 @@ function openChatPopup()
     restyleAllTabPanels(tabBar)
     buildSidebar()
 
-    if tabBar then
+    if tabBar and not tabChangeHooked then
         originalOnTabChange = tabBar.onTabChange
         tabBar.onTabChange = function(self, tab)
             buildSidebar()
@@ -172,6 +175,7 @@ function openChatPopup()
                 originalOnTabChange(self, tab)
             end
         end
+        tabChangeHooked = true
     end
 
     if not chatPopup:getParent() then
@@ -307,7 +311,7 @@ function buildSidebar()
     local allTabs = getAllTabs(tabBar)
     for i, tab in ipairs(allTabs) do
         local ok, btn = pcall(function()
-            return g_ui.createWidget('UIButton', sidebar)
+            return g_ui.createWidget('TabButton', sidebar)
         end)
         if ok and btn then
             local text = ''
