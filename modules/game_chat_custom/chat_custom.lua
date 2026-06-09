@@ -7,7 +7,6 @@ local chatPopup = nil
 local isOpen = false
 local savedWidgets = {}
 local originalOnTabChange = nil
-local tabChangeHooked = false
 local sidebarButtons = {}
 
 local THEME = {
@@ -16,8 +15,8 @@ local THEME = {
     tabSelectedBorder = '#00B4D8',
     tabText = '#FFFFFF90',
     tabSelectedText = '#00B4D8',
-    contentBg = 'alpha',
-    bufferBg = 'alpha',
+    contentBg = '#00000099',
+    bufferBg = '#00000099',
     scrollThumb = '#00B4D890',
     scrollBg = '#00B4D818',
 }
@@ -73,8 +72,6 @@ function init()
 end
 
 function terminate()
-    tabChangeHooked = false
-    originalOnTabChange = nil
     local root = g_ui.getRootWidget()
     if root then
         local consolePanel = root:recursiveGetChildById('consolePanel')
@@ -90,7 +87,6 @@ function terminate()
         disconnect(g_game, { onGameEnd = onGameEnd })
     end)
 
-    -- Always restore on terminate (handles both open and closed states)
     forceRestoreAndClose()
 
     if chatPopup then
@@ -143,7 +139,6 @@ function openChatPopup()
     g_keyboard.bindKeyDown('Enter', onEnterPressed, chatPopup)
 
     -- Move contentPanel into popup only on first open
-    -- On subsequent opens, contentPanel is already inside popup
     if contentPanel and contentPanel:getParent() ~= chatPopup then
         contentPanel:breakAnchors()
         local slot = chatPopup:recursiveGetChildById('chatContentSlot')
@@ -167,7 +162,7 @@ function openChatPopup()
     restyleAllTabPanels(tabBar)
     buildSidebar()
 
-    if tabBar and not tabChangeHooked then
+    if tabBar and not originalOnTabChange then
         originalOnTabChange = tabBar.onTabChange
         tabBar.onTabChange = function(self, tab)
             buildSidebar()
@@ -178,13 +173,13 @@ function openChatPopup()
                 originalOnTabChange(self, tab)
             end
         end
-        tabChangeHooked = true
     end
 
     if not chatPopup:getParent() then
         root:addChild(chatPopup)
     end
-    -- Focus popup first so onKeyPress works, then focus input
+
+    -- Show, raise, focus popup for onKeyPress, then focus input
     chatPopup:show()
     chatPopup:raise()
     chatPopup:focus()
@@ -201,7 +196,6 @@ function closeChatPopup()
     if not isOpen then return end
     isOpen = false
 
-    -- Hide popup
     chatPopup:hide()
 
     -- Rebind Enter back to consolePanel so Enter can reopen
@@ -211,15 +205,10 @@ function closeChatPopup()
         g_keyboard.bindKeyDown('Enter', onEnterPressed, consolePanel)
         consolePanel:show()
     end
-    -- Keep savedWidgets intact so forceRestoreAndClose() can
-    -- still find contentPanel/consolePanel to restore on gameEnd
 end
 
--- Restore everything and clean up. Called by terminate() and onGameEnd().
 function forceRestoreAndClose()
     if not isOpen then
-        -- Also handle case where popup was closed but contentPanel
-        -- is still inside popup and consolePanel is hidden
         if chatPopup and savedWidgets.contentPanel and savedWidgets.consolePanel then
             local contentPanel = savedWidgets.contentPanel
             local consolePanel = savedWidgets.consolePanel
@@ -263,7 +252,6 @@ function forceRestoreAndClose()
 
     chatPopup:hide()
 
-    -- Reparent contentPanel back
     if contentPanel and consolePanel then
         pcall(function() contentPanel:breakAnchors() end)
         pcall(function() consolePanel:addChild(contentPanel) end)
@@ -312,7 +300,7 @@ function buildSidebar()
     local allTabs = getAllTabs(tabBar)
     for i, tab in ipairs(allTabs) do
         local ok, btn = pcall(function()
-            return g_ui.createWidget('TabButton', sidebar)
+            return g_ui.createWidget('UIButton', sidebar)
         end)
         if ok and btn then
             local text = ''
@@ -354,7 +342,6 @@ function buildSidebar()
 end
 
 function destroySidebarButtons()
-    -- Break ALL anchors first, then destroy
     for _, btn in pairs(sidebarButtons) do
         pcall(function() btn:breakAnchors() end)
     end
