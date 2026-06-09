@@ -997,6 +997,11 @@ function CharacterList.show()
     charactersWindow:raise()
     charactersWindow:focus()
 
+    -- Show logo when character list is visible
+    if charListLogo then
+        charListLogo:show()
+    end
+
     if showHiddenCheckbox then
         setCheckedWithoutCallback(showHiddenCheckbox, getShowHiddenCharacters())
     end
@@ -1015,6 +1020,9 @@ function CharacterList.show()
     else
         autoReconnectButton:setText('Auto reconnect: ' .. reconnectStatus)
     end
+
+    -- Update events panel
+    pcall(function() CharacterList.updateEventsPanel() end)
 end
 
 function CharacterList.hide(showLogin)
@@ -1348,9 +1356,11 @@ function CharacterList.updateEventsPanel()
         end
     end)
 
-    -- Populate active events using simple Labels (avoid nested widget creation that can C++ crash)
+    -- Populate active events using batch update to prevent C++ layout crash
     local activeContainer = eventsPanel:recursiveGetChildById('activeEventsContainer')
     if activeContainer then
+        -- Use disableUpdateTemporarily to batch all layout changes into one pass
+        pcall(function() activeContainer:disableUpdateTemporarily() end)
         activeContainer:destroyChildren()
         if #activeEvents == 0 then
             local noEvents = g_ui.createWidget('Label', activeContainer)
@@ -1367,16 +1377,22 @@ function CharacterList.updateEventsPanel()
                 lbl:setFont('verdana-11px-rounded')
                 lbl:setMarginTop(i > 1 and 3 or 2)
                 lbl:setMarginLeft(4)
-                -- Use bullet character as color indicator
                 lbl:setText('> ' .. (event.name or 'Unknown'))
                 lbl:setTooltip(event.description or '')
             end
         end
+        pcall(function()
+            if activeContainer:getLayout() then
+                activeContainer:getLayout():enableUpdates()
+                activeContainer:updateLayout()
+            end
+        end)
     end
 
     -- Populate upcoming events
     local upcomingContainer = eventsPanel:recursiveGetChildById('upcomingEventsContainer')
     if upcomingContainer then
+        pcall(function() upcomingContainer:disableUpdateTemporarily() end)
         upcomingContainer:destroyChildren()
         if #upcomingEvents == 0 then
             local noEvents = g_ui.createWidget('Label', upcomingContainer)
@@ -1397,5 +1413,11 @@ function CharacterList.updateEventsPanel()
                 lbl:setTooltip(event.description or '')
             end
         end
+        pcall(function()
+            if upcomingContainer:getLayout() then
+                upcomingContainer:getLayout():enableUpdates()
+                upcomingContainer:updateLayout()
+            end
+        end)
     end
 end
