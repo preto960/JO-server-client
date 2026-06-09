@@ -252,16 +252,15 @@ MainWindow
 
   // ============================================
   // CAROUSEL VIEWPORT (clips overflow)
-  // Right edge stops before eventsPanel
   // ============================================
   UIWidget
     id: carouselViewport
     anchors.left: parent.left
-    anchors.right: eventsPanel.left
+    anchors.right: parent.right
     anchors.top: titleLabel.bottom
     anchors.bottom: parent.bottom
     margin-left: 59
-    margin-right: 15
+    margin-right: 59
     margin-top: 8
     margin-bottom: 70
     clipping: true
@@ -277,112 +276,16 @@ MainWindow
       draggable: false
 
   // ============================================
-  // EVENTS PANEL (right side) - uses UIAnchorLayout (default, no layout: property)
-  // Children use anchors, NOT layout positioning
-  // ============================================
-  UIWidget
-    id: eventsPanel
-    anchors.right: parent.right
-    anchors.top: titleLabel.bottom
-    anchors.bottom: parent.bottom
-    margin-top: 8
-    margin-bottom: 70
-    margin-right: 15
-    width: 210
-    background-color: #0A0A1A60
-    border-width: 1
-    border-color: #00B4D830
-
-    // Events title
-    Label
-      id: eventsTitle
-      !text: tr('ACTIVE EVENTS')
-      color: #00B4D8
-      anchors.top: parent.top
-      anchors.left: parent.left
-      anchors.right: parent.right
-      margin-top: 10
-      margin-left: 10
-      margin-right: 10
-      font: Verdana Bold-11px
-      text-auto-resize: true
-      text-align: center
-
-    // Separator under title
-    UIWidget
-      id: eventsTitleSeparator
-      height: 1
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: eventsTitle.bottom
-      margin-top: 6
-      margin-left: 8
-      margin-right: 8
-      background-color: #00B4D830
-
-    // Active events container - verticalBox for dynamic labels
-    UIWidget
-      id: activeEventsContainer
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: eventsTitleSeparator.bottom
-      margin-top: 6
-      margin-left: 8
-      margin-right: 8
-      height: 120
-      layout: verticalBox
-
-    // Upcoming title
-    Label
-      id: upcomingTitle
-      !text: tr('UPCOMING')
-      color: #FFFFFF99
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: activeEventsContainer.bottom
-      margin-top: 8
-      margin-left: 10
-      margin-right: 10
-      font: verdana-11px-rounded
-      text-auto-resize: true
-      text-align: center
-
-    // Separator under upcoming title
-    UIWidget
-      id: upcomingSeparator
-      height: 1
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: upcomingTitle.bottom
-      margin-top: 6
-      margin-left: 8
-      margin-right: 8
-      background-color: #00B4D820
-
-    // Upcoming events container - verticalBox for dynamic labels
-    UIWidget
-      id: upcomingEventsContainer
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: upcomingSeparator.bottom
-      anchors.bottom: parent.bottom
-      margin-top: 6
-      margin-left: 8
-      margin-right: 8
-      margin-bottom: 10
-      layout: verticalBox
-
-  // ============================================
-  // RIGHT ARROW BUTTON (just before events panel)
+  // RIGHT ARROW BUTTON
   // ============================================
   UIButton
     id: rightArrow
     !text: ''
     width: 28
     height: 28
-    anchors.right: eventsPanel.left
+    anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
-    margin-right: 8
+    margin-right: 15
     image-source: /images/game/entergame/arrow_right
     @onClick: CharacterList.scrollRight()
 

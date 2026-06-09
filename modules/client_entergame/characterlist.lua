@@ -670,6 +670,8 @@ function CharacterList.terminate()
         charListFooterBar = nil
     end
 
+    CharacterList.destroyEventsPanel()
+
     if loadBox then
         g_game.cancelLogin()
         loadBox:destroy()
@@ -1024,6 +1026,9 @@ function CharacterList.show()
     -- Show footer bar
     pcall(function() CharacterList.showFooterBar() end)
 
+    -- Show events panel (separate floating widget)
+    pcall(function() CharacterList.showEventsPanel() end)
+
     -- Show logo
     if charListLogo then
         charListLogo:show()
@@ -1038,6 +1043,7 @@ function CharacterList.hide(showLogin)
     end
 
     CharacterList.hideFooterBar()
+    CharacterList.hideEventsPanel()
 
     charactersWindow:hide()
 
@@ -1100,6 +1106,7 @@ function CharacterList.doLogin()
             characterName = selected.characterName
         }
         CharacterList.hideFooterBar()
+        CharacterList.hideEventsPanel()
         charactersWindow:hide()
         if charListLogo then
             charListLogo:hide()
@@ -1350,6 +1357,229 @@ function executeAutoReconnect()
 end
 
 local charListFooterBar = nil
+local charListEventsPanel = nil
+
+function CharacterList.createEventsPanel()
+    if charListEventsPanel then return end
+    if not charactersWindow then return end
+
+    pcall(function()
+        local root = g_ui.getRootWidget()
+        if not root then return end
+
+        -- Create events panel as a SEPARATE floating widget (not inside charactersWindow)
+        charListEventsPanel = g_ui.loadUIFromString(
+            'UIWidget id: charEventsPanelWidget\n' ..
+            '  visible: false\n' ..
+            '  focusable: false\n' ..
+            '  width: 210\n' ..
+            '  anchors.left: charactersWindow.right\n' ..
+            '  anchors.verticalCenter: charactersWindow.verticalCenter\n' ..
+            '  margin-left: 8\n' ..
+            '  background-color: #0A0A1A80\n' ..
+            '  border-width: 1\n' ..
+            '  border-color: #00B4D830\n' ..
+            '  height: 440\n' ..
+            -- Title
+            '  Label\n' ..
+            '    id: evtTitle\n' ..
+            '    !text: tr("ACTIVE EVENTS")\n' ..
+            '    color: #00B4D8\n' ..
+            '    anchors.top: parent.top\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    margin-top: 10\n' ..
+            '    margin-left: 10\n' ..
+            '    margin-right: 10\n' ..
+            '    font: Verdana Bold-11px\n' ..
+            '    text-auto-resize: true\n' ..
+            '    text-align: center\n' ..
+            -- Separator under title
+            '  UIWidget\n' ..
+            '    id: evtTitleSep\n' ..
+            '    height: 1\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    anchors.top: evtTitle.bottom\n' ..
+            '    margin-top: 6\n' ..
+            '    margin-left: 8\n' ..
+            '    margin-right: 8\n' ..
+            '    background-color: #00B4D830\n' ..
+            -- Active event label 1
+            '  Label\n' ..
+            '    id: evtActive1\n' ..
+            '    !text: \'\'\n' ..
+            '    color: #FFFFFFFF\n' ..
+            '    anchors.top: evtTitleSep.bottom\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    margin-top: 8\n' ..
+            '    margin-left: 10\n' ..
+            '    margin-right: 10\n' ..
+            '    font: verdana-11px-rounded\n' ..
+            '    text-auto-resize: true\n' ..
+            '    text-wrap: true\n' ..
+            -- Active event label 2
+            '  Label\n' ..
+            '    id: evtActive2\n' ..
+            '    !text: \'\'\n' ..
+            '    color: #FFFFFFCC\n' ..
+            '    anchors.top: evtActive1.bottom\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    margin-top: 4\n' ..
+            '    margin-left: 10\n' ..
+            '    margin-right: 10\n' ..
+            '    font: verdana-11px-rounded\n' ..
+            '    text-auto-resize: true\n' ..
+            '    text-wrap: true\n' ..
+            -- Active event label 3
+            '  Label\n' ..
+            '    id: evtActive3\n' ..
+            '    !text: \'\'\n' ..
+            '    color: #FFFFFF99\n' ..
+            '    anchors.top: evtActive2.bottom\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    margin-top: 4\n' ..
+            '    margin-left: 10\n' ..
+            '    margin-right: 10\n' ..
+            '    font: verdana-11px-rounded\n' ..
+            '    text-auto-resize: true\n' ..
+            '    text-wrap: true\n' ..
+            -- Upcoming title
+            '  Label\n' ..
+            '    id: evtUpcomingTitle\n' ..
+            '    !text: tr("UPCOMING")\n' ..
+            '    color: #FFFFFF99\n' ..
+            '    anchors.top: evtActive3.bottom\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    margin-top: 12\n' ..
+            '    margin-left: 10\n' ..
+            '    margin-right: 10\n' ..
+            '    font: verdana-11px-rounded\n' ..
+            '    text-auto-resize: true\n' ..
+            '    text-align: center\n' ..
+            -- Separator under upcoming title
+            '  UIWidget\n' ..
+            '    id: evtUpcomingSep\n' ..
+            '    height: 1\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    anchors.top: evtUpcomingTitle.bottom\n' ..
+            '    margin-top: 6\n' ..
+            '    margin-left: 8\n' ..
+            '    margin-right: 8\n' ..
+            '    background-color: #00B4D820\n' ..
+            -- Upcoming event label 1
+            '  Label\n' ..
+            '    id: evtUpcoming1\n' ..
+            '    !text: \'\'\n' ..
+            '    color: #FFFFFFFF\n' ..
+            '    anchors.top: evtUpcomingSep.bottom\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    margin-top: 8\n' ..
+            '    margin-left: 10\n' ..
+            '    margin-right: 10\n' ..
+            '    font: verdana-11px-rounded\n' ..
+            '    text-auto-resize: true\n' ..
+            '    text-wrap: true\n' ..
+            -- Upcoming event label 2
+            '  Label\n' ..
+            '    id: evtUpcoming2\n' ..
+            '    !text: \'\'\n' ..
+            '    color: #FFFFFFCC\n' ..
+            '    anchors.top: evtUpcoming1.bottom\n' ..
+            '    anchors.left: parent.left\n' ..
+            '    anchors.right: parent.right\n' ..
+            '    margin-top: 4\n' ..
+            '    margin-left: 10\n' ..
+            '    margin-right: 10\n' ..
+            '    font: verdana-11px-rounded\n' ..
+            '    text-auto-resize: true\n' ..
+            '    text-wrap: true\n',
+            root
+        )
+        print('[CharacterList] Events panel widget created successfully')
+    end)
+
+    -- Populate events data
+    CharacterList.updateEventsData()
+end
+
+function CharacterList.updateEventsData()
+    if not charListEventsPanel then return end
+
+    pcall(function()
+        local activeEvents = {}
+        local upcomingEvents = {}
+
+        -- Try to get events from bottommenu module
+        if modules.client_bottommenu and modules.client_bottommenu.getActiveEventsInfo then
+            activeEvents, upcomingEvents = modules.client_bottommenu.getActiveEventsInfo()
+        end
+
+        -- Populate active event labels
+        for i = 1, 3 do
+            local label = charListEventsPanel:getChildById('evtActive' .. i)
+            if label then
+                if activeEvents[i] then
+                    label:setText(activeEvents[i].name or '')
+                    local color = activeEvents[i].color or '#FFFFFFFF'
+                    label:setColor(color)
+                    label:setVisible(true)
+                else
+                    label:setText('')
+                    label:setVisible(false)
+                end
+            end
+        end
+
+        -- Populate upcoming event labels
+        for i = 1, 2 do
+            local label = charListEventsPanel:getChildById('evtUpcoming' .. i)
+            if label then
+                if upcomingEvents[i] then
+                    label:setText(upcomingEvents[i].name or '')
+                    local color = upcomingEvents[i].color or '#FFFFFFFF'
+                    label:setColor(color)
+                    label:setVisible(true)
+                else
+                    label:setText('')
+                    label:setVisible(false)
+                end
+            end
+        end
+
+        print('[CharacterList] Events data updated: ' .. #activeEvents .. ' active, ' .. #upcomingEvents .. ' upcoming')
+    end)
+end
+
+function CharacterList.showEventsPanel()
+    if not charListEventsPanel then
+        CharacterList.createEventsPanel()
+    end
+    if charListEventsPanel then
+        charListEventsPanel:show()
+        charListEventsPanel:raise()
+        CharacterList.updateEventsData()
+    end
+end
+
+function CharacterList.hideEventsPanel()
+    if charListEventsPanel then
+        charListEventsPanel:hide()
+    end
+end
+
+function CharacterList.destroyEventsPanel()
+    if charListEventsPanel then
+        charListEventsPanel:destroy()
+        charListEventsPanel = nil
+    end
+end
 
 function CharacterList.showFooterBar()
     if not charactersWindow then return end
