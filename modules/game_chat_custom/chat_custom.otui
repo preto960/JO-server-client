@@ -3,7 +3,7 @@ UIWidget
   visible: false
   focusable: true
   size: 560 400
-  background-color: #00000099
+  background-color: #0A0A1499
   border-width: 1
   border-color: #00B4D840
 
@@ -48,18 +48,21 @@ UIWidget
   UIWidget
     id: chatTabSidebar
     width: 96
-    anchors.top: chatHeader.bottom
+    anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: chatInputPanel.top
-    background-color: #00000066
+    margin-left: -96
+    background-color: #0A0A14CC
+    border-width: 1
+    border-right: #00B4D830
 
   UIWidget
     id: chatContentSlot
     anchors.top: chatHeader.bottom
-    anchors.left: chatTabSidebar.right
+    anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: chatInputPanel.top
-    background-color: #00000066
+    background-color: #0A0A14BB
 
   UIWidget
     id: chatInputPanel
@@ -68,7 +71,7 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin: 1 1 1 1
-    background-color: #00000066
+    background-color: #0A0A14CC
 
     TextEdit
       id: chatInput
@@ -76,7 +79,7 @@ UIWidget
       margin: 4
       shift-navigation: true
       max-length: 255
-      background-color: #000000BB
+      background-color: #0A0A14EE
       color: #CAF0F8
       font: verdana-11px-antialised
       text-align: left

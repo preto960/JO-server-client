@@ -11,14 +11,15 @@ local tabChangeHooked = false
 local sidebarButtons = {}
 
 local THEME = {
-    tabBg = '#00000066',
-    tabSelectedBg = '#00B4D820',
-    tabSelectedBorder = '#00B4D850',
+    tabBg = '#0A0A14CC',
+    tabSelectedBg = '#00B4D830',
+    tabSelectedBorder = '#00B4D8',
     tabText = '#FFFFFF60',
-    tabSelectedText = '#CAF0F8',
-    contentBg = '#00000066',
-    bufferBg = '#000000BB',
-    scrollThumb = '#00B4D850',
+    tabSelectedText = '#00B4D8',
+    contentBg = '#0A0A14BB',
+    bufferBg = '#0A0A14EE',
+    scrollThumb = '#00B4D860',
+    scrollBg = '#00B4D818',
 }
 
 function init()
@@ -37,6 +38,16 @@ function init()
         chatPopup:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
         chatPopup:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
         chatPopup:hide()
+
+        -- ESC to close via onKeyPress (works regardless of focus bindings)
+        chatPopup.onKeyPress = function(widget, keyCode, keyboardModifiers)
+            if keyboardModifiers == KeyboardNoModifier and keyCode == KeyEscape then
+                if isOpen then
+                    closeChatPopup()
+                    return true
+                end
+            end
+        end
 
         -- Close button via Lua (not @onClick in OTUI)
         local closeBtn = chatPopup:recursiveGetChildById('chatCloseButton')
@@ -436,11 +447,13 @@ end
 function restyleScrollbar(scrollBar)
     if not scrollBar then return end
     pcall(function()
-        scrollBar:setWidth(8)
+        scrollBar:setWidth(10)
         scrollBar:setMarginRight(2)
         scrollBar:setMarginTop(2)
         scrollBar:setMarginBottom(2)
-        scrollBar:setBackgroundColor('transparent')
+        scrollBar:setBackgroundColor(THEME.scrollBg)
+        scrollBar:setBorderWidth(1)
+        scrollBar:setBorderColor('#00B4D820')
     end)
 
     local children = scrollBar:getChildren()
@@ -449,6 +462,7 @@ function restyleScrollbar(scrollBar)
             child:setImageSource('')
             child:setBackgroundColor(THEME.scrollThumb)
             child:setBorderWidth(0)
+            child:setBorderRadius(4)
         end)
     end
 end
