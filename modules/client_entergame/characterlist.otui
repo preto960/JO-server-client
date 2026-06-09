@@ -228,7 +228,7 @@ MainWindow
     anchors.left: parent.left
     margin-left: 15
     margin-top: 12
-    margin-bottom: 6
+    margin-bottom: 15
     font: verdana-11px-rounded
     text-auto-resize: true
 
@@ -299,9 +299,9 @@ MainWindow
     !text: tr('Free Account')
     visible: true
     anchors.left: parent.left
-    anchors.bottom: buttonOk.top
+    anchors.bottom: parent.bottom
     margin-left: 15
-    margin-bottom: 14
+    margin-bottom: 22
     color: #FFFFFF99
     font: verdana-11px-rounded
     text-auto-resize: true

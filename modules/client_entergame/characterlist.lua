@@ -723,6 +723,11 @@ function CharacterList.create(characters, account, otui)
         carouselViewport:setClipping(true)
     end)
 
+    -- Disable dragging on the entire character selection window
+    pcall(function()
+        charactersWindow:setDraggable(false)
+    end)
+
     -- Disable dragging on viewport and container so user cannot drag the card area
     pcall(function()
         carouselViewport:setDraggable(false)
