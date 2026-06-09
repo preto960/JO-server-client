@@ -1358,7 +1358,7 @@ function CharacterList.updateEventsPanel()
         end
     end)
 
-    -- Populate active events
+    -- Populate active events using simple Labels (avoid nested widget creation that can C++ crash)
     local activeContainer = eventsPanel:recursiveGetChildById('activeEventsContainer')
     if activeContainer then
         activeContainer:destroyChildren()
@@ -1370,40 +1370,16 @@ function CharacterList.updateEventsPanel()
             noEvents:setMarginTop(4)
             noEvents:setMarginBottom(4)
             noEvents:setTextAlign('center')
-            noEvents:setWidth(180)
         else
             for i, event in ipairs(activeEvents) do
-                local row = g_ui.createWidget('UIWidget', activeContainer)
-                row:setHeight(18)
-                row:setWidth(180)
-                if i > 1 then
-                    row:setMarginTop(4)
-                else
-                    row:setMarginTop(2)
-                end
-
-                -- Color indicator dot
-                local dot = g_ui.createWidget('UIWidget', row)
-                dot:setSize('8 8')
-                dot:setMarginLeft(4)
-                dot:setMarginTop(5)
-                local eventColor = event.color or '#00B4D8FF'
-                -- Extract RGB from hex (remove alpha if present)
-                local rgb = eventColor:sub(1, 7)
-                dot:setBackgroundColor(rgb)
-
-                -- Event name label
-                local nameLabel = g_ui.createWidget('Label', row)
-                nameLabel:setText(event.name or 'Unknown')
-                nameLabel:setColor('#CAF0F8FF')
-                nameLabel:setFont('verdana-11px-rounded')
-                nameLabel:setTextAutoResize(true)
-                nameLabel:setMarginLeft(16)
-                nameLabel:setMarginTop(1)
-                nameLabel:setWidth(164)
-                nameLabel:setWordWrap(true)
-
-                row:setTooltip(event.description or '')
+                local lbl = g_ui.createWidget('Label', activeContainer)
+                lbl:setColor('#CAF0F8FF')
+                lbl:setFont('verdana-11px-rounded')
+                lbl:setMarginTop(i > 1 and 3 or 2)
+                lbl:setMarginLeft(4)
+                -- Use bullet character as color indicator
+                lbl:setText('> ' .. (event.name or 'Unknown'))
+                lbl:setTooltip(event.description or '')
             end
         end
     end
@@ -1420,39 +1396,15 @@ function CharacterList.updateEventsPanel()
             noEvents:setMarginTop(4)
             noEvents:setMarginBottom(4)
             noEvents:setTextAlign('center')
-            noEvents:setWidth(180)
         else
             for i, event in ipairs(upcomingEvents) do
-                local row = g_ui.createWidget('UIWidget', upcomingContainer)
-                row:setHeight(18)
-                row:setWidth(180)
-                if i > 1 then
-                    row:setMarginTop(4)
-                else
-                    row:setMarginTop(2)
-                end
-
-                -- Color indicator dot
-                local dot = g_ui.createWidget('UIWidget', row)
-                dot:setSize('8 8')
-                dot:setMarginLeft(4)
-                dot:setMarginTop(5)
-                local eventColor = event.color or '#00B4D8FF'
-                local rgb = eventColor:sub(1, 7)
-                dot:setBackgroundColor(rgb)
-
-                -- Event name label
-                local nameLabel = g_ui.createWidget('Label', row)
-                nameLabel:setText(event.name or 'Unknown')
-                nameLabel:setColor('#CAF0F8AA')
-                nameLabel:setFont('verdana-11px-rounded')
-                nameLabel:setTextAutoResize(true)
-                nameLabel:setMarginLeft(16)
-                nameLabel:setMarginTop(1)
-                nameLabel:setWidth(164)
-                nameLabel:setWordWrap(true)
-
-                row:setTooltip(event.description or '')
+                local lbl = g_ui.createWidget('Label', upcomingContainer)
+                lbl:setColor('#CAF0F8AA')
+                lbl:setFont('verdana-11px-rounded')
+                lbl:setMarginTop(i > 1 and 3 or 2)
+                lbl:setMarginLeft(4)
+                lbl:setText('> ' .. (event.name or 'Unknown'))
+                lbl:setTooltip(event.description or '')
             end
         end
     end
