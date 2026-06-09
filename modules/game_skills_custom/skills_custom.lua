@@ -74,6 +74,18 @@ function init()
             })
         end)
 
+        -- Bind Escape to close skills window
+        pcall(function()
+            Keybind.bind("Windows", "Escape", {
+                { type = KEY_DOWN, callback = function()
+                    if isOpen then
+                        close()
+                        return true
+                    end
+                end
+            })
+        end)
+
         pcall(function()
             connect(g_game, {
                 onGameEnd = onGameEnd
