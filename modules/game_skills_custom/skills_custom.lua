@@ -170,10 +170,10 @@ function onGameEnd()
 end
 
 function centerWindow()
-    local root = g_ui.getRootWidget()
-    if root and customWindow then
-        local x = (root:getWidth() - customWindow:getWidth()) / 2
-        local y = (root:getHeight() - customWindow:getHeight()) / 2
+    local gw = g_window
+    if gw then
+        local x = (gw.getWidth() - customWindow:getWidth()) / 2
+        local y = (gw.getHeight() - customWindow:getHeight()) / 2
         customWindow:setPosition({ x = x, y = y })
     end
 end
