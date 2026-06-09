@@ -6,8 +6,6 @@ UIWidget
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840
-  anchors.horizontalCenter: parent.horizontalCenter
-  anchors.verticalCenter: parent.verticalCenter
   @onEscape: modules.game_skills_custom.close()
 
   // Top accent line

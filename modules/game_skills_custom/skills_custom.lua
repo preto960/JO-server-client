@@ -48,6 +48,9 @@ function init()
         if not customWindow:getParent() then
             root:addChild(customWindow)
         end
+        -- Center via anchors (requires parent to be set first)
+        customWindow:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
+        customWindow:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
         customWindow:hide()
 
         -- ESC to close
@@ -165,15 +168,6 @@ function onGameEnd()
         local btn = root and root:recursiveGetChildById('skillsButton')
         if btn then btn:setOn(false) end
         isOpen = false
-    end
-end
-
-function centerWindow()
-    local gw = g_window
-    if gw then
-        local x = (gw.getWidth() - customWindow:getWidth()) / 2
-        local y = (gw.getHeight() - customWindow:getHeight()) / 2
-        customWindow:setPosition({ x = x, y = y })
     end
 end
 
