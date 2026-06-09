@@ -50,6 +50,16 @@ function init()
         end
         customWindow:hide()
 
+        -- ESC to close
+        customWindow.onKeyPress = function(widget, keyCode, keyboardModifiers)
+            if keyboardModifiers == KeyboardNoModifier and keyCode == KeyEscape then
+                if isOpen then
+                    close()
+                    return true
+                end
+            end
+        end
+
         -- Find skills button by ID and override its onMouseRelease
         local btn = root:recursiveGetChildById('skillsButton')
         if not btn then return end
@@ -71,18 +81,6 @@ function init()
             Keybind.new("Windows", "Show/hide skills windows", "Alt+S", "")
             Keybind.bind("Windows", "Show/hide skills windows", {
                 { type = KEY_DOWN, callback = customToggle }
-            })
-        end)
-
-        -- Bind Escape to close skills window
-        pcall(function()
-            Keybind.bind("Windows", "Escape", {
-                { type = KEY_DOWN, callback = function()
-                    if isOpen then
-                        close()
-                        return true
-                    end
-                end
             })
         end)
 
