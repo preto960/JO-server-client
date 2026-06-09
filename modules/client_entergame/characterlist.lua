@@ -1383,7 +1383,7 @@ function CharacterList.createEventsPanel()
             '  width: 210\n' ..
             '  anchors.left: charactersWindow.right\n' ..
             '  anchors.verticalCenter: charactersWindow.verticalCenter\n' ..
-            '  margin-left: 8\n' ..
+            '  margin-left: 12\n' ..
             '  background-color: #0A0A1A80\n' ..
             '  border-width: 1\n' ..
             '  border-color: #00B4D830\n' ..
@@ -1391,7 +1391,7 @@ function CharacterList.createEventsPanel()
             '  Label\n' ..
             '    id: evtTitle\n' ..
             '    !text: tr("ACTIVE EVENTS")\n' ..
-            '    color: #00B4D8\n' ..
+            '    color: #FFFFFFBB\n' ..
             '    anchors.top: parent.top\n' ..
             '    anchors.left: parent.left\n' ..
             '    anchors.right: parent.right\n' ..
@@ -1450,11 +1450,11 @@ function CharacterList.createEventsPanel()
             '  Label\n' ..
             '    id: evtUpcomingTitle\n' ..
             '    !text: tr("UPCOMING")\n' ..
-            '    color: #FFFFFF99\n' ..
+            '    color: #00B4D8\n' ..
             '    anchors.top: evtActive3.bottom\n' ..
             '    anchors.left: parent.left\n' ..
             '    anchors.right: parent.right\n' ..
-            '    margin-top: 12\n' ..
+            '    margin-top: 18\n' ..
             '    margin-left: 10\n' ..
             '    margin-right: 10\n' ..
             '    font: verdana-11px-rounded\n' ..
