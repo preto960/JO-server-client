@@ -554,3 +554,48 @@ function setBoostedCreatureAndBoss(data)
     -- boosted boss
     applyToBoostedSlot(data.bossraceid, bossOutfit, bossImage, fileName, BOSS_BONUS_TEXT)
 end
+
+-- @ Returns event info for today and tomorrow for external use (e.g. characterlist)
+function getActiveEventsInfo()
+    if not eventSchedulerCalendar or #eventSchedulerCalendar == 0 then
+        return {}, {}
+    end
+
+    local activeEvents = {}
+    local upcomingEvents = {}
+
+    local todayDays = getCalendarDays(os.time(), os.time())
+    if #todayDays > 0 then
+        for _, event in ipairs(todayDays[1]) do
+            table.insert(activeEvents, {
+                name = event.name or 'Unknown',
+                description = event.description or '',
+                color = event.active or '#00B4D8FF',
+                season = event.season,
+                special = event.special,
+                priority = event.priority or 0
+            })
+        end
+    end
+
+    local tomorrowDays = getCalendarDays(os.time() + 86400, os.time() + 86400)
+    if #tomorrowDays > 0 then
+        for _, event in ipairs(tomorrowDays[1]) do
+            table.insert(upcomingEvents, {
+                name = event.name or 'Unknown',
+                description = event.description or '',
+                color = event.active or '#00B4D8FF',
+                season = event.season,
+                special = event.special,
+                priority = event.priority or 0
+            })
+        end
+    end
+
+    -- Sort by priority (higher first)
+    local function sortByPriority(a, b) return (a.priority or 0) > (b.priority or 0) end
+    table.sort(activeEvents, sortByPriority)
+    table.sort(upcomingEvents, sortByPriority)
+
+    return activeEvents, upcomingEvents
+end

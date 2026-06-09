@@ -3,11 +3,12 @@ Module
   description: Electric Blue UI Theme - Neon cyberpunk blue on deep black
   author: JO Dev
   version: 1.0
-  dependOnClient: true
   autoLoad: true
-  loadLater: 1500
 
-  onLoad: |
+  dependencies:
+    - client_styles
+
+  @onLoad: |
     if g_modules.getModule('ui_pack_fantasy') and g_modules.getModule('ui_pack_fantasy'):isLoaded() then
       g_logger.warning('[Electric Theme] Fantasy theme is already active, skipping electric theme.')
       return

@@ -1015,6 +1015,9 @@ function CharacterList.show()
     else
         autoReconnectButton:setText('Auto reconnect: ' .. reconnectStatus)
     end
+
+    -- Update events panel
+    pcall(function() CharacterList.updateEventsPanel() end)
 end
 
 function CharacterList.hide(showLogin)
@@ -1331,4 +1334,123 @@ function executeAutoReconnect()
         errorBox = nil
     end
     CharacterList.doLogin()
+end
+
+function CharacterList.updateEventsPanel()
+    if not charactersWindow then return end
+
+    local eventsPanel = charactersWindow:recursiveGetChildById('eventsPanel')
+    if not eventsPanel then return end
+
+    -- Try to get event data from bottommenu module
+    local activeEvents = {}
+    local upcomingEvents = {}
+    pcall(function()
+        if modules.client_bottommenu and modules.client_bottommenu.getActiveEventsInfo then
+            activeEvents, upcomingEvents = modules.client_bottommenu.getActiveEventsInfo()
+        end
+    end)
+
+    -- Populate active events
+    local activeContainer = eventsPanel:recursiveGetChildById('activeEventsContainer')
+    if activeContainer then
+        activeContainer:destroyChildren()
+        if #activeEvents == 0 then
+            local noEvents = g_ui.createWidget('Label', activeContainer)
+            noEvents:setText(tr('No active events'))
+            noEvents:setColor('#FFFFFF60')
+            noEvents:setFont('verdana-11px-rounded')
+            noEvents:setMarginTop(4)
+            noEvents:setMarginBottom(4)
+            noEvents:setTextAlign('center')
+            noEvents:setWidth(180)
+        else
+            for i, event in ipairs(activeEvents) do
+                local row = g_ui.createWidget('UIWidget', activeContainer)
+                row:setHeight(18)
+                row:setWidth(180)
+                if i > 1 then
+                    row:setMarginTop(4)
+                else
+                    row:setMarginTop(2)
+                end
+
+                -- Color indicator dot
+                local dot = g_ui.createWidget('UIWidget', row)
+                dot:setSize(8, 8)
+                dot:setMarginLeft(0)
+                dot:anchors.left = nil
+                dot:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                dot:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+                local eventColor = event.color or '#00B4D8FF'
+                -- Extract RGB from hex (remove alpha if present)
+                local rgb = eventColor:sub(1, 7)
+                dot:setBackgroundColor(rgb)
+
+                -- Event name label
+                local nameLabel = g_ui.createWidget('Label', row)
+                nameLabel:setText(event.name or 'Unknown')
+                nameLabel:setColor('#CAF0F8FF')
+                nameLabel:setFont('verdana-11px-rounded')
+                nameLabel:setTextAutoResize(true)
+                nameLabel:setMarginLeft(12)
+                nameLabel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                nameLabel:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+                nameLabel:setWidth(168)
+                nameLabel:setWordWrap(true)
+
+                row:setTooltip(event.description or '')
+            end
+        end
+    end
+
+    -- Populate upcoming events
+    local upcomingContainer = eventsPanel:recursiveGetChildById('upcomingEventsContainer')
+    if upcomingContainer then
+        upcomingContainer:destroyChildren()
+        if #upcomingEvents == 0 then
+            local noEvents = g_ui.createWidget('Label', upcomingContainer)
+            noEvents:setText(tr('No upcoming events'))
+            noEvents:setColor('#FFFFFF40')
+            noEvents:setFont('verdana-11px-rounded')
+            noEvents:setMarginTop(4)
+            noEvents:setMarginBottom(4)
+            noEvents:setTextAlign('center')
+            noEvents:setWidth(180)
+        else
+            for i, event in ipairs(upcomingEvents) do
+                local row = g_ui.createWidget('UIWidget', upcomingContainer)
+                row:setHeight(18)
+                row:setWidth(180)
+                if i > 1 then
+                    row:setMarginTop(4)
+                else
+                    row:setMarginTop(2)
+                end
+
+                -- Color indicator dot
+                local dot = g_ui.createWidget('UIWidget', row)
+                dot:setSize(8, 8)
+                dot:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                dot:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+                local eventColor = event.color or '#00B4D8FF'
+                local rgb = eventColor:sub(1, 7)
+                dot:setBackgroundColor(rgb)
+
+                -- Event name label
+                local nameLabel = g_ui.createWidget('Label', row)
+                nameLabel:setText(event.name or 'Unknown')
+                nameLabel:setColor('#CAF0F8AA')
+                nameLabel:setFont('verdana-11px-rounded')
+                nameLabel:setTextAutoResize(true)
+                nameLabel:setMarginLeft(12)
+                nameLabel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                nameLabel:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+                nameLabel:setWidth(168)
+                nameLabel:setWordWrap(true)
+
+                row:setTooltip(event.description or '')
+            end
+        end
+    end
 end
