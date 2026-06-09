@@ -136,6 +136,7 @@ function customToggle()
         populateSkills()
         customWindow:show()
         customWindow:raise()
+        customWindow:focus()
         centerWindow()
         isOpen = true
         if btn then btn:setOn(true) end
