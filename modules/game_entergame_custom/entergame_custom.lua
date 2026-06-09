@@ -319,9 +319,9 @@ function toggleAudio()
     pcall(function()
         local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
         if topMenu then
-            local rightBtns = topMenu:recursiveGetChildById('rightButtonsPanel')
-            if rightBtns then
-                local children = rightBtns:getChildren()
+            local panel = topMenu:recursiveGetChildById('topLeftTogglesPanel')
+            if panel then
+                local children = panel:getChildren()
                 for i = 1, #children do
                     if children[i]:getId() == 'audioButton' then
                         children[i]:onClick()
@@ -337,9 +337,9 @@ function openOptions()
     pcall(function()
         local topMenu = g_ui.getRootWidget():recursiveGetChildById('topMenu')
         if topMenu then
-            local rightBtns = topMenu:recursiveGetChildById('rightButtonsPanel')
-            if rightBtns then
-                local children = rightBtns:getChildren()
+            local panel = topMenu:recursiveGetChildById('topLeftTogglesPanel')
+            if panel then
+                local children = panel:getChildren()
                 for i = 1, #children do
                     if children[i]:getId() == 'optionsButton' then
                         children[i]:onClick()
