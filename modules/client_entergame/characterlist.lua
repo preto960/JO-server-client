@@ -1021,9 +1021,9 @@ function CharacterList.show()
         autoReconnectButton:setText('Auto reconnect: ' .. reconnectStatus)
     end
 
-    print('[CharacterList] show() before updateEventsPanel')
-    -- Update events panel
-    pcall(function() CharacterList.updateEventsPanel() end)
+    -- Update events panel (disabled - causes C++ crash when modifying children)
+    -- TODO: re-enable with static OTUI labels instead of dynamic widget creation
+    -- pcall(function() CharacterList.updateEventsPanel() end)
     print('[CharacterList] show() complete')
 end
 
