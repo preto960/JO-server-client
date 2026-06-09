@@ -6,13 +6,15 @@ local welcomeBox = nil
 
 function init()
     -- Connect to g_game's onGameStart event
+    -- Using addEvent + pcall for safety (avoids any interaction with protocol parsing)
     connect(g_game, {
         onGameStart = function()
             addEvent(function()
                 if g_game.isOnline() then
-                    welcomeBox = pcall(displayInfoBox, 'JO Server', 'Hola!')
-                    -- pcall with displayInfoBox returns the widget on success
-                    if type(welcomeBox) ~= 'userdata' then
+                    local ok, box = pcall(displayInfoBox, 'JO Server', 'Hola!')
+                    if ok and type(box) == 'userdata' then
+                        welcomeBox = box
+                    else
                         welcomeBox = nil
                     end
                 end
@@ -31,6 +33,12 @@ function init()
 end
 
 function terminate()
+    -- Disconnect events to prevent leaks
+    disconnect(g_game, {
+        onGameStart = function() end,
+        onGameEnd = function() end
+    })
+    -- Clean up any remaining welcome box
     if welcomeBox then
         pcall(function()
             welcomeBox:destroy()

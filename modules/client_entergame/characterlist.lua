@@ -848,8 +848,8 @@ function CharacterList.rebuildCharactersList()
 
     local showAppearance = shouldShowAppearance()
     local showOutfits = showAppearance and true  -- Always show outfits in carousel mode
-    local oddRowColor = showAppearance and '#0D0D1A' or '#0A0A1A'
-    local evenRowColor = showAppearance and '#0A0A1A' or '#0A0A1A'
+    local oddRowColor = '#0A0A1A'
+    local evenRowColor = '#0A0A1A'
     local focused = characterList:getFocusedChild()
     local focusName = focused and focused.characterName or g_settings.get('last-used-character')
     local focusWorld = focused and focused.worldName or g_settings.get('last-used-world')
@@ -880,7 +880,7 @@ function CharacterList.rebuildCharactersList()
         widget.charIndex = i - 1
         -- Let horizontalBox layout handle positioning automatically
         widget:setHeight(CARD_HEIGHT)
-        widget:setBackgroundColor('#0A0A1ABB')
+        widget:setBackgroundColor('#0A0A1A80')
         -- Add right margin for spacing between cards (except last card)
         if i < #characters then
             widget:setMarginRight(CARD_SPACING)

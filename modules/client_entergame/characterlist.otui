@@ -9,7 +9,7 @@
 CharacterWidget < UIWidget
   width: 155
   height: 370
-  background-color: #0A0A1ABB
+  background-color: #0A0A1A80
   border-width: 2
   border-color: #00B4D880
   &updateOnStates: |
@@ -23,7 +23,7 @@ CharacterWidget < UIWidget
         self:setBackgroundColor("#00B4D840")
         self:setBorderColor("#00D4F8")
       else
-        self:setBackgroundColor("#0A0A1ABB")
+        self:setBackgroundColor("#0A0A1A80")
         self:setBorderColor("#00B4D880")
       end
       local pin = self:getChildById('pin')
@@ -150,11 +150,12 @@ MainWindow
   id: charactersWindow
   !text: ''
   visible: false
-  border-width: 0
+  border-width: 1
+  border-color: #00B4D840
   size: 780 520
   image-border: 0
   padding: 0
-  background-color: #0A0A1AE8
+  background-color: #00000099
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.hide(true)
   @onSetup: |
