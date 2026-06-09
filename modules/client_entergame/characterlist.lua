@@ -979,7 +979,9 @@ function CharacterList.destroy()
 end
 
 function CharacterList.show()
+    print('[CharacterList] show() called')
     if loadBox or errorBox or not charactersWindow then
+        print('[CharacterList] show() early return: loadBox=' .. tostring(loadBox) .. ' errorBox=' .. tostring(errorBox) .. ' window=' .. tostring(charactersWindow))
         return
     end
     -- Also hide original UI (topMenu/bottomMenu) to prevent overlap
@@ -993,9 +995,12 @@ function CharacterList.show()
         end
     end)
 
+    print('[CharacterList] show() before charactersWindow:show()')
     charactersWindow:show()
+    print('[CharacterList] show() after charactersWindow:show()')
     charactersWindow:raise()
     charactersWindow:focus()
+    print('[CharacterList] show() after raise/focus')
 
     if showHiddenCheckbox then
         setCheckedWithoutCallback(showHiddenCheckbox, getShowHiddenCharacters())
@@ -1016,8 +1021,10 @@ function CharacterList.show()
         autoReconnectButton:setText('Auto reconnect: ' .. reconnectStatus)
     end
 
+    print('[CharacterList] show() before updateEventsPanel')
     -- Update events panel
     pcall(function() CharacterList.updateEventsPanel() end)
+    print('[CharacterList] show() complete')
 end
 
 function CharacterList.hide(showLogin)

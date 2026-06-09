@@ -356,7 +356,7 @@ MainWindow
     margin-right: 15
     margin-top: 8
     margin-bottom: 70
-    clip: true
+    clipping: true
 
     // Card Container uses horizontalBox layout.
     // Scroll by adjusting marginLeft on this container.
@@ -378,7 +378,7 @@ MainWindow
     height: 28
     anchors.right: eventsPanel.left
     anchors.verticalCenter: parent.verticalCenter
-    margin-right: -5
+    margin-right: 8
     image-source: /images/game/entergame/arrow_right
     @onClick: CharacterList.scrollRight()
 
