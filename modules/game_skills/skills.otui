@@ -95,9 +95,30 @@ XpBoostButton < UIWidget
 MiniWindow
   id: skillWindow
   height: 150
+  image-source: none
+  image-border: 0
+  background-color: #00000099
+  border-width: 1
+  border-color: #00B4D840
   @onOpen: modules.game_skills.onMiniWindowOpen()
   @onClose: modules.game_skills.onMiniWindowClose()
   &save: true
+
+  UIWidget
+    id: miniwindowHeader
+    image-source: none
+    image-border: 0
+    background-color: #0D1F35
+    border-width-bottom: 1
+    border-color-bottom: #00B4D8
+
+  UIWidget
+    id: miniwindowHeaderBevel
+    background-color: #00B4D830
+
+  UIWidget
+    id: miniwindowHeaderBorder
+    background-color: #1A3A5C
 
   UIWidget
     id: miniwindowIcon
@@ -121,6 +142,70 @@ MiniWindow
     height: 13
     !text: tr('Skills')
     color: #CAF0F8
+
+  UIButton
+    id: closeButton
+    image-source: none
+    background-color: #1A3A5C
+    border-width: 1
+    border-color: #1A3A5C
+
+    $hover:
+      background-color: #FF2E63
+      border-color: #00B4D8
+
+    $pressed:
+      background-color: #0A1628
+
+  UIButton
+    id: minimizeButton
+    image-source: none
+    background-color: #1A3A5C
+    border-width: 1
+    border-color: #1A3A5C
+
+    $hover:
+      background-color: #1B3A5C
+      border-color: #00B4D8
+
+    $pressed:
+      background-color: #0A1628
+
+    $on:
+      background-color: #00B4D8
+
+    $on hover:
+      background-color: #00B4D8
+
+    $on pressed:
+      background-color: #1A3A5C
+
+  UIButton
+    id: lockButton
+    image-source: none
+    background-color: #0D1B2A
+    border-width: 1
+    border-color: #1A3A5C
+
+    $hover:
+      background-color: #1B3A5C
+      border-color: #00B4D8
+
+    $pressed:
+      background-color: #0A1628
+
+    $on:
+      background-color: #00B4D8
+
+    $on hover:
+      background-color: #00B4D8
+
+    $on pressed:
+      background-color: #1A3A5C
+
+  ResizeBorder
+    id: bottomResizeBorder
+    background: #00B4D840
 
   MiniWindowContents
     padding-left: 5
