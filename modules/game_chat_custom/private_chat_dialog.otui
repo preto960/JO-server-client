@@ -1,0 +1,108 @@
+UIWidget
+  id: chatPrivateDialog
+  visible: false
+  focusable: true
+  size: 260 130
+  background-color: #0A0A1AEE
+  border-width: 1
+  border-color: #00B4D860
+
+  // Top cyan accent line
+  UIWidget
+    height: 2
+    background-color: #00B4D8
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+
+  // Title label
+  Label
+    id: privateChatTitle
+    text: 'Chat Privado'
+    font: Verdana Bold-11px
+    color: #00B4D8
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 10
+    text-align: center
+
+  // Cyan separator under title
+  UIWidget
+    height: 1
+    background-color: #00B4D840
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: privateChatTitle.bottom
+    margin-left: 12
+    margin-right: 12
+    margin-top: 4
+
+  // Sub-label
+  Label
+    id: privateChatLabel
+    text: 'Nombre del jugador:'
+    font: verdana-11px-rounded
+    color: #FFFFFFBB
+    anchors.top: privateChatTitle.bottom
+    anchors.left: parent.left
+    margin-top: 18
+    margin-left: 14
+
+  // Player name input
+  TextEdit
+    id: privateChatNameInput
+    font: verdana-11px-antialised
+    color: #CAF0F8
+    background-color: #0A0A1AFF
+    border-width: 1
+    border-color: #00B4D840
+    height: 24
+    anchors.top: privateChatLabel.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 4
+    margin-left: 14
+    margin-right: 14
+    shift-navigation: true
+    max-length: 40
+    placeholder: 'Escribe el nombre...'
+    placeholder-color: #FFFFFF60
+    selection-color: #CAF0F8FF
+    selection-background-color: #00B4D840
+    text-align: left
+    text-vertical-alignment: center
+    image-source: none
+
+  // Open button
+  UIButton
+    id: privateChatOpenBtn
+    text: 'Abrir Chat'
+    font: Verdana Bold-11px
+    color: #0A0A1A
+    background-color: #00B4D8
+    border-width: 1
+    border-color: #0090B0
+    height: 26
+    anchors.top: privateChatNameInput.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 8
+    margin-left: 14
+    margin-right: 14
+
+  // Close button (X)
+  UIButton
+    id: privateChatCloseBtn
+    text: 'X'
+    font: verdana-11px-rounded
+    color: #FFFFFF88
+    background-color: alpha
+    border-width: 0
+    width: 22
+    height: 22
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: 4
+    margin-right: 4

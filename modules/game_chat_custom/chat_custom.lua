@@ -10,6 +10,7 @@ local originalOnTabChange = nil
 local originalAddTab = nil
 local originalAddTabText = nil
 local sidebarButtons = {}
+local privateDialog = nil
 
 -- Drag state
 local chatDragInfo = {
@@ -36,6 +37,18 @@ function init()
         chatPopup = g_ui.loadUI('chat_custom')
     end)
     if not ok or not chatPopup then return end
+
+    -- Load the private chat dialog OTUI once
+    local ok2 = pcall(function()
+        privateDialog = g_ui.loadUI('private_chat_dialog')
+    end)
+    if ok2 and privateDialog then
+        local root = g_ui.getRootWidget()
+        if root and not privateDialog:getParent() then
+            root:addChild(privateDialog)
+        end
+        privateDialog:hide()
+    end
 
     addEvent(function()
         local root = g_ui.getRootWidget()
@@ -70,6 +83,11 @@ function init()
         -- ESC to close via onKeyPress (same approach as skills window)
         chatPopup.onKeyPress = function(widget, keyCode, keyboardModifiers)
             if keyboardModifiers == KeyboardNoModifier and keyCode == KeyEscape then
+                -- Close private dialog first if open
+                if privateDialog and privateDialog:isVisible() then
+                    closePrivateChatDialog()
+                    return true
+                end
                 if isOpen then
                     closeChatPopup()
                     return true
@@ -83,6 +101,28 @@ function init()
             closeBtn.onMouseRelease = function(self, mousePos, mouseButton)
                 if mouseButton == MouseLeftButton then
                     addEvent(closeChatPopup)
+                end
+            end
+        end
+
+        -- Wire private chat dialog key press (Enter/Escape)
+        if privateDialog then
+            privateDialog.onKeyPress = privateChatDialogKeyPress
+
+            local openBtn = privateDialog:recursiveGetChildById('privateChatOpenBtn')
+            if openBtn then
+                openBtn.onMouseRelease = function(self, mousePos, mouseButton)
+                    if mouseButton == MouseLeftButton then
+                        submitPrivateChat()
+                    end
+                end
+            end
+            local closeBtn2 = privateDialog:recursiveGetChildById('privateChatCloseBtn')
+            if closeBtn2 then
+                closeBtn2.onMouseRelease = function(self, mousePos, mouseButton)
+                    if mouseButton == MouseLeftButton then
+                        closePrivateChatDialog()
+                    end
                 end
             end
         end
@@ -192,6 +232,11 @@ function terminate()
 
     forceRestoreAndClose()
 
+    if privateDialog then
+        pcall(function() privateDialog:destroy() end)
+        privateDialog = nil
+    end
+
     if chatPopup then
         chatPopup:destroy()
         chatPopup = nil
@@ -200,6 +245,10 @@ end
 
 function onEnterPressed()
     if not g_game.isOnline() then return end
+    -- If private dialog is open, let it handle Enter
+    if privateDialog and privateDialog:isVisible() then
+        return
+    end
     if not isOpen then
         openChatPopup()
     else
@@ -345,6 +394,11 @@ end
 function closeChatPopup()
     if not isOpen then return end
     isOpen = false
+
+    -- Also close private dialog if open
+    if privateDialog and privateDialog:isVisible() then
+        privateDialog:hide()
+    end
 
     -- Save position on close
     local pos = chatPopup:getPosition()
@@ -712,101 +766,72 @@ function sendChatMessage()
 end
 
 function openPrivateChatDialog()
+    if not privateDialog then return end
     local root = g_ui.getRootWidget()
     if not root then return end
 
-    -- Create a small input dialog
-    local dialog = g_ui.createWidget('UIWidget', root)
-    dialog:setId('chatPrivateDialog')
-    dialog:setSize(topoint('220 80'))
-    dialog:setBackgroundColor('#0A0A1ADD')
-    dialog:setBorderWidth(1)
-    dialog:setBorderColor('#00B4D860')
-    dialog:raise()
-    dialog:focus()
+    -- Ensure dialog is parented to root
+    if not privateDialog:getParent() then
+        root:addChild(privateDialog)
+    end
 
+    -- Position it near the chat popup
     local chatPos = chatPopup:getPosition()
-    dialog:setPosition(topoint(string.format('%d %d', chatPos.x + 140, chatPos.y + 50)))
+    if chatPos then
+        privateDialog:setPosition(topoint(string.format('%d %d', chatPos.x + 140, chatPos.y + 50)))
+    end
 
-    local label = g_ui.createWidget('Label', dialog)
-    pcall(function()
-        label:setId('privateChatLabel')
-        label:setText('Chat privado con:')
-        label:setFont('verdana-11px-rounded')
-        label:setColor('#FFFFFFBB')
-        label:addAnchor(AnchorTop, 'parent', AnchorTop)
-        label:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        label:setMarginTop(8)
-        label:setMarginLeft(10)
-    end)
+    -- Clear any previous text
+    local nameInput = privateDialog:recursiveGetChildById('privateChatNameInput')
+    if nameInput then
+        nameInput:clearText()
+    end
 
-    local nameInput = g_ui.createWidget('TextEdit', dialog)
-    pcall(function()
-        nameInput:setId('privateChatNameInput')
-        nameInput:setFont('verdana-11px-antialised')
-        nameInput:setColor('#CAF0F8')
-        nameInput:setBackgroundColor('#0A0A1AFF')
-        nameInput:setBorderWidth(1)
-        nameInput:setBorderColor('#00B4D840')
-        nameInput:setPlaceholder('Nombre del jugador...')
-        nameInput:setPlaceholderColor('#FFFFFF60')
-        nameInput:addAnchor(AnchorTop, label, AnchorBottom)
-        nameInput:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        nameInput:addAnchor(AnchorRight, 'parent', AnchorRight)
-        nameInput:setMarginTop(4)
-        nameInput:setMarginLeft(10)
-        nameInput:setMarginRight(10)
-        nameInput:setHeight(22)
+    -- Show and focus
+    privateDialog:show()
+    privateDialog:raise()
+    privateDialog:focus()
+
+    if nameInput then
         nameInput:focus()
-    end)
-
-    local sendBtn = g_ui.createWidget('UIButton', dialog)
-    pcall(function()
-        sendBtn:setId('privateChatSendBtn')
-        sendBtn:setText('Abrir')
-        sendBtn:setFont('Verdana Bold-11px')
-        sendBtn:setColor('#0A0A1A')
-        sendBtn:setBackgroundColor('#00B4D8')
-        sendBtn:setBorderWidth(1)
-        sendBtn:setBorderColor('#0090B0')
-        sendBtn:setHeight(28)
-        sendBtn:addAnchor(AnchorTop, nameInput, AnchorBottom)
-        sendBtn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        sendBtn:addAnchor(AnchorRight, 'parent', AnchorRight)
-        sendBtn:setMarginTop(6)
-        sendBtn:setMarginLeft(10)
-        sendBtn:setMarginRight(10)
-    end)
-
-    local function closeDialog()
-        pcall(function() dialog:destroy() end)
     end
+end
 
-    sendBtn.onMouseRelease = function(self, mousePos, mouseButton)
-        if mouseButton == MouseLeftButton then
-            local name = nameInput:getText()
-            if name and #name > 0 then
-                pcall(function()
-                    g_game.openPrivateChannel(name)
-                end)
-            end
-            closeDialog()
-        end
+function closePrivateChatDialog()
+    if not privateDialog then return end
+    privateDialog:hide()
+    if chatPopup and chatPopup:isVisible() then
+        chatPopup:focus()
+        local input = chatPopup:recursiveGetChildById('chatInput')
+        if input then input:focus() end
     end
+end
 
-    dialog.onKeyPress = function(widget, keyCode, keyboardModifiers)
+function submitPrivateChat()
+    if not privateDialog then return end
+    local nameInput = privateDialog:recursiveGetChildById('privateChatNameInput')
+    if not nameInput then return end
+
+    local name = nameInput:getText()
+    if name and #name > 0 then
+        pcall(function()
+            g_game.openPrivateChannel(name)
+        end)
+    end
+    closePrivateChatDialog()
+end
+
+-- Handle Enter/Escape inside the private dialog
+privateChatDialogKeyPress = function(widget, keyCode, keyboardModifiers)
+    if not privateDialog or not privateDialog:isVisible() then return false end
+    if keyboardModifiers == KeyboardNoModifier then
         if keyCode == KeyEscape then
-            closeDialog()
+            closePrivateChatDialog()
             return true
         elseif keyCode == KeyEnter then
-            local name = nameInput:getText()
-            if name and #name > 0 then
-                pcall(function()
-                    g_game.openPrivateChannel(name)
-                end)
-            end
-            closeDialog()
+            submitPrivateChat()
             return true
         end
     end
+    return false
 end
