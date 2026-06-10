@@ -4,7 +4,7 @@ UIWidget
   focusable: true
   size: 660 400
 
-  // Tab sidebar - no frame, just tabs floating outside the main window
+  // Tab sidebar - floating outside both blocks
   UIWidget
     id: chatTabSidebar
     width: 130
@@ -13,14 +13,44 @@ UIWidget
     anchors.bottom: parent.bottom
     background-color: alpha
 
-  // Main frame (login-style background)
+  // ===== BOTTOM BLOCK: Text Input (positioned first at bottom) =====
   UIWidget
-    id: chatFrame
+    id: chatBottomBlock
+    height: 38
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 130
+    background-color: #0A0A1ABB
+    border-width: 1
+    border-color: #00B4D840
+
+    TextEdit
+      id: chatInput
+      anchors.fill: parent
+      margin: 6 4
+      shift-navigation: true
+      max-length: 255
+      background-color: alpha
+      color: #CAF0F8
+      font: verdana-11px-antialised
+      text-align: left
+      text-vertical-alignment: center
+      placeholder: "Escribe un mensaje..."
+      placeholder-color: #00B4D850
+      selection-color: #CAF0F8FF
+      selection-background-color: #00B4D840
+      image-source: none
+
+  // ===== TOP BLOCK: Title + Messages (fills remaining space) =====
+  UIWidget
+    id: chatTopBlock
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin-left: 130
+    margin-bottom: 42
     background-color: #0A0A1A99
     border-width: 1
     border-color: #00B4D840
@@ -68,30 +98,5 @@ UIWidget
       anchors.top: chatHeader.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      anchors.bottom: chatInputPanel.top
-      background-color: alpha
-
-    UIWidget
-      id: chatInputPanel
-      height: 36
-      anchors.left: parent.left
-      anchors.right: parent.right
       anchors.bottom: parent.bottom
       background-color: alpha
-
-      TextEdit
-        id: chatInput
-        anchors.fill: parent
-        margin: 6 4
-        shift-navigation: true
-        max-length: 255
-        background-color: alpha
-        color: #CAF0F8
-        font: verdana-11px-antialised
-        text-align: left
-        text-vertical-alignment: center
-        placeholder: "Escribe un mensaje..."
-        placeholder-color: #00B4D850
-        selection-color: #CAF0F8FF
-        selection-background-color: #00B4D840
-        image-source: none
