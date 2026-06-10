@@ -2,56 +2,80 @@ local reloadButton = nil
 local reloadLabel = nil
 
 function init()
-    g_logger.info("[DevTools] init() called")
-
     addEvent(function()
+        -- Method 1: Ctrl+Shift+R hotkey (always works, no widget visibility issues)
+        g_keyboard.bindKeyDown('Ctrl+Shift+R', function()
+            g_logger.warning("[DevTools] Reloading all modules...")
+            g_modules.reloadModules()
+            g_logger.warning("[DevTools] Reload complete.")
+        end)
+
+        -- Method 2: Try to add button to topmenu if it exists
         local root = g_ui.getRootWidget()
-        g_logger.info("[DevTools] root widget: " .. tostring(root))
+        if not root then return end
 
-        if not root then
-            g_logger.warning("[DevTools] No root widget found")
-            return
-        end
+        local topMenu = root:recursiveGetChildById('topMenu')
+        if topMenu then
+            -- Add button inside topmenu (always visible panel)
+            reloadButton = g_ui.createWidget('UIWidget', topMenu)
+            reloadButton:setId('devReloadButton')
+            reloadButton:setHeight(24)
+            reloadButton:setBackgroundColor('#0A0A1ACC')
+            reloadButton:setBorderWidth(1)
+            reloadButton:setBorderColor('#00B4D860')
+            -- Append to right side of topmenu
+            reloadButton:addAnchor(AnchorRight, 'parent', AnchorRight)
+            reloadButton:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+            reloadButton:setMarginRight(6)
 
-        reloadButton = g_ui.createWidget('UIWidget', root)
-        reloadButton:setId('devReloadButton')
-        reloadButton:setHeight(28)
-        reloadButton:setBackgroundColor('#0A0A1ACC')
-        reloadButton:setBorderWidth(1)
-        reloadButton:setBorderColor('#00B4D860')
-        reloadButton:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-        reloadButton:addAnchor(AnchorRight, 'parent', AnchorRight)
-        reloadButton:setMarginBottom(8)
-        reloadButton:setMarginRight(8)
+            reloadLabel = g_ui.createWidget('Label', reloadButton)
+            reloadLabel:setText('Reload')
+            reloadLabel:setFont('verdana-11px-rounded')
+            reloadLabel:setColor('#00B4D8')
+            reloadLabel:setBackgroundColor('alpha')
+            reloadLabel:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
+            reloadLabel:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+            reloadLabel:setPaddingLeft(8)
+            reloadLabel:setPaddingRight(8)
 
-        g_logger.info("[DevTools] Button created, parent: " .. tostring(reloadButton:getParent()))
-
-        reloadLabel = g_ui.createWidget('Label', reloadButton)
-        reloadLabel:setId('devReloadLabel')
-        reloadLabel:setText('Reload')
-        reloadLabel:setFont('verdana-11px-rounded')
-        reloadLabel:setColor('#00B4D8')
-        reloadLabel:setBackgroundColor('alpha')
-        reloadLabel:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
-        reloadLabel:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
-        reloadLabel:setPaddingLeft(10)
-        reloadLabel:setPaddingRight(10)
-
-        reloadButton.onMouseRelease = function(self, mousePos, mouseButton)
-            if mouseButton == MouseLeftButton then
-                doReload()
+            reloadButton.onMouseRelease = function(self, mousePos, mouseButton)
+                if mouseButton == MouseLeftButton then
+                    doReload()
+                end
             end
-        end
 
-        -- Raise on any click/move on the button
-        reloadButton.onFocusChange = function(self, focused)
-            if focused then
-                pcall(function() self:raise() end)
+            reloadButton:raise()
+        else
+            -- Fallback: add to root with anchors
+            reloadButton = g_ui.createWidget('UIWidget', root)
+            reloadButton:setId('devReloadButton')
+            reloadButton:setHeight(28)
+            reloadButton:setBackgroundColor('#0A0A1ACC')
+            reloadButton:setBorderWidth(1)
+            reloadButton:setBorderColor('#00B4D860')
+            reloadButton:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+            reloadButton:addAnchor(AnchorRight, 'parent', AnchorRight)
+            reloadButton:setMarginBottom(8)
+            reloadButton:setMarginRight(8)
+
+            reloadLabel = g_ui.createWidget('Label', reloadButton)
+            reloadLabel:setText('Reload')
+            reloadLabel:setFont('verdana-11px-rounded')
+            reloadLabel:setColor('#00B4D8')
+            reloadLabel:setBackgroundColor('alpha')
+            reloadLabel:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
+            reloadLabel:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+            reloadLabel:setPaddingLeft(10)
+            reloadLabel:setPaddingRight(10)
+
+            reloadButton.onMouseRelease = function(self, mousePos, mouseButton)
+                if mouseButton == MouseLeftButton then
+                    doReload()
+                end
             end
-        end
 
-        reloadButton:raise()
-        g_logger.info("[DevTools] Button raised, visible: " .. tostring(reloadButton:isVisible()))
+            reloadButton:raise()
+        end
     end)
 end
 
