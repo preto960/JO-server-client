@@ -1,0 +1,392 @@
+-- equipment_custom.otui - Custom equipment window (cyberpunk cyan theme)
+-- Standalone popup showing 10 equipment slots + soul/capacity
+
+UIWidget
+  id: equipmentWindow
+  visible: false
+  focusable: true
+  size: 230 290
+  background-color: #0A0A1ABB
+  border-width: 1
+  border-color: #00B4D860
+  padding: 10
+
+  -- Title bar
+  UIWidget
+    id: equipHeader
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 22
+    margin-bottom: 6
+
+    -- Cyan accent line at top
+    UIWidget
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 2
+      background-color: #00B4D8
+
+    Label
+      id: equipTitle
+      !text: tr('Equipment')
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 4
+      font: verdana-11px-rounded
+      color: #00B4D8
+
+    -- Close X button
+    UIWidget
+      id: equipCloseBtn
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      size: 18 18
+      margin-right: 2
+
+      Label
+        !text: tr('X')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        font: verdana-11px-rounded
+        color: #FFFFFF60
+
+  -- Equipment slots area
+  UIWidget
+    id: equipSlotsArea
+    anchors.top: equipHeader.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 200
+
+    -- Row 1: Helmet centered
+    UIWidget
+      id: slot_helmet
+      &slotId: 1
+      size: 42 42
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: parent.top
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Head')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    -- Row 2: Amulet | Armor | Backpack
+    UIWidget
+      id: slot_amulet
+      &slotId: 2
+      size: 42 42
+      anchors.top: slot_helmet.bottom
+      anchors.left: parent.left
+      margin-left: 20
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Neck')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    UIWidget
+      id: slot_armor
+      &slotId: 4
+      size: 42 42
+      anchors.top: slot_helmet.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Body')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    UIWidget
+      id: slot_backpack
+      &slotId: 3
+      size: 42 42
+      anchors.top: slot_helmet.bottom
+      anchors.right: parent.right
+      margin-right: 20
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Back')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    -- Row 3: Sword | Legs | Shield
+    UIWidget
+      id: slot_sword
+      &slotId: 6
+      size: 42 42
+      anchors.top: slot_amulet.bottom
+      anchors.left: slot_amulet.left
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Weapon')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    UIWidget
+      id: slot_legs
+      &slotId: 7
+      size: 42 42
+      anchors.top: slot_armor.bottom
+      anchors.left: slot_armor.left
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Legs')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    UIWidget
+      id: slot_shield
+      &slotId: 5
+      size: 42 42
+      anchors.top: slot_backpack.bottom
+      anchors.left: slot_backpack.left
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Shield')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    -- Row 4: Ring | Boots | Tools
+    UIWidget
+      id: slot_ring
+      &slotId: 9
+      size: 42 42
+      anchors.top: slot_sword.bottom
+      anchors.left: slot_sword.left
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Ring')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    UIWidget
+      id: slot_boots
+      &slotId: 8
+      size: 42 42
+      anchors.top: slot_legs.bottom
+      anchors.left: slot_legs.left
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Feet')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+    UIWidget
+      id: slot_tools
+      &slotId: 10
+      size: 42 42
+      anchors.top: slot_shield.bottom
+      anchors.left: slot_shield.left
+      margin-top: 3
+      background-color: #0A0A1AEE
+      border-width: 1
+      border-color: #00B4D830
+
+      UIItem
+        id: item
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        size: 34 34
+
+      Label
+        id: slotLabel
+        !text: tr('Ammo')
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        margin-bottom: 1
+        font: verdana-8px-rounded
+        color: #00B4D850
+        text-align: center
+        visible: true
+
+  -- Bottom bar: Soul + Capacity
+  UIWidget
+    id: equipStatsBar
+    anchors.top: equipSlotsArea.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-top: 6
+    height: 26
+    background-color: #0A0A1A99
+    border-width: 1
+    border-color: #00B4D820
+    padding: 2 6
+
+    Label
+      !text: tr('Soul')
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      font: verdana-9px-rounded
+      color: #00B4D870
+
+    Label
+      id: soulValue
+      !text: '0'
+      anchors.left: prev.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 4
+      font: verdana-9px-rounded
+      color: #00B4D8
+
+    Label
+      !text: tr('Cap')
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
+      font: verdana-9px-rounded
+      color: #00B4D870
+
+    Label
+      id: capValue
+      !text: '0'
+      anchors.left: prev.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 4
+      font: verdana-9px-rounded
+      color: #00B4D8

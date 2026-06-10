@@ -180,6 +180,7 @@ local function loadModules()
     -- that would cause the login screen, footer, or sidebar to reappear
     local SAFE_RELOAD_MODULES = {
         'game_chat_custom',
+        'game_inventory_custom',
         'skills_custom',
         'game_healthcircle',
         'game_actionbar',
