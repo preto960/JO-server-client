@@ -590,8 +590,21 @@ function buildSidebar()
 
     sidebarButtons._plusBtn = plusBtn
 
+    plusBtn.onMousePress = function(self, mousePos, mouseButton)
+        if mouseButton == MouseLeftButton then
+            pcall(function()
+                self:setBackgroundColor('#00B4D8C0')
+                self:setBorderColor('#00B4D8')
+            end)
+        end
+    end
+
     plusBtn.onMouseRelease = function(self, mousePos, mouseButton)
         if mouseButton == MouseLeftButton then
+            pcall(function()
+                self:setBackgroundColor('#00B4D850')
+                self:setBorderColor('#00B4D860')
+            end)
             openPrivateChatDialog()
         end
     end
