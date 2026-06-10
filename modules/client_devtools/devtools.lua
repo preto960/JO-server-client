@@ -1,11 +1,17 @@
 local reloadButton = nil
 local reloadLabel = nil
-local raiseEvent = nil
 
 function init()
+    g_logger.info("[DevTools] init() called")
+
     addEvent(function()
         local root = g_ui.getRootWidget()
-        if not root then return end
+        g_logger.info("[DevTools] root widget: " .. tostring(root))
+
+        if not root then
+            g_logger.warning("[DevTools] No root widget found")
+            return
+        end
 
         reloadButton = g_ui.createWidget('UIWidget', root)
         reloadButton:setId('devReloadButton')
@@ -13,11 +19,12 @@ function init()
         reloadButton:setBackgroundColor('#0A0A1ACC')
         reloadButton:setBorderWidth(1)
         reloadButton:setBorderColor('#00B4D860')
-        -- Anchor to bottom-right corner of screen
         reloadButton:addAnchor(AnchorBottom, 'parent', AnchorBottom)
         reloadButton:addAnchor(AnchorRight, 'parent', AnchorRight)
         reloadButton:setMarginBottom(8)
         reloadButton:setMarginRight(8)
+
+        g_logger.info("[DevTools] Button created, parent: " .. tostring(reloadButton:getParent()))
 
         reloadLabel = g_ui.createWidget('Label', reloadButton)
         reloadLabel:setId('devReloadLabel')
@@ -36,36 +43,31 @@ function init()
             end
         end
 
-        -- Keep button always on top every frame
-        raiseEvent = cycleEvent(function()
-            if reloadButton then
-                pcall(function() reloadButton:raise() end)
-            else
-                if raiseEvent then
-                    raiseEvent:cancel()
-                    raiseEvent = nil
-                end
+        -- Raise on any click/move on the button
+        reloadButton.onFocusChange = function(self, focused)
+            if focused then
+                pcall(function() self:raise() end)
             end
-        end, 500)
+        end
+
+        reloadButton:raise()
+        g_logger.info("[DevTools] Button raised, visible: " .. tostring(reloadButton:isVisible()))
     end)
 end
 
 function doReload()
     if not reloadButton then return end
 
-    -- Visual feedback: light up
     pcall(function()
         reloadButton:setBackgroundColor('#00B4D860')
         reloadLabel:setColor('#FFD700')
     end)
 
-    -- Reload after brief delay so user sees the flash
     scheduleEvent(function()
         pcall(function()
             g_modules.reloadModules()
         end)
 
-        -- Restore button appearance after reload finishes
         scheduleEvent(function()
             if reloadButton then
                 pcall(function()
@@ -79,10 +81,6 @@ function doReload()
 end
 
 function terminate()
-    if raiseEvent then
-        raiseEvent:cancel()
-        raiseEvent = nil
-    end
     if reloadButton then
         pcall(function() reloadButton:destroy() end)
         reloadButton = nil
