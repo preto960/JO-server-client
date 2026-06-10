@@ -568,8 +568,8 @@ function buildSidebar()
     -- Add "+" button at the bottom for new private chat
     local plusBtn = g_ui.createWidget('UIWidget', sidebar)
     pcall(function()
-        plusBtn:setHeight(40)
-        plusBtn:setWidth(40)
+        plusBtn:setHeight(36)
+        plusBtn:setWidth(36)
         plusBtn:addAnchor(AnchorTop, 'parent', AnchorTop)
         plusBtn:addAnchor(AnchorRight, 'parent', AnchorRight)
         plusBtn:setMarginTop(1 + (btnIndex - 1) * 29)
@@ -581,7 +581,7 @@ function buildSidebar()
     local plusLabel = g_ui.createWidget('Label', plusBtn)
     pcall(function()
         plusLabel:setText('+')
-        plusLabel:setFont('Verdana Bold-13px')
+        plusLabel:setFont('verdana-11px-rounded')
         plusLabel:setColor('#00B4D8')
         plusLabel:setBackgroundColor('alpha')
         plusLabel:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
@@ -592,17 +592,6 @@ function buildSidebar()
 
     plusBtn.onMouseRelease = function(self, mousePos, mouseButton)
         if mouseButton == MouseLeftButton then
-            -- Flash effect: light up then restore after short delay
-            pcall(function()
-                self:setBackgroundColor('#00B4D8C0')
-                self:setBorderColor('#00B4D8')
-            end)
-            addEvent(function()
-                pcall(function()
-                    self:setBackgroundColor('#00B4D850')
-                    self:setBorderColor('#00B4D860')
-                end)
-            end, 150)
             openPrivateChatDialog()
         end
     end
@@ -616,15 +605,6 @@ function destroySidebarButtons()
         pcall(function() btn:destroy() end)
     end
     sidebarButtons = {}
-end
-
-function resetPlusBtn(btn)
-    if btn then
-        pcall(function()
-            btn:setBackgroundColor('#00B4D850')
-            btn:setBorderColor('#00B4D860')
-        end)
-    end
 end
 
 function updateSidebarHighlight(selectedTab)
@@ -792,9 +772,6 @@ function openPrivateChatDialog()
     if not privateDialog then return end
     local root = g_ui.getRootWidget()
     if not root then return end
-
-    -- Reset plus button color in case onMouseRelease didn't fire
-    resetPlusBtn(sidebarButtons._plusBtn)
 
     -- Ensure dialog is parented to root
     if not privateDialog:getParent() then
