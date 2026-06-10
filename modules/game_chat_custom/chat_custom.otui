@@ -25,6 +25,14 @@ UIWidget
     border-width: 1
     border-color: #00B4D840
 
+    // Top cyan accent line inside input block
+    UIWidget
+      height: 2
+      background-color: #00B4D8
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: parent.top
+
     TextEdit
       id: chatInput
       anchors.fill: parent
@@ -37,7 +45,7 @@ UIWidget
       text-align: left
       text-vertical-alignment: center
       placeholder: "Escribe un mensaje..."
-      placeholder-color: #00B4D850
+      placeholder-color: #FFFFFF99
       selection-color: #CAF0F8FF
       selection-background-color: #00B4D840
       image-source: none

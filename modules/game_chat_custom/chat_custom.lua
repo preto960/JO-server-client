@@ -315,12 +315,15 @@ function buildSidebar()
                 btn:setBorderColor('transparent')
                 btn:setPaddingLeft(8)
                 btn:setPaddingRight(6)
+                -- Each tab auto-resizes to its text width
+                btn:setWidth(1)
+                pcall(function() btn:setAutoResize(true) end)
+                pcall(function() btn:setTextAutoResize(true) end)
                 -- Each tab gets a visible background
                 btn:setBackgroundColor(THEME.tabBg)
                 btn:setColor(THEME.tabText)
                 btn:addAnchor(AnchorTop, 'parent', AnchorTop)
                 btn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-                btn:addAnchor(AnchorRight, 'parent', AnchorRight)
                 btn:setMarginTop(1 + (i - 1) * 29)
             end)
 
