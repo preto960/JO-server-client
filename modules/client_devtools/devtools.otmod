@@ -1,9 +1,0 @@
-Module
-  name: client_devtools
-  description: Developer tools - hot reload button for JO Server
-  author: JO Server
-  sandboxed: true
-  reloadable: false
-  scripts: [ devtools ]
-  @onLoad: init()
-  @onUnload: terminate()

@@ -174,6 +174,12 @@ local function loadModules()
 
     -- uncomment the line below so that modules are reloaded when modified. (Note: Use only mod dev)
     g_modules.enableAutoReload()
+
+    -- Dev hotkey: Ctrl+Shift+R to reload all modules without restarting
+    g_keyboard.bindKeyDown('Ctrl+Shift+R', function()
+        g_logger.warning("[DevTools] Reloading all modules...")
+        g_modules.reloadModules()
+    end)
 end
 
 -- run updater, must use data.zip
