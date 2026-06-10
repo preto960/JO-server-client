@@ -55,7 +55,7 @@ UIWidget
     id: privateChatNameInput
     font: verdana-11px-antialised
     color: #CAF0F8
-    background-color: #0A0A1AFF
+    background-color: #0D0D20FF
     border-width: 1
     border-color: #00B4D840
     height: 24
