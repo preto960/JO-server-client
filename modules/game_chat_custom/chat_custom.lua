@@ -7,6 +7,8 @@ local chatPopup = nil
 local isOpen = false
 local savedWidgets = {}
 local originalOnTabChange = nil
+local originalAddTab = nil
+local originalAddTabText = nil
 local sidebarButtons = {}
 
 -- Drag state
@@ -157,6 +159,16 @@ function stopChatDrag()
 end
 
 function terminate()
+    -- Restore hooked functions
+    if originalAddTab and modules.game_console then
+        modules.game_console.addTab = originalAddTab
+        originalAddTab = nil
+    end
+    if originalAddTabText and modules.game_console then
+        modules.game_console.addTabText = originalAddTabText
+        originalAddTabText = nil
+    end
+
     -- Save chat position before destroy
     if chatPopup and chatPopup:getParent() then
         local pos = chatPopup:getPosition()
@@ -266,6 +278,53 @@ function openChatPopup()
         end
     end
 
+    -- Hook addTab to rebuild sidebar when new tabs are created
+    if not originalAddTab and modules.game_console then
+        originalAddTab = modules.game_console.addTab
+        modules.game_console.addTab = function(name, focus)
+            local result = originalAddTab(name, focus)
+            if isOpen then
+                buildSidebar()
+            end
+            return result
+        end
+    end
+
+    -- Hook addTabText to make player names clickable for private chat
+    if not originalAddTabText and modules.game_console then
+        originalAddTabText = modules.game_console.addTabText
+        modules.game_console.addTabText = function(tab, text, focus, ...)
+            originalAddTabText(tab, text, focus, ...)
+            -- Hook labels inside the buffer for left-click on player names
+            if tab and tab.tabPanel then
+                local buffer = tab.tabPanel:getChildById('consoleBuffer')
+                if buffer then
+                    local labels = buffer:getChildren()
+                    for _, label in ipairs(labels) do
+                        if label.creatureName and not label._customChatHooked then
+                            label._customChatHooked = true
+                            local origRelease = label.onMouseRelease
+                            label.onMouseRelease = function(self, mousePos, mouseButton)
+                                if mouseButton == MouseLeftButton and self.creatureName then
+                                    local localPlayer = g_game.getLocalPlayer()
+                                    if localPlayer and self.creatureName ~= localPlayer:getName() then
+                                pcall(function()
+                                    g_game.openPrivateChannel(self.creatureName)
+                                end)
+                                    return true
+                                end
+                                end
+                                if origRelease then
+                                    origRelease(self, mousePos, mouseButton)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
     if not chatPopup:getParent() then
         root:addChild(chatPopup)
     end
@@ -342,6 +401,16 @@ function forceRestoreAndClose()
 
     pcall(function() g_keyboard.unbindKeyDown('Enter', chatPopup) end)
 
+    -- Restore hooked functions
+    if originalAddTab and modules.game_console then
+        modules.game_console.addTab = originalAddTab
+        originalAddTab = nil
+    end
+    if originalAddTabText and modules.game_console then
+        modules.game_console.addTabText = originalAddTabText
+        originalAddTabText = nil
+    end
+
     destroySidebarButtons()
     restoreTabStyles(tabBar)
 
@@ -393,6 +462,7 @@ function buildSidebar()
     destroySidebarButtons()
 
     local allTabs = getAllTabs(tabBar)
+    local btnIndex = 1
     for i, tab in ipairs(allTabs) do
         local ok, btn = pcall(function()
             return g_ui.createWidget('UIButton', sidebar)
@@ -421,7 +491,8 @@ function buildSidebar()
                 -- Align to RIGHT of sidebar (flush with chat window left edge)
                 btn:addAnchor(AnchorTop, 'parent', AnchorTop)
                 btn:addAnchor(AnchorRight, 'parent', AnchorRight)
-                btn:setMarginTop(1 + (i - 1) * 29)
+                btn:setMarginTop(1 + (btnIndex - 1) * 29)
+                btnIndex = btnIndex + 1
             end)
 
             sidebarButtons[tab] = btn
@@ -439,6 +510,34 @@ function buildSidebar()
     end
 
     updateSidebarHighlight(nil)
+
+    -- Add "+" button at the bottom for new private chat
+    local plusBtn = g_ui.createWidget('UIButton', sidebar)
+    pcall(function()
+        plusBtn:setHeight(28)
+        plusBtn:setText('+')
+        plusBtn:setFont('Verdana Bold-11px')
+        plusBtn:setImageSource('')
+        plusBtn:setBorderWidth(0)
+        plusBtn:setBorderColor('transparent')
+        plusBtn:setPaddingLeft(12)
+        plusBtn:setPaddingRight(12)
+        plusBtn:setPaddingTop(4)
+        plusBtn:setPaddingBottom(4)
+        plusBtn:setBackgroundColor('#00B4D840')
+        plusBtn:setColor('#00B4D8')
+        plusBtn:addAnchor(AnchorTop, 'parent', AnchorTop)
+        plusBtn:addAnchor(AnchorRight, 'parent', AnchorRight)
+        plusBtn:setMarginTop(1 + (btnIndex - 1) * 29)
+    end)
+
+    sidebarButtons._plusBtn = plusBtn
+
+    plusBtn.onMouseRelease = function(self, mousePos, mouseButton)
+        if mouseButton == MouseLeftButton then
+            openPrivateChatDialog()
+        end
+    end
 end
 
 function destroySidebarButtons()
@@ -610,4 +709,104 @@ function sendChatMessage()
     end)
 
     input:clearText()
+end
+
+function openPrivateChatDialog()
+    local root = g_ui.getRootWidget()
+    if not root then return end
+
+    -- Create a small input dialog
+    local dialog = g_ui.createWidget('UIWidget', root)
+    dialog:setId('chatPrivateDialog')
+    dialog:setSize(topoint('220 80'))
+    dialog:setBackgroundColor('#0A0A1ADD')
+    dialog:setBorderWidth(1)
+    dialog:setBorderColor('#00B4D860')
+    dialog:raise()
+    dialog:focus()
+
+    local chatPos = chatPopup:getPosition()
+    dialog:setPosition(topoint(string.format('%d %d', chatPos.x + 140, chatPos.y + 50)))
+
+    local label = g_ui.createWidget('Label', dialog)
+    pcall(function()
+        label:setId('privateChatLabel')
+        label:setText('Chat privado con:')
+        label:setFont('verdana-11px-rounded')
+        label:setColor('#FFFFFFBB')
+        label:addAnchor(AnchorTop, 'parent', AnchorTop)
+        label:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        label:setMarginTop(8)
+        label:setMarginLeft(10)
+    end)
+
+    local nameInput = g_ui.createWidget('TextEdit', dialog)
+    pcall(function()
+        nameInput:setId('privateChatNameInput')
+        nameInput:setFont('verdana-11px-antialised')
+        nameInput:setColor('#CAF0F8')
+        nameInput:setBackgroundColor('#0A0A1AFF')
+        nameInput:setBorderWidth(1)
+        nameInput:setBorderColor('#00B4D840')
+        nameInput:setPlaceholder('Nombre del jugador...')
+        nameInput:setPlaceholderColor('#FFFFFF60')
+        nameInput:addAnchor(AnchorTop, label, AnchorBottom)
+        nameInput:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        nameInput:addAnchor(AnchorRight, 'parent', AnchorRight)
+        nameInput:setMarginTop(4)
+        nameInput:setMarginLeft(10)
+        nameInput:setMarginRight(10)
+        nameInput:setHeight(22)
+        nameInput:focus()
+    end)
+
+    local sendBtn = g_ui.createWidget('UIButton', dialog)
+    pcall(function()
+        sendBtn:setId('privateChatSendBtn')
+        sendBtn:setText('Abrir')
+        sendBtn:setFont('Verdana Bold-11px')
+        sendBtn:setColor('#0A0A1A')
+        sendBtn:setBackgroundColor('#00B4D8')
+        sendBtn:setBorderWidth(1)
+        sendBtn:setBorderColor('#0090B0')
+        sendBtn:setHeight(28)
+        sendBtn:addAnchor(AnchorTop, nameInput, AnchorBottom)
+        sendBtn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        sendBtn:addAnchor(AnchorRight, 'parent', AnchorRight)
+        sendBtn:setMarginTop(6)
+        sendBtn:setMarginLeft(10)
+        sendBtn:setMarginRight(10)
+    end)
+
+    local function closeDialog()
+        pcall(function() dialog:destroy() end)
+    end
+
+    sendBtn.onMouseRelease = function(self, mousePos, mouseButton)
+        if mouseButton == MouseLeftButton then
+            local name = nameInput:getText()
+            if name and #name > 0 then
+                pcall(function()
+                    g_game.openPrivateChannel(name)
+                end)
+            end
+            closeDialog()
+        end
+    end
+
+    dialog.onKeyPress = function(widget, keyCode, keyboardModifiers)
+        if keyCode == KeyEscape then
+            closeDialog()
+            return true
+        elseif keyCode == KeyEnter then
+            local name = nameInput:getText()
+            if name and #name > 0 then
+                pcall(function()
+                    g_game.openPrivateChannel(name)
+                end)
+            end
+            closeDialog()
+            return true
+        end
+    end
 end
