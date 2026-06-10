@@ -590,8 +590,21 @@ function buildSidebar()
 
     sidebarButtons._plusBtn = plusBtn
 
+    local function restoreBtn()
+        pcall(function()
+            plusBtn:setBackgroundColor('#00B4D850')
+            plusBtn:setBorderColor('#00B4D860')
+            plusBtn:setBorderWidth(1)
+        end)
+    end
+
     plusBtn.onMouseRelease = function(self, mousePos, mouseButton)
         if mouseButton == MouseLeftButton then
+            pcall(function()
+                self:setBackgroundColor('#00B4D8C0')
+                self:setBorderColor('#00B4D8')
+            end)
+            restoreEvent = scheduleEvent(restoreBtn, 120)
             openPrivateChatDialog()
         end
     end
@@ -616,20 +629,23 @@ function updateSidebarHighlight(selectedTab)
     end
 
     for tab, btn in pairs(sidebarButtons) do
-        pcall(function()
-            local isSel = (tab == selectedTab)
-            if isSel then
-                btn:setBackgroundColor(THEME.tabSelectedBg)
-                btn:setBorderColor(THEME.tabSelectedBorder)
-                btn:setBorderWidth(1)
-                btn:setColor(THEME.tabSelectedText)
-            else
-                btn:setBackgroundColor(THEME.tabBg)
-                btn:setBorderWidth(0)
-                btn:setBorderColor('transparent')
-                btn:setColor(THEME.tabText)
-            end
-        end)
+        -- Skip the + button (key is a string, not a tab object)
+        if type(tab) ~= 'string' then
+            pcall(function()
+                local isSel = (tab == selectedTab)
+                if isSel then
+                    btn:setBackgroundColor(THEME.tabSelectedBg)
+                    btn:setBorderColor(THEME.tabSelectedBorder)
+                    btn:setBorderWidth(1)
+                    btn:setColor(THEME.tabSelectedText)
+                else
+                    btn:setBackgroundColor(THEME.tabBg)
+                    btn:setBorderWidth(0)
+                    btn:setBorderColor('transparent')
+                    btn:setColor(THEME.tabText)
+                end
+            end)
+        end
     end
 end
 
