@@ -601,10 +601,7 @@ function buildSidebar()
 
     plusBtn.onMouseRelease = function(self, mousePos, mouseButton)
         if mouseButton == MouseLeftButton then
-            pcall(function()
-                self:setBackgroundColor('#00B4D850')
-                self:setBorderColor('#00B4D860')
-            end)
+            resetPlusBtn(self)
             openPrivateChatDialog()
         end
     end
@@ -618,6 +615,15 @@ function destroySidebarButtons()
         pcall(function() btn:destroy() end)
     end
     sidebarButtons = {}
+end
+
+function resetPlusBtn(btn)
+    if btn then
+        pcall(function()
+            btn:setBackgroundColor('#00B4D850')
+            btn:setBorderColor('#00B4D860')
+        end)
+    end
 end
 
 function updateSidebarHighlight(selectedTab)
@@ -785,6 +791,9 @@ function openPrivateChatDialog()
     if not privateDialog then return end
     local root = g_ui.getRootWidget()
     if not root then return end
+
+    -- Reset plus button color in case onMouseRelease didn't fire
+    resetPlusBtn(sidebarButtons._plusBtn)
 
     -- Ensure dialog is parented to root
     if not privateDialog:getParent() then
