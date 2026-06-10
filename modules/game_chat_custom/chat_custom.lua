@@ -581,7 +581,7 @@ function buildSidebar()
     local plusLabel = g_ui.createWidget('Label', plusBtn)
     pcall(function()
         plusLabel:setText('+')
-        plusLabel:setFont('Verdana Bold-18px')
+        plusLabel:setFont('Verdana Bold-13px')
         plusLabel:setColor('#00B4D8')
         plusLabel:setBackgroundColor('alpha')
         plusLabel:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
@@ -590,18 +590,19 @@ function buildSidebar()
 
     sidebarButtons._plusBtn = plusBtn
 
-    plusBtn.onMousePress = function(self, mousePos, mouseButton)
+    plusBtn.onMouseRelease = function(self, mousePos, mouseButton)
         if mouseButton == MouseLeftButton then
+            -- Flash effect: light up then restore after short delay
             pcall(function()
                 self:setBackgroundColor('#00B4D8C0')
                 self:setBorderColor('#00B4D8')
             end)
-        end
-    end
-
-    plusBtn.onMouseRelease = function(self, mousePos, mouseButton)
-        if mouseButton == MouseLeftButton then
-            resetPlusBtn(self)
+            addEvent(function()
+                pcall(function()
+                    self:setBackgroundColor('#00B4D850')
+                    self:setBorderColor('#00B4D860')
+                end)
+            end, 150)
             openPrivateChatDialog()
         end
     end
