@@ -172,14 +172,60 @@ local function loadModules()
         dofile(script)
     end
 
-    -- uncomment the line below so that modules are reloaded when modified. (Note: Use only mod dev)
+-- Auto-reload: when files change on disk (e.g. after git pull),
+    -- only the modified module is reloaded automatically (~500ms delay)
     g_modules.enableAutoReload()
 
-    -- Dev hotkey: Ctrl+Shift+R to reload all modules without restarting
-    g_keyboard.bindKeyDown('Ctrl+Shift+R', function()
-        g_logger.warning("[DevTools] Reloading all modules...")
-        g_modules.reloadModules()
-    end)
+    -- Safe reload: only reloads custom dev modules, skips core/login/UI modules
+    -- that would cause the login screen, footer, or sidebar to reappear
+    local SAFE_RELOAD_MODULES = {
+        'game_chat_custom',
+        'skills_custom',
+        'game_healthcircle',
+        'game_actionbar',
+        'game_notifications',
+        'debug_info',
+    }
+    local SKIP_RELOAD_MODULES = {
+        'game_entergame_custom', 'client_bottommenu', 'client_topmenu',
+        'game_mainpanel', 'game_interface', 'client', 'corelib', 'gamelib',
+        'modulelib', 'startup', 'features', 'things', 'updater',
+    }
+
+    local function doSafeReload()
+        g_logger.warning("[DevTools] Safe reload: reloading custom modules only...")
+        local reloaded = 0
+        for _, name in ipairs(SAFE_RELOAD_MODULES) do
+            local mod = g_modules.getModule(name)
+            if mod and mod:isLoaded() then
+                local canReload = false
+                pcall(function() canReload = mod:canReload() end)
+                if canReload then
+                    pcall(function() mod:reload() end)
+                    reloaded = reloaded + 1
+                    g_logger.warning("[DevTools] Reloaded: " .. name)
+                end
+            end
+        end
+        g_logger.warning("[DevTools] Safe reload done. " .. reloaded .. " module(s) reloaded.")
+    end
+
+    -- Hotkey: Ctrl+Shift+R
+    g_keyboard.bindKeyDown('Ctrl+Shift+R', doSafeReload)
+
+    -- Visible reload button in the game sidebar
+    scheduleEvent(function()
+        pcall(function()
+            modules.client_topmenu.addRightGameToggleButton(
+                'devReloadButton',
+                'Reload Custom Modules (Ctrl+Shift+R)',
+                '/images/options/button_reload',
+                doSafeReload,
+                true
+            )
+            g_logger.warning("[DevTools] Reload button added to game sidebar")
+        end)
+    end, 3000)
 end
 
 -- run updater, must use data.zip
