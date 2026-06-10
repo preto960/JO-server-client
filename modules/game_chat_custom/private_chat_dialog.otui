@@ -3,7 +3,7 @@ UIWidget
   visible: false
   focusable: true
   size: 260 130
-  background-color: #0A0A1AEE
+  background-color: #12122AE0
   border-width: 1
   border-color: #00B4D860
 
@@ -18,7 +18,7 @@ UIWidget
   // Title label
   Label
     id: privateChatTitle
-    text: 'Chat Privado'
+    !text: 'Chat Privado'
     font: Verdana Bold-11px
     color: #00B4D8
     anchors.top: parent.top
@@ -42,7 +42,7 @@ UIWidget
   // Sub-label
   Label
     id: privateChatLabel
-    text: 'Nombre del jugador:'
+    !text: 'Nombre del jugador:'
     font: verdana-11px-rounded
     color: #FFFFFFBB
     anchors.top: privateChatTitle.bottom
@@ -67,7 +67,7 @@ UIWidget
     margin-right: 14
     shift-navigation: true
     max-length: 40
-    placeholder: 'Escribe el nombre...'
+    placeholder: "Escribe el nombre..."
     placeholder-color: #FFFFFF60
     selection-color: #CAF0F8FF
     selection-background-color: #00B4D840
@@ -78,7 +78,7 @@ UIWidget
   // Open button
   UIButton
     id: privateChatOpenBtn
-    text: 'Abrir Chat'
+    !text: 'Abrir Chat'
     font: Verdana Bold-11px
     color: #0A0A1A
     background-color: #00B4D8
@@ -95,7 +95,7 @@ UIWidget
   // Close button (X)
   UIButton
     id: privateChatCloseBtn
-    text: 'X'
+    !text: 'X'
     font: verdana-11px-rounded
     color: #FFFFFF88
     background-color: alpha
