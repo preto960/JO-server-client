@@ -6,6 +6,15 @@ local customWindow = nil
 local originalToggle = nil
 local isOpen = false
 
+-- Drag state
+local dragInfo = {
+    active = false,
+    widget = nil,
+    overlay = nil,
+    startPos = {x=0, y=0},
+    startMouse = {x=0, y=0}
+}
+
 local skillNames = nil
 local skillLabels = nil
 
@@ -48,10 +57,30 @@ function init()
         if not customWindow:getParent() then
             root:addChild(customWindow)
         end
-        -- Center via anchors (requires parent to be set first)
-        customWindow:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
-        customWindow:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+        -- Restore saved position or center once
+        local savedX = g_settings.getNumber('skillsCustomWindow/x')
+        local savedY = g_settings.getNumber('skillsCustomWindow/y')
+        if savedX and savedY then
+            customWindow:setPos(Point(savedX, savedY))
+        else
+            local rootSize = root:getSize()
+            local winSize = customWindow:getSize()
+            customWindow:setPos(Point(
+                math.floor((rootSize.width - winSize.width) / 2),
+                math.floor((rootSize.height - winSize.height) / 2)
+            ))
+        end
         customWindow:hide()
+
+        -- Make the title bar draggable
+        local titleBar = customWindow:getChildById('titleBar')
+        if titleBar then
+            titleBar.onMousePress = function(widget, mousePos, mouseButton)
+                if mouseButton == MouseLeftButton then
+                    startWindowDrag(customWindow, mousePos)
+                end
+            end
+        end
 
         -- ESC to close
         customWindow.onKeyPress = function(widget, keyCode, keyboardModifiers)
@@ -95,7 +124,80 @@ function init()
     end)
 end
 
+-- Drag functions
+function startWindowDrag(window, mousePos)
+    if dragInfo.active then return end
+    local root = g_ui.getRootWidget()
+    if not root then return end
+
+    -- Create a full-screen transparent overlay to capture all mouse events
+    local overlay = g_ui.createWidget('UIWidget', root)
+    overlay:setSize(root:getSize())
+    overlay:setBackgroundColor('#00000000')
+    overlay:focus()
+
+    local winPos = window:getPosition()
+    local mouseScreen = g_window.getMousePosition()
+
+    dragInfo.active = true
+    dragInfo.widget = window
+    dragInfo.overlay = overlay
+    dragInfo.startPos = {x = winPos.x, y = winPos.y}
+    dragInfo.startMouse = {x = mouseScreen.x, y = mouseScreen.y}
+
+    -- Break any centering anchors so position sticks
+    window:breakAnchors()
+
+    overlay.onMouseMove = function(self, pos, moved)
+        if dragInfo.active then
+            local dx = pos.x - dragInfo.startMouse.x
+            local dy = pos.y - dragInfo.startMouse.y
+            dragInfo.widget:setPos(Point(
+                dragInfo.startPos.x + dx,
+                dragInfo.startPos.y + dy
+            ))
+        end
+    end
+
+    overlay.onMouseRelease = function(self, pos, mouseButton)
+        if mouseButton == MouseLeftButton then
+            stopWindowDrag()
+        end
+    end
+end
+
+function stopWindowDrag()
+    if not dragInfo.active then return end
+    dragInfo.active = false
+
+    -- Save position
+    if dragInfo.widget then
+        local pos = dragInfo.widget:getPosition()
+        g_settings.set(dragInfo.widget:getId() .. '/x', pos.x)
+        g_settings.set(dragInfo.widget:getId() .. '/y', pos.y)
+    end
+
+    -- Remove overlay
+    if dragInfo.overlay then
+        dragInfo.overlay:destroy()
+        dragInfo.overlay = nil
+    end
+    dragInfo.widget = nil
+
+    -- Focus back to window
+    if customWindow and customWindow:isVisible() then
+        customWindow:focus()
+    end
+end
+
 function terminate()
+    -- Save position before destroy
+    if customWindow and customWindow:getParent() then
+        local pos = customWindow:getPosition()
+        g_settings.set('skillsCustomWindow/x', pos.x)
+        g_settings.set('skillsCustomWindow/y', pos.y)
+    end
+
     pcall(function()
         disconnect(g_game, {
             onGameEnd = onGameEnd
@@ -131,6 +233,11 @@ function customToggle()
     local btn = root and root:recursiveGetChildById('skillsButton')
 
     if isOpen then
+        -- Save position on close
+        local pos = customWindow:getPosition()
+        g_settings.set('skillsCustomWindow/x', pos.x)
+        g_settings.set('skillsCustomWindow/y', pos.y)
+
         customWindow:hide()
         isOpen = false
         if btn then btn:setOn(false) end

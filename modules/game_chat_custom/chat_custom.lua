@@ -9,6 +9,14 @@ local savedWidgets = {}
 local originalOnTabChange = nil
 local sidebarButtons = {}
 
+-- Drag state
+local chatDragInfo = {
+    active = false,
+    overlay = nil,
+    startPos = {x=0, y=0},
+    startMouse = {x=0, y=0}
+}
+
 local THEME = {
     tabBg = '#0A0A1ACC',
     tabSelectedBg = '#00B4D860',
@@ -33,10 +41,30 @@ function init()
         if not chatPopup:getParent() then
             root:addChild(chatPopup)
         end
-        -- Center via anchors (requires parent to be set first)
-        chatPopup:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
-        chatPopup:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+        -- Restore saved position or center once
+        local savedX = g_settings.getNumber('chatCustomWindow/x')
+        local savedY = g_settings.getNumber('chatCustomWindow/y')
+        if savedX and savedY then
+            chatPopup:setPos(Point(savedX, savedY))
+        else
+            local rootSize = root:getSize()
+            local winSize = chatPopup:getSize()
+            chatPopup:setPos(Point(
+                math.floor((rootSize.width - winSize.width) / 2),
+                math.floor((rootSize.height - winSize.height) / 2)
+            ))
+        end
         chatPopup:hide()
+
+        -- Make the chat header (top block) draggable
+        local chatHeader = chatPopup:recursiveGetChildById('chatHeader')
+        if chatHeader then
+            chatHeader.onMousePress = function(widget, mousePos, mouseButton)
+                if mouseButton == MouseLeftButton then
+                    startChatDrag(mousePos)
+                end
+            end
+        end
 
         -- ESC to close via onKeyPress (same approach as skills window)
         chatPopup.onKeyPress = function(widget, keyCode, keyboardModifiers)
@@ -71,7 +99,73 @@ function init()
     end)
 end
 
+-- Drag functions for chat
+function startChatDrag(mousePos)
+    if chatDragInfo.active then return end
+    local root = g_ui.getRootWidget()
+    if not root then return end
+
+    local overlay = g_ui.createWidget('UIWidget', root)
+    overlay:setSize(root:getSize())
+    overlay:setBackgroundColor('#00000000')
+    overlay:focus()
+
+    local winPos = chatPopup:getPosition()
+    local mouseScreen = g_window.getMousePosition()
+
+    chatDragInfo.active = true
+    chatDragInfo.overlay = overlay
+    chatDragInfo.startPos = {x = winPos.x, y = winPos.y}
+    chatDragInfo.startMouse = {x = mouseScreen.x, y = mouseScreen.y}
+
+    chatPopup:breakAnchors()
+
+    overlay.onMouseMove = function(self, pos, moved)
+        if chatDragInfo.active then
+            local dx = pos.x - chatDragInfo.startMouse.x
+            local dy = pos.y - chatDragInfo.startMouse.y
+            chatPopup:setPos(Point(
+                chatDragInfo.startPos.x + dx,
+                chatDragInfo.startPos.y + dy
+            ))
+        end
+    end
+
+    overlay.onMouseRelease = function(self, pos, mouseButton)
+        if mouseButton == MouseLeftButton then
+            stopChatDrag()
+        end
+    end
+end
+
+function stopChatDrag()
+    if not chatDragInfo.active then return end
+    chatDragInfo.active = false
+
+    local pos = chatPopup:getPosition()
+    g_settings.set('chatCustomWindow/x', pos.x)
+    g_settings.set('chatCustomWindow/y', pos.y)
+
+    if chatDragInfo.overlay then
+        chatDragInfo.overlay:destroy()
+        chatDragInfo.overlay = nil
+    end
+
+    if chatPopup and chatPopup:isVisible() then
+        chatPopup:focus()
+        local input = chatPopup:recursiveGetChildById('chatInput')
+        if input then input:focus() end
+    end
+end
+
 function terminate()
+    -- Save chat position before destroy
+    if chatPopup and chatPopup:getParent() then
+        local pos = chatPopup:getPosition()
+        g_settings.set('chatCustomWindow/x', pos.x)
+        g_settings.set('chatCustomWindow/y', pos.y)
+    end
+
     local root = g_ui.getRootWidget()
     if root then
         local consolePanel = root:recursiveGetChildById('consolePanel')
@@ -195,6 +289,11 @@ end
 function closeChatPopup()
     if not isOpen then return end
     isOpen = false
+
+    -- Save position on close
+    local pos = chatPopup:getPosition()
+    g_settings.set('chatCustomWindow/x', pos.x)
+    g_settings.set('chatCustomWindow/y', pos.y)
 
     chatPopup:hide()
 
