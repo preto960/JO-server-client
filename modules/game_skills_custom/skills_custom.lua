@@ -58,17 +58,16 @@ function init()
             root:addChild(customWindow)
         end
         -- Restore saved position or center once
-        local savedX = g_settings.getNumber('skillsCustomWindow/x')
-        local savedY = g_settings.getNumber('skillsCustomWindow/y')
-        if savedX and savedY then
-            customWindow:setPos(Point(savedX, savedY))
+        local savedPos = g_settings.getPoint('skillsCustomWindow/position')
+        if savedPos then
+            customWindow:setPosition(savedPos)
         else
             local rootSize = root:getSize()
             local winSize = customWindow:getSize()
-            customWindow:setPos(Point(
+            customWindow:setPosition(topoint(string.format('%d %d',
                 math.floor((rootSize.width - winSize.width) / 2),
                 math.floor((rootSize.height - winSize.height) / 2)
-            ))
+            )))
         end
         customWindow:hide()
 
@@ -152,10 +151,10 @@ function startWindowDrag(window, mousePos)
         if dragInfo.active then
             local dx = pos.x - dragInfo.startMouse.x
             local dy = pos.y - dragInfo.startMouse.y
-            dragInfo.widget:setPos(Point(
+            dragInfo.widget:setPosition(topoint(string.format('%d %d',
                 dragInfo.startPos.x + dx,
                 dragInfo.startPos.y + dy
-            ))
+            )))
         end
     end
 
@@ -173,8 +172,7 @@ function stopWindowDrag()
     -- Save position
     if dragInfo.widget then
         local pos = dragInfo.widget:getPosition()
-        g_settings.set(dragInfo.widget:getId() .. '/x', pos.x)
-        g_settings.set(dragInfo.widget:getId() .. '/y', pos.y)
+        g_settings.set(dragInfo.widget:getId() .. '/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
     end
 
     -- Remove overlay
@@ -194,8 +192,7 @@ function terminate()
     -- Save position before destroy
     if customWindow and customWindow:getParent() then
         local pos = customWindow:getPosition()
-        g_settings.set('skillsCustomWindow/x', pos.x)
-        g_settings.set('skillsCustomWindow/y', pos.y)
+        g_settings.set('skillsCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
     end
 
     pcall(function()
@@ -235,8 +232,7 @@ function customToggle()
     if isOpen then
         -- Save position on close
         local pos = customWindow:getPosition()
-        g_settings.set('skillsCustomWindow/x', pos.x)
-        g_settings.set('skillsCustomWindow/y', pos.y)
+        g_settings.set('skillsCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
 
         customWindow:hide()
         isOpen = false

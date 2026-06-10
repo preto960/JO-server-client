@@ -42,17 +42,16 @@ function init()
             root:addChild(chatPopup)
         end
         -- Restore saved position or center once
-        local savedX = g_settings.getNumber('chatCustomWindow/x')
-        local savedY = g_settings.getNumber('chatCustomWindow/y')
-        if savedX and savedY then
-            chatPopup:setPos(Point(savedX, savedY))
+        local savedPos = g_settings.getPoint('chatCustomWindow/position')
+        if savedPos then
+            chatPopup:setPosition(savedPos)
         else
             local rootSize = root:getSize()
             local winSize = chatPopup:getSize()
-            chatPopup:setPos(Point(
+            chatPopup:setPosition(topoint(string.format('%d %d',
                 math.floor((rootSize.width - winSize.width) / 2),
                 math.floor((rootSize.height - winSize.height) / 2)
-            ))
+            )))
         end
         chatPopup:hide()
 
@@ -124,10 +123,10 @@ function startChatDrag(mousePos)
         if chatDragInfo.active then
             local dx = pos.x - chatDragInfo.startMouse.x
             local dy = pos.y - chatDragInfo.startMouse.y
-            chatPopup:setPos(Point(
+            chatPopup:setPosition(topoint(string.format('%d %d',
                 chatDragInfo.startPos.x + dx,
                 chatDragInfo.startPos.y + dy
-            ))
+            )))
         end
     end
 
@@ -143,8 +142,7 @@ function stopChatDrag()
     chatDragInfo.active = false
 
     local pos = chatPopup:getPosition()
-    g_settings.set('chatCustomWindow/x', pos.x)
-    g_settings.set('chatCustomWindow/y', pos.y)
+    g_settings.set('chatCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
 
     if chatDragInfo.overlay then
         chatDragInfo.overlay:destroy()
@@ -162,9 +160,8 @@ function terminate()
     -- Save chat position before destroy
     if chatPopup and chatPopup:getParent() then
         local pos = chatPopup:getPosition()
-        g_settings.set('chatCustomWindow/x', pos.x)
-        g_settings.set('chatCustomWindow/y', pos.y)
-    end
+        g_settings.set('chatCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
+        end
 
     local root = g_ui.getRootWidget()
     if root then
@@ -292,8 +289,7 @@ function closeChatPopup()
 
     -- Save position on close
     local pos = chatPopup:getPosition()
-    g_settings.set('chatCustomWindow/x', pos.x)
-    g_settings.set('chatCustomWindow/y', pos.y)
+    g_settings.set('chatCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
 
     chatPopup:hide()
 
