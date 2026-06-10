@@ -1,5 +1,6 @@
 local reloadButton = nil
 local reloadLabel = nil
+local raiseEvent = nil
 
 function init()
     addEvent(function()
@@ -8,16 +9,15 @@ function init()
 
         reloadButton = g_ui.createWidget('UIWidget', root)
         reloadButton:setId('devReloadButton')
-        reloadButton:setSize(topoint('90 30'))
+        reloadButton:setHeight(28)
         reloadButton:setBackgroundColor('#0A0A1ACC')
         reloadButton:setBorderWidth(1)
         reloadButton:setBorderColor('#00B4D860')
-
-        local rootSize = root:getSize()
-        reloadButton:setPosition(topoint(string.format('%d %d',
-            rootSize.width - 100,
-            rootSize.height - 40
-        )))
+        -- Anchor to bottom-right corner of screen
+        reloadButton:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+        reloadButton:addAnchor(AnchorRight, 'parent', AnchorRight)
+        reloadButton:setMarginBottom(8)
+        reloadButton:setMarginRight(8)
 
         reloadLabel = g_ui.createWidget('Label', reloadButton)
         reloadLabel:setId('devReloadLabel')
@@ -27,6 +27,8 @@ function init()
         reloadLabel:setBackgroundColor('alpha')
         reloadLabel:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
         reloadLabel:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+        reloadLabel:setPaddingLeft(10)
+        reloadLabel:setPaddingRight(10)
 
         reloadButton.onMouseRelease = function(self, mousePos, mouseButton)
             if mouseButton == MouseLeftButton then
@@ -34,8 +36,17 @@ function init()
             end
         end
 
-        -- Keep button on top
-        reloadButton:raise()
+        -- Keep button always on top every frame
+        raiseEvent = cycleEvent(function()
+            if reloadButton then
+                pcall(function() reloadButton:raise() end)
+            else
+                if raiseEvent then
+                    raiseEvent:cancel()
+                    raiseEvent = nil
+                end
+            end
+        end, 500)
     end)
 end
 
@@ -68,6 +79,10 @@ function doReload()
 end
 
 function terminate()
+    if raiseEvent then
+        raiseEvent:cancel()
+        raiseEvent = nil
+    end
     if reloadButton then
         pcall(function() reloadButton:destroy() end)
         reloadButton = nil
