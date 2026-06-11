@@ -1,11 +1,6 @@
--- equipment_custom.lua - Custom equipment window for JO Server
--- Cyberpunk dark/cyan theme, standalone draggable popup
--- Hooks into game inventory events to display equipped items
-
 local equipWindow = nil
 local isOpen = false
 
--- Slot ID -> widget ID mapping (inventory slot constants -> our slot widget IDs)
 local SLOT_MAP = {
     [InventorySlotHead]   = 'slot_helmet',
     [InventorySlotNeck]   = 'slot_amulet',
@@ -19,7 +14,19 @@ local SLOT_MAP = {
     [InventorySlotAmmo]   = 'slot_tools',
 }
 
--- Drag state
+local SLOT_TOGGLER = {
+    slot_helmet   = 'helmet',
+    slot_amulet   = 'amulet',
+    slot_backpack = 'backpack',
+    slot_armor    = 'armor',
+    slot_shield   = 'shield',
+    slot_sword    = 'sword',
+    slot_legs     = 'legs',
+    slot_boots    = 'boots',
+    slot_ring     = 'ring',
+    slot_tools    = 'tools',
+}
+
 local dragInfo = {
     active = false,
     overlay = nil,
@@ -45,22 +52,23 @@ function init()
             root:addChild(equipWindow)
         end
 
-        -- Restore saved position or place to the right of chat
         local savedPos = g_settings.getPoint('equipmentCustomWindow/position')
         if savedPos then
-            equipWindow:setPosition(savedPos)
+            pcall(function() equipWindow:setPosition(savedPos) end)
         else
-            -- Default position: center-right of screen
-            local rootSize = root:getSize()
-            local winSize = equipWindow:getSize()
-            equipWindow:setPosition(topoint(string.format('%d %d',
-                math.floor(rootSize.width - winSize.width - 20),
-                math.floor((rootSize.height - winSize.height) / 2)
-            )))
+            pcall(function()
+                local rw = root:getWidth()
+                local rh = root:getHeight()
+                local ww = equipWindow:getWidth()
+                local wh = equipWindow:getHeight()
+                if ww > 0 and wh > 0 then
+                    equipWindow:setX(rw - ww - 20)
+                    equipWindow:setY(math.floor((rh - wh) / 2))
+                end
+            end)
         end
         equipWindow:hide()
 
-        -- Make header draggable
         local header = equipWindow:recursiveGetChildById('equipHeader')
         if header then
             header.onMousePress = function(widget, mousePos, mouseButton)
@@ -70,7 +78,6 @@ function init()
             end
         end
 
-        -- Close button
         local closeBtn = equipWindow:recursiveGetChildById('equipCloseBtn')
         if closeBtn then
             closeBtn.onMouseRelease = function(self, mousePos, mouseButton)
@@ -80,7 +87,6 @@ function init()
             end
         end
 
-        -- ESC to close
         equipWindow.onKeyPress = function(widget, keyCode, keyboardModifiers)
             if keyboardModifiers == KeyboardNoModifier and keyCode == KeyEscape then
                 if isOpen then
@@ -90,33 +96,11 @@ function init()
             end
         end
 
-        -- Slot hover effect: highlight border on hover
-        for slotConst, widgetId in pairs(SLOT_MAP) do
-            local slotWidget = equipWindow:recursiveGetChildById(widgetId)
-            if slotWidget then
-                slotWidget.onHoverChange = function(self, hovered)
-                    if hovered then
-                        pcall(function()
-                            self:setBorderColor('#00B4D8')
-                            self:setBorderWidth(2)
-                        end)
-                    else
-                        pcall(function()
-                            self:setBorderColor('#00B4D830')
-                            self:setBorderWidth(1)
-                        end)
-                    end
-                end
-            end
-        end
-
-        -- Connect to game start/end events IMMEDIATELY (not deferred)
         connect(g_game, {
             onGameStart = onGameStart,
             onGameEnd = onGameEnd
         })
 
-        -- If already online (e.g. hot-reload), fire onGameStart manually
         if g_game.isOnline() then
             g_logger.warning("[Equipment] Already online, calling onGameStart directly")
             onGameStart()
@@ -132,7 +116,6 @@ function terminate()
         onGameEnd = onGameEnd
     })
 
-    -- Save position
     if equipWindow and equipWindow:getParent() then
         local pos = equipWindow:getPosition()
         g_settings.set('equipmentCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
@@ -144,7 +127,6 @@ function terminate()
     end
 end
 
--- Drag functions
 function startDrag(mousePos)
     if dragInfo.active then return end
     local root = g_ui.getRootWidget()
@@ -169,10 +151,10 @@ function startDrag(mousePos)
         if dragInfo.active then
             local dx = pos.x - dragInfo.startMouse.x
             local dy = pos.y - dragInfo.startMouse.y
-            equipWindow:setPosition(topoint(string.format('%d %d',
-                dragInfo.startPos.x + dx,
-                dragInfo.startPos.y + dy
-            )))
+            pcall(function()
+                equipWindow:setX(dragInfo.startPos.x + dx)
+                equipWindow:setY(dragInfo.startPos.y + dy)
+            end)
         end
     end
 
@@ -200,7 +182,6 @@ function stopDrag()
     end
 end
 
--- Open / Close
 function openEquipment()
     if not equipWindow then return end
     if not g_game.isOnline() then return end
@@ -210,7 +191,6 @@ function openEquipment()
     equipWindow:focus()
     isOpen = true
 
-    -- Refresh all slots
     refreshAllSlots()
 end
 
@@ -218,7 +198,6 @@ function closeEquipment()
     if not isOpen then return end
     isOpen = false
 
-    -- Save position
     local pos = equipWindow:getPosition()
     g_settings.set('equipmentCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
 
@@ -233,9 +212,7 @@ function toggleEquipment()
     end
 end
 
--- Game events
 function onGameStart()
-    -- Register for inventory changes
     pcall(function()
         local player = g_game.getLocalPlayer()
         if player then
@@ -247,7 +224,6 @@ function onGameStart()
         end
     end)
 
-    -- Add sidebar button to open equipment window (3000ms to ensure sidebar is ready)
     scheduleEvent(function()
         pcall(function()
             modules.client_topmenu.addRightGameToggleButton(
@@ -261,7 +237,6 @@ function onGameStart()
         end)
     end, 3000)
 
-    -- Hotkey: Ctrl+E to toggle equipment
     g_keyboard.bindKeyDown('Ctrl+E', function()
         if g_game.isOnline() then
             toggleEquipment()
@@ -283,7 +258,6 @@ function onGameEnd()
     end)
 end
 
--- Inventory change handler
 function onInventoryChange(player, slot, item, oldItem)
     local widgetId = SLOT_MAP[slot]
     if not widgetId or not equipWindow then return end
@@ -291,35 +265,20 @@ function onInventoryChange(player, slot, item, oldItem)
     local slotWidget = equipWindow:recursiveGetChildById(widgetId)
     if not slotWidget then return end
 
-    local itemWidget = slotWidget:recursiveGetChildById('item')
-    local labelWidget = slotWidget:recursiveGetChildById('slotLabel')
-
-    if itemWidget then
-        pcall(function()
+    pcall(function()
+        local itemWidget = slotWidget:getChildById('item')
+        if itemWidget then
             itemWidget:setItem(item)
-            itemWidget:setWidth(34)
-            itemWidget:setHeight(34)
-        end)
-    end
+        end
 
-    -- Hide label when item is equipped, show when empty
-    if labelWidget then
-        pcall(function()
-            labelWidget:setVisible(not item)
-        end)
-    end
-
-    -- Highlight slot briefly when item changes
-    if item then
-        pcall(function()
-            slotWidget:setBackgroundColor('#00B4D820')
-            scheduleEvent(function()
-                pcall(function()
-                    slotWidget:setBackgroundColor('#0A0A1AEE')
-                end)
-            end, 300)
-        end)
-    end
+        local togglerName = SLOT_TOGGLER[widgetId]
+        if togglerName then
+            local toggler = slotWidget:getChildById(togglerName)
+            if toggler then
+                toggler:setEnabled(not item)
+            end
+        end
+    end)
 end
 
 function onSoulChange(localPlayer, soul)
@@ -350,11 +309,9 @@ function refreshAllSlots()
     local player = g_game.getLocalPlayer()
     if not player or not equipWindow then return end
 
-    -- Refresh soul and capacity
     onSoulChange(player, player:getSoul())
     onFreeCapacityChange(player, player:getFreeCapacity())
 
-    -- Refresh all equipment slots
     for slotConst, widgetId in pairs(SLOT_MAP) do
         local item = player:getInventoryItem(slotConst)
         onInventoryChange(player, slotConst, item, nil)

@@ -2,42 +2,33 @@ UIWidget
   id: equipmentWindow
   visible: false
   focusable: true
-  size: 230 290
-  background-color: #0A0A1ABB
+  size: 160 260
+  background-color: #00000099
   border-width: 1
-  border-color: #00B4D860
-  padding: 10
+  border-color: #00B4D840
+  padding: 14 14 8 14
 
   UIWidget
     id: equipHeader
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 22
-    margin-bottom: 6
-
-    UIWidget
-      anchors.top: parent.top
-      anchors.left: parent.left
-      anchors.right: parent.right
-      height: 2
-      background-color: #00B4D8
+    height: 18
+    margin-bottom: 8
 
     Label
       id: equipTitle
-      !text: 'Equipment'
-      anchors.left: parent.left
-      anchors.verticalCenter: parent.verticalCenter
-      margin-left: 4
+      !text: 'EQUIPMENT'
       font: verdana-11px-rounded
       color: #00B4D8
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
 
     UIWidget
       id: equipCloseBtn
       anchors.right: parent.right
       anchors.verticalCenter: parent.verticalCenter
       size: 18 18
-      margin-right: 2
 
       Label
         !text: 'X'
@@ -47,324 +38,121 @@ UIWidget
         color: #FFFFFF60
 
   UIWidget
+    height: 1
+    background-color: #00B4D8
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: equipHeader.bottom
+
+  UIWidget
     id: equipSlotsArea
     anchors.top: equipHeader.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 200
+    margin-top: 8
 
-    UIWidget
+    MainInventoryItem
       id: slot_helmet
-      size: 42 42
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.top: parent.top
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Head'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_amulet
-      size: 42 42
       anchors.top: slot_helmet.bottom
       anchors.left: parent.left
-      margin-left: 20
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Neck'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_armor
-      size: 42 42
       anchors.top: slot_helmet.bottom
       anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Body'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_backpack
-      size: 42 42
       anchors.top: slot_helmet.bottom
       anchors.right: parent.right
-      margin-right: 20
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Back'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_sword
-      size: 42 42
       anchors.top: slot_amulet.bottom
       anchors.left: slot_amulet.left
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Weapon'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_legs
-      size: 42 42
       anchors.top: slot_armor.bottom
       anchors.left: slot_armor.left
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Legs'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_shield
-      size: 42 42
       anchors.top: slot_backpack.bottom
       anchors.left: slot_backpack.left
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Shield'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_ring
-      size: 42 42
       anchors.top: slot_sword.bottom
       anchors.left: slot_sword.left
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Ring'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_boots
-      size: 42 42
       anchors.top: slot_legs.bottom
       anchors.left: slot_legs.left
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Feet'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
-
-    UIWidget
+    MainInventoryItem
       id: slot_tools
-      size: 42 42
       anchors.top: slot_shield.bottom
       anchors.left: slot_shield.left
-      margin-top: 3
-      background-color: #0A0A1AEE
-      border-width: 1
-      border-color: #00B4D830
+      margin-top: 4
 
-      UIItem
-        id: item
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        size: 34 34
-
-      Label
-        id: slotLabel
-        !text: 'Ammo'
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        margin-bottom: 1
-        font: verdana-8px-rounded
-        color: #00B4D850
-        text-align: center
-        visible: true
+  UIWidget
+    height: 1
+    background-color: #00B4D830
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: slot_boots.bottom
+    margin-top: 6
 
   UIWidget
     id: equipStatsBar
-    anchors.top: equipSlotsArea.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-top: 6
-    height: 26
-    background-color: #0A0A1A99
-    border-width: 1
-    border-color: #00B4D820
-    padding: 2 6
+    margin-top: 4
 
     Label
       !text: 'Soul'
+      font: verdana-9px-rounded
+      color: #FFFFFF99
       anchors.left: parent.left
       anchors.verticalCenter: parent.verticalCenter
-      font: verdana-9px-rounded
-      color: #00B4D870
 
     Label
       id: soulValue
       !text: '0'
+      font: verdana-9px-rounded
+      color: #00B4D8
       anchors.left: prev.right
       anchors.verticalCenter: parent.verticalCenter
       margin-left: 4
-      font: verdana-9px-rounded
-      color: #00B4D8
 
     Label
       !text: 'Cap'
+      font: verdana-9px-rounded
+      color: #FFFFFF99
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      font: verdana-9px-rounded
-      color: #00B4D870
 
     Label
       id: capValue
       !text: '0'
+      font: verdana-9px-rounded
+      color: #00B4D8
       anchors.left: prev.right
       anchors.verticalCenter: parent.verticalCenter
       margin-left: 4
-      font: verdana-9px-rounded
-      color: #00B4D8
