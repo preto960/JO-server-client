@@ -57,7 +57,7 @@ UIWidget
 
     UIWidget
       id: slotRef
-      size: 50 50
+      size: 50 25
       anchors.top: parent.top
       anchors.left: parent.left
       visible: false
