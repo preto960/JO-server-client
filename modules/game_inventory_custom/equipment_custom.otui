@@ -2,7 +2,7 @@ UIWidget
   id: equipmentWindow
   visible: false
   focusable: true
-  size: 210 320
+  size: 200 280
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840
@@ -57,72 +57,72 @@ UIWidget
 
     MainInventoryItem
       id: slot_helmet
-      size: 42 42
+      size: 50 50
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.top: parent.top
 
     MainInventoryItem
       id: slot_amulet
-      size: 42 42
+      size: 50 50
       anchors.top: slot_helmet.bottom
       anchors.left: parent.left
-      margin-top: 6
+      margin-top: 0
 
     MainInventoryItem
       id: slot_armor
-      size: 42 42
+      size: 50 50
       anchors.top: slot_helmet.bottom
       anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 6
+      margin-top: 0
 
     MainInventoryItem
       id: slot_backpack
-      size: 42 42
+      size: 50 50
       anchors.top: slot_helmet.bottom
       anchors.right: parent.right
-      margin-top: 6
+      margin-top: 0
 
     MainInventoryItem
       id: slot_sword
-      size: 42 42
+      size: 50 50
       anchors.top: slot_amulet.bottom
       anchors.left: slot_amulet.left
-      margin-top: 6
+      margin-top: 0
 
     MainInventoryItem
       id: slot_legs
-      size: 42 42
+      size: 50 50
       anchors.top: slot_armor.bottom
       anchors.left: slot_armor.left
-      margin-top: 6
+      margin-top: 0
 
     MainInventoryItem
       id: slot_shield
-      size: 42 42
+      size: 50 50
       anchors.top: slot_backpack.bottom
       anchors.left: slot_backpack.left
-      margin-top: 6
+      margin-top: 0
 
     MainInventoryItem
       id: slot_ring
-      size: 42 42
+      size: 50 50
       anchors.top: slot_sword.bottom
       anchors.left: slot_sword.left
-      margin-top: 6
+      margin-top: 0
 
     MainInventoryItem
       id: slot_boots
-      size: 42 42
+      size: 50 50
       anchors.top: slot_legs.bottom
       anchors.left: slot_legs.left
-      margin-top: 6
+      margin-top: 0
 
     MainInventoryItem
       id: slot_tools
-      size: 42 42
+      size: 50 50
       anchors.top: slot_shield.bottom
       anchors.left: slot_shield.left
-      margin-top: 6
+      margin-top: 0
 
     UIWidget
       height: 1
@@ -130,7 +130,7 @@ UIWidget
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.top: slot_boots.bottom
-      margin-top: 6
+      margin-top: 0
 
     UIWidget
       id: equipStatsBar
