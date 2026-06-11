@@ -194,11 +194,23 @@ function openEquipment()
     equipWindow:raise()
     equipWindow:focus()
     isOpen = true
+
+    pcall(function()
+        local savedPos = g_settings.getPoint('equipmentCustomWindow/position')
+        if savedPos and savedPos.x > 0 and savedPos.y > 0 then
+            equipWindow:setX(savedPos.x)
+            equipWindow:setY(savedPos.y)
+        end
+    end)
 end
 
 function closeEquipment()
     if not isOpen then return end
     isOpen = false
+
+    if dragInfo.active then
+        stopWindowDrag()
+    end
 
     local pos = equipWindow:getPosition()
     g_settings.set('equipmentCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))

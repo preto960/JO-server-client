@@ -58,12 +58,14 @@ UIWidget
     MainInventoryItem
       id: slot_helmet
       size: 50 50
+      &slotPosition: {x = 65535, y = 1, z = 0}
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.top: parent.top
 
     MainInventoryItem
       id: slot_amulet
       size: 50 50
+      &slotPosition: {x = 65535, y = 2, z = 0}
       anchors.top: slot_helmet.bottom
       anchors.left: parent.left
       margin-top: 0
@@ -71,6 +73,7 @@ UIWidget
     MainInventoryItem
       id: slot_armor
       size: 50 50
+      &slotPosition: {x = 65535, y = 4, z = 0}
       anchors.top: slot_helmet.bottom
       anchors.horizontalCenter: parent.horizontalCenter
       margin-top: 0
@@ -78,6 +81,7 @@ UIWidget
     MainInventoryItem
       id: slot_backpack
       size: 50 50
+      &slotPosition: {x = 65535, y = 3, z = 0}
       anchors.top: slot_helmet.bottom
       anchors.right: parent.right
       margin-top: 0
@@ -85,6 +89,7 @@ UIWidget
     MainInventoryItem
       id: slot_sword
       size: 50 50
+      &slotPosition: {x = 65535, y = 6, z = 0}
       anchors.top: slot_amulet.bottom
       anchors.left: slot_amulet.left
       margin-top: 0
@@ -92,6 +97,7 @@ UIWidget
     MainInventoryItem
       id: slot_legs
       size: 50 50
+      &slotPosition: {x = 65535, y = 7, z = 0}
       anchors.top: slot_armor.bottom
       anchors.left: slot_armor.left
       margin-top: 0
@@ -99,6 +105,7 @@ UIWidget
     MainInventoryItem
       id: slot_shield
       size: 50 50
+      &slotPosition: {x = 65535, y = 5, z = 0}
       anchors.top: slot_backpack.bottom
       anchors.left: slot_backpack.left
       margin-top: 0
@@ -106,6 +113,7 @@ UIWidget
     MainInventoryItem
       id: slot_ring
       size: 50 50
+      &slotPosition: {x = 65535, y = 9, z = 0}
       anchors.top: slot_sword.bottom
       anchors.left: slot_sword.left
       margin-top: 0
@@ -113,6 +121,7 @@ UIWidget
     MainInventoryItem
       id: slot_boots
       size: 50 50
+      &slotPosition: {x = 65535, y = 8, z = 0}
       anchors.top: slot_legs.bottom
       anchors.left: slot_legs.left
       margin-top: 0
@@ -120,6 +129,7 @@ UIWidget
     MainInventoryItem
       id: slot_tools
       size: 50 50
+      &slotPosition: {x = 65535, y = 10, z = 0}
       anchors.top: slot_shield.bottom
       anchors.left: slot_shield.left
       margin-top: 0
