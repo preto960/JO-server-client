@@ -2,7 +2,7 @@ UIWidget
   id: equipmentWindow
   visible: false
   focusable: true
-  size: 200 280
+  size: 200 320
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840
@@ -56,35 +56,27 @@ UIWidget
     margin-top: 10
 
     MainInventoryItem
-      id: slot_helmet
-      size: 50 50
-      &slotPosition: {x = 65535, y = 1, z = 0}
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: parent.top
-
-    MainInventoryItem
       id: slot_amulet
       size: 50 50
       &slotPosition: {x = 65535, y = 2, z = 0}
-      anchors.top: slot_helmet.bottom
+      anchors.top: parent.top
       anchors.left: parent.left
-      margin-top: 0
 
     MainInventoryItem
-      id: slot_armor
+      id: slot_helmet
       size: 50 50
-      &slotPosition: {x = 65535, y = 4, z = 0}
-      anchors.top: slot_helmet.bottom
-      anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 0
+      &slotPosition: {x = 65535, y = 1, z = 0}
+      anchors.top: slot_amulet.top
+      anchors.left: slot_amulet.right
+      margin-left: 5
 
     MainInventoryItem
       id: slot_backpack
       size: 50 50
       &slotPosition: {x = 65535, y = 3, z = 0}
-      anchors.top: slot_helmet.bottom
-      anchors.right: parent.right
-      margin-top: 0
+      anchors.top: slot_amulet.top
+      anchors.left: slot_helmet.right
+      margin-left: 5
 
     MainInventoryItem
       id: slot_sword
@@ -92,15 +84,39 @@ UIWidget
       &slotPosition: {x = 65535, y = 6, z = 0}
       anchors.top: slot_amulet.bottom
       anchors.left: slot_amulet.left
-      margin-top: 0
+      margin-top: 5
+
+    MainInventoryItem
+      id: slot_ring
+      size: 50 50
+      &slotPosition: {x = 65535, y = 9, z = 0}
+      anchors.top: slot_sword.bottom
+      anchors.left: slot_amulet.left
+      margin-top: 5
+
+    MainInventoryItem
+      id: slot_armor
+      size: 50 50
+      &slotPosition: {x = 65535, y = 4, z = 0}
+      anchors.top: slot_helmet.bottom
+      anchors.left: slot_helmet.left
+      margin-top: 5
 
     MainInventoryItem
       id: slot_legs
       size: 50 50
       &slotPosition: {x = 65535, y = 7, z = 0}
       anchors.top: slot_armor.bottom
-      anchors.left: slot_armor.left
-      margin-top: 0
+      anchors.left: slot_helmet.left
+      margin-top: 5
+
+    MainInventoryItem
+      id: slot_boots
+      size: 50 50
+      &slotPosition: {x = 65535, y = 8, z = 0}
+      anchors.top: slot_legs.bottom
+      anchors.left: slot_helmet.left
+      margin-top: 5
 
     MainInventoryItem
       id: slot_shield
@@ -108,31 +124,15 @@ UIWidget
       &slotPosition: {x = 65535, y = 5, z = 0}
       anchors.top: slot_backpack.bottom
       anchors.left: slot_backpack.left
-      margin-top: 0
-
-    MainInventoryItem
-      id: slot_ring
-      size: 50 50
-      &slotPosition: {x = 65535, y = 9, z = 0}
-      anchors.top: slot_sword.bottom
-      anchors.left: slot_sword.left
-      margin-top: 0
-
-    MainInventoryItem
-      id: slot_boots
-      size: 50 50
-      &slotPosition: {x = 65535, y = 8, z = 0}
-      anchors.top: slot_legs.bottom
-      anchors.left: slot_legs.left
-      margin-top: 0
+      margin-top: 5
 
     MainInventoryItem
       id: slot_tools
       size: 50 50
       &slotPosition: {x = 65535, y = 10, z = 0}
       anchors.top: slot_shield.bottom
-      anchors.left: slot_shield.left
-      margin-top: 0
+      anchors.left: slot_backpack.left
+      margin-top: 5
 
     UIWidget
       height: 1
@@ -140,7 +140,7 @@ UIWidget
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.top: slot_boots.bottom
-      margin-top: 0
+      margin-top: 8
 
     UIWidget
       id: equipStatsBar
@@ -148,7 +148,7 @@ UIWidget
       anchors.right: parent.right
       anchors.top: slot_boots.bottom
       anchors.bottom: parent.bottom
-      margin-top: 10
+      margin-top: 12
 
       Label
         !text: 'Soul'
