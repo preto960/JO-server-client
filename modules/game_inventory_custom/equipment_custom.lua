@@ -54,6 +54,28 @@ function init()
             root:addChild(equipWindow)
         end
 
+        local slotIds = {'slot_helmet', 'slot_amulet', 'slot_armor', 'slot_backpack', 'slot_sword', 'slot_legs', 'slot_shield', 'slot_ring', 'slot_boots', 'slot_tools'}
+        for _, sid in ipairs(slotIds) do
+            local slot = equipWindow:recursiveGetChildById(sid)
+            if slot then
+                local rb = g_ui.createWidget('UIWidget', slot)
+                rb:setWidth(1)
+                rb:setBackgroundColor('#00B4D860')
+                rb:setPhantom(true)
+                rb:addAnchor(AnchorRight, 'parent', AnchorRight)
+                rb:addAnchor(AnchorTop, 'parent', AnchorTop)
+                rb:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+
+                local bb = g_ui.createWidget('UIWidget', slot)
+                bb:setHeight(1)
+                bb:setBackgroundColor('#00B4D860')
+                bb:setPhantom(true)
+                bb:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+                bb:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                bb:addAnchor(AnchorRight, 'parent', AnchorRight)
+            end
+        end
+
         local savedPos = g_settings.getPoint('equipmentCustomWindow/position')
         if savedPos then
             pcall(function() equipWindow:setPosition(savedPos) end)
