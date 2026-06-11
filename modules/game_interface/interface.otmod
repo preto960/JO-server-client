@@ -28,6 +28,7 @@ Module
     - game_containers
     - game_viplist
     - game_battle
+    - game_battle_custom
     - game_npctrade
     - game_textwindow
     - game_playertrade

@@ -1,0 +1,8 @@
+Module
+  name: game_battle_custom
+  description: Custom battle list window skin for JO Server
+  author: JO Server
+  sandboxed: true
+  scripts: [ battle_custom ]
+  @onLoad: init()
+  @onUnload: terminate()
