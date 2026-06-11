@@ -181,11 +181,9 @@ local function loadModules()
     local SAFE_RELOAD_MODULES = {
         'game_chat_custom',
         'game_inventory_custom',
-        'skills_custom',
         'game_healthcircle',
         'game_actionbar',
         'game_notifications',
-        'debug_info',
     }
     local SKIP_RELOAD_MODULES = {
         'game_entergame_custom', 'client_bottommenu', 'client_topmenu',
@@ -198,13 +196,23 @@ local function loadModules()
         local reloaded = 0
         for _, name in ipairs(SAFE_RELOAD_MODULES) do
             local mod = g_modules.getModule(name)
-            if mod and mod:isLoaded() then
+            if not mod then
+                g_logger.warning("[DevTools] Skipped (not found): " .. name)
+            elseif not mod:isLoaded() then
+                g_logger.warning("[DevTools] Skipped (not loaded): " .. name)
+            else
                 local canReload = false
                 pcall(function() canReload = mod:canReload() end)
                 if canReload then
-                    pcall(function() mod:reload() end)
-                    reloaded = reloaded + 1
-                    g_logger.warning("[DevTools] Reloaded: " .. name)
+                    local ok, err = pcall(function() mod:reload() end)
+                    if ok then
+                        reloaded = reloaded + 1
+                        g_logger.warning("[DevTools] Reloaded: " .. name)
+                    else
+                        g_logger.warning("[DevTools] Failed to reload: " .. name .. " - " .. tostring(err))
+                    end
+                else
+                    g_logger.warning("[DevTools] Skipped (canReload=false): " .. name)
                 end
             end
         end

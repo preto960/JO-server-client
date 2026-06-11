@@ -31,7 +31,12 @@ function init()
     local ok = pcall(function()
         equipWindow = g_ui.loadUI('equipment_custom')
     end)
-    if not ok or not equipWindow then return end
+    if not ok or not equipWindow then
+        g_logger.warning("[Equipment] Failed to load equipment_custom.otui")
+        return
+    end
+
+    g_logger.warning("[Equipment] Module loaded, setting up UI...")
 
     addEvent(function()
         local root = g_ui.getRootWidget()
@@ -105,23 +110,27 @@ function init()
             end
         end
 
-        -- Connect to inventory events
-        pcall(function()
-            connect(g_game, {
-                onGameStart = onGameStart,
-                onGameEnd = onGameEnd
-            })
-        end)
+        -- Connect to game start/end events IMMEDIATELY (not deferred)
+        connect(g_game, {
+            onGameStart = onGameStart,
+            onGameEnd = onGameEnd
+        })
+
+        -- If already online (e.g. hot-reload), fire onGameStart manually
+        if g_game.isOnline() then
+            g_logger.warning("[Equipment] Already online, calling onGameStart directly")
+            onGameStart()
+        else
+            g_logger.warning("[Equipment] Waiting for game to start...")
+        end
     end)
 end
 
 function terminate()
-    pcall(function()
-        disconnect(g_game, {
-            onGameStart = onGameStart,
-            onGameEnd = onGameEnd
-        })
-    end)
+    disconnect(g_game, {
+        onGameStart = onGameStart,
+        onGameEnd = onGameEnd
+    })
 
     -- Save position
     if equipWindow and equipWindow:getParent() then
@@ -238,7 +247,7 @@ function onGameStart()
         end
     end)
 
-    -- Add sidebar button to open equipment window
+    -- Add sidebar button to open equipment window (3000ms to ensure sidebar is ready)
     scheduleEvent(function()
         pcall(function()
             modules.client_topmenu.addRightGameToggleButton(
@@ -248,8 +257,9 @@ function onGameStart()
                 toggleEquipment,
                 false
             )
+            g_logger.warning("[Equipment] Sidebar button added")
         end)
-    end, 1000)
+    end, 3000)
 
     -- Hotkey: Ctrl+E to toggle equipment
     g_keyboard.bindKeyDown('Ctrl+E', function()
