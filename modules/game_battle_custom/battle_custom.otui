@@ -6,8 +6,6 @@ UIWidget
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840
-  layout:
-    type: anchorLayout
   @onEscape: modules.game_battle_custom.closeBattle()
 
   UIWidget
