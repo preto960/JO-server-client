@@ -47,108 +47,17 @@ UIWidget
         color: #00B4D8
 
   UIWidget
-    id: filterPanel
-    anchors.top: prev.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    height: 46
-    margin: 8
-    margin-top: 6
-    margin-bottom: 0
-    layout:
-      type: grid
-      flow: true
-      cell-spacing: 2
-      num-columns: 6
-      cell-size: 20 20
-      fit-children: false
-
-    BattlePlayers
-      id: hidePlayers
-      !tooltip: tr('Hide players')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleKnights
-      id: hideKnights
-      !tooltip: tr('Hide knights')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattlePaladins
-      id: hidePaladins
-      !tooltip: tr('Hide paladins')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleDruids
-      id: hideDruids
-      !tooltip: tr('Hide druids')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleSorcerers
-      id: hideSorcerers
-      !tooltip: tr('Hide sorcerers')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleMonks
-      id: hideMonks
-      !tooltip: tr('Hide monks')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleSummons
-      id: hideSummons
-      !tooltip: tr('Hide summons')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleNPCs
-      id: hideNPCs
-      !tooltip: tr('Hide Npcs')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleMonsters
-      id: hideMonsters
-      !tooltip: tr('Hide monsters')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleSkulls
-      id: hideSkulls
-      !tooltip: tr('Hide non-skull players')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleParty
-      id: hideParty
-      !tooltip: tr('Hide party members')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-    BattleMembersOwnGuild
-      id: hideMembersOwnGuild
-      !tooltip: tr('Hide own guild members')
-      @onClick: modules.game_battle_custom.onFilterButtonClick(self)
-
-  UIWidget
-    height: 1
-    background-color: #00B4D830
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: filterPanel.bottom
-    margin-left: 8
-    margin-right: 8
-    margin-top: 4
-
-  UIWidget
     id: contentsPanel
-    anchors.top: prev.bottom
+    anchors.top: titleBar.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin: 8
-    margin-top: 6
-    layout:
-      type: verticalBox
-      fit-children: true
-    pixels-scroll: true
+    margin-top: 4
+    layout: verticalBox
+    fit-children: true
 
     Panel
       id: battlePanel
-      width: 100%
-      layout:
-        type: verticalBox
-        fit-children: true
+      layout: verticalBox
+      fit-children: true
