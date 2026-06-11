@@ -52,6 +52,8 @@ tfs lua (new) : function Player.sendWorldTime(self, time)
 Canary: void ProtocolGame::sendTibiaTime(int32_t time)
  ]]
 
+    if not mapController.ui or not mapController.ui.rosePanel then return end
+
     currentDayTime = {
         h = hour % 24,
         m = minute

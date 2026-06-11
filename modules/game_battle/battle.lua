@@ -52,7 +52,7 @@ function BattleListManager:saveInstancesState()
             local windowSize = instance.window and instance.window:getSize()
             local isLocked = false
             local isMinimized = false
-            if instance.window then
+            if instance.window and not instance.window:isDestroyed() then
                 isLocked = instance.window:getSettings('locked') or false
                 local lockButton = instance.window:getChildById('lockButton')
                 if lockButton then
@@ -489,7 +489,7 @@ function BattleListInstance:saveHideButtonStates()
 end
 
 function BattleListInstance:saveLockState()
-    if self.window then
+    if self.window and not self.window:isDestroyed() then
         local isLocked = self.window:getSettings('locked') or false
         local lockButton = self.window:getChildById('lockButton')
         if lockButton then
@@ -2563,6 +2563,7 @@ function toggle() -- Close/Open the battle window or Pressing Ctrl + B
 end
 
 function terminate() -- Terminating the Module (unload)
+    BattleListManager:stopPeriodicSave()
     -- Save battle list instances state before destroying
     BattleListManager:saveInstancesState()
     
