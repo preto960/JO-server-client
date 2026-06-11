@@ -55,18 +55,27 @@ UIWidget
     margin: 16
     margin-top: 10
 
+    UIWidget
+      id: slotRef
+      size: 50 50
+      anchors.top: parent.top
+      anchors.left: parent.left
+      visible: false
+      phantom: true
+
     MainInventoryItem
       id: slot_amulet
       size: 50 50
       &slotPosition: {x = 65535, y = 2, z = 0}
-      anchors.top: parent.top
-      anchors.left: parent.left
+      anchors.top: slotRef.bottom
+      anchors.left: slotRef.left
+      margin-top: 5
 
     MainInventoryItem
       id: slot_helmet
       size: 50 50
       &slotPosition: {x = 65535, y = 1, z = 0}
-      anchors.top: slot_amulet.top
+      anchors.top: slotRef.top
       anchors.left: slot_amulet.right
       margin-left: 5
 
