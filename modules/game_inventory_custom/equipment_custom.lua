@@ -29,6 +29,7 @@ local SLOT_TOGGLER = {
 
 local dragInfo = {
     active = false,
+    widget = nil,
     overlay = nil,
     startPos = {x=0, y=0},
     startMouse = {x=0, y=0}
@@ -43,11 +44,12 @@ function init()
         return
     end
 
-    g_logger.warning("[Equipment] Module loaded, setting up UI...")
+    g_logger.warning("[Equipment] Module loaded")
 
     addEvent(function()
         local root = g_ui.getRootWidget()
         if not root then return end
+
         if not equipWindow:getParent() then
             root:addChild(equipWindow)
         end
@@ -69,20 +71,11 @@ function init()
         end
         equipWindow:hide()
 
-        local header = equipWindow:recursiveGetChildById('equipHeader')
-        if header then
-            header.onMousePress = function(widget, mousePos, mouseButton)
+        local titleBar = equipWindow:getChildById('titleBar')
+        if titleBar then
+            titleBar.onMousePress = function(widget, mousePos, mouseButton)
                 if mouseButton == MouseLeftButton then
-                    startDrag(mousePos)
-                end
-            end
-        end
-
-        local closeBtn = equipWindow:recursiveGetChildById('equipCloseBtn')
-        if closeBtn then
-            closeBtn.onMouseRelease = function(self, mousePos, mouseButton)
-                if mouseButton == MouseLeftButton then
-                    addEvent(closeEquipment)
+                    startWindowDrag(equipWindow, mousePos)
                 end
             end
         end
@@ -111,23 +104,24 @@ function init()
 end
 
 function terminate()
-    disconnect(g_game, {
-        onGameStart = onGameStart,
-        onGameEnd = onGameEnd
-    })
-
     if equipWindow and equipWindow:getParent() then
         local pos = equipWindow:getPosition()
         g_settings.set('equipmentCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
     end
 
+    disconnect(g_game, {
+        onGameStart = onGameStart,
+        onGameEnd = onGameEnd
+    })
+
     if equipWindow then
         equipWindow:destroy()
         equipWindow = nil
     end
+    isOpen = false
 end
 
-function startDrag(mousePos)
+function startWindowDrag(window, mousePos)
     if dragInfo.active then return end
     local root = g_ui.getRootWidget()
     if not root then return end
@@ -137,45 +131,49 @@ function startDrag(mousePos)
     overlay:setBackgroundColor('#00000000')
     overlay:focus()
 
-    local winPos = equipWindow:getPosition()
+    local winPos = window:getPosition()
     local mouseScreen = g_window.getMousePosition()
 
     dragInfo.active = true
+    dragInfo.widget = window
     dragInfo.overlay = overlay
     dragInfo.startPos = {x = winPos.x, y = winPos.y}
     dragInfo.startMouse = {x = mouseScreen.x, y = mouseScreen.y}
 
-    equipWindow:breakAnchors()
+    window:breakAnchors()
 
     overlay.onMouseMove = function(self, pos, moved)
         if dragInfo.active then
             local dx = pos.x - dragInfo.startMouse.x
             local dy = pos.y - dragInfo.startMouse.y
             pcall(function()
-                equipWindow:setX(dragInfo.startPos.x + dx)
-                equipWindow:setY(dragInfo.startPos.y + dy)
+                dragInfo.widget:setX(dragInfo.startPos.x + dx)
+                dragInfo.widget:setY(dragInfo.startPos.y + dy)
             end)
         end
     end
 
     overlay.onMouseRelease = function(self, pos, mouseButton)
         if mouseButton == MouseLeftButton then
-            stopDrag()
+            stopWindowDrag()
         end
     end
 end
 
-function stopDrag()
+function stopWindowDrag()
     if not dragInfo.active then return end
     dragInfo.active = false
 
-    local pos = equipWindow:getPosition()
-    g_settings.set('equipmentCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
+    if dragInfo.widget then
+        local pos = dragInfo.widget:getPosition()
+        g_settings.set('equipmentCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
+    end
 
     if dragInfo.overlay then
         dragInfo.overlay:destroy()
         dragInfo.overlay = nil
     end
+    dragInfo.widget = nil
 
     if equipWindow and equipWindow:isVisible() then
         equipWindow:focus()
@@ -186,12 +184,16 @@ function openEquipment()
     if not equipWindow then return end
     if not g_game.isOnline() then return end
 
+    if not equipWindow:getParent() then
+        local root = g_ui.getRootWidget()
+        if root then root:addChild(equipWindow) end
+    end
+
+    refreshAllSlots()
     equipWindow:show()
     equipWindow:raise()
     equipWindow:focus()
     isOpen = true
-
-    refreshAllSlots()
 end
 
 function closeEquipment()
