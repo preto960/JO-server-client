@@ -6,6 +6,8 @@ UIWidget
   background-color: #00000099
   border-width: 1
   border-color: #00B4D840
+  layout:
+    type: anchorLayout
   @onEscape: modules.game_battle_custom.closeBattle()
 
   UIWidget
@@ -148,9 +150,7 @@ UIWidget
 
     Panel
       id: battlePanel
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.top: parent.top
+      width: 100%
       layout:
         type: verticalBox
         fit-children: true
