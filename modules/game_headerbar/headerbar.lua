@@ -1,7 +1,10 @@
 local headerBar = nil
 local battleBtn = nil
 local equipBtn = nil
-local skillsBtn = nil
+local gameTopPanel = nil
+local savedTopPanelMargin = 0
+
+local HEADER_HEIGHT = 36
 
 local function updateButtonState(btn, isOn)
     if not btn then return end
@@ -21,13 +24,28 @@ function init()
         local root = g_ui.getRootWidget()
         if not root then return end
 
-        if not headerBar:getParent() then
-            root:addChild(headerBar)
+        -- Find gameRootPanel and parent the header bar INSIDE it
+        local gameRootPanel = root:getChildById('gameRootPanel')
+        if not gameRootPanel then
+            g_logger.warning("[HeaderBar] gameRootPanel not found")
+            return
         end
 
+        -- Add header bar to gameRootPanel (not root!)
+        if not headerBar:getParent() then
+            gameRootPanel:addChild(headerBar)
+        end
+
+        -- Get button references
         battleBtn = headerBar:getChildById('headerBattleBtn')
         equipBtn = headerBar:getChildById('headerEquipBtn')
-        skillsBtn = headerBar:getChildById('headerSkillsBtn')
+
+        -- Push gameTopPanel (stats bar) down so it sits below our header bar
+        gameTopPanel = gameRootPanel:getChildById('gameTopPanel')
+        if gameTopPanel then
+            savedTopPanelMargin = gameTopPanel:getMarginTop()
+            gameTopPanel:setMarginTop(savedTopPanelMargin + HEADER_HEIGHT)
+        end
 
         -- Show/hide bar based on game state
         connect(g_game, {
@@ -46,6 +64,14 @@ function terminate()
         onGameStart = onGameStart,
         onGameEnd = onGameEnd
     })
+
+    -- Restore gameTopPanel margin
+    if gameTopPanel then
+        pcall(function()
+            gameTopPanel:setMarginTop(savedTopPanelMargin)
+        end)
+        gameTopPanel = nil
+    end
 
     if headerBar then
         headerBar:destroy()
@@ -116,15 +142,6 @@ function toggleEquipment()
             modules.game_inventory_custom.openEquipment()
         end
         updateButtonState(equipBtn, not isOpen)
-    end)
-end
-
-function toggleSkills()
-    pcall(function()
-        -- Check if custom skills module exists
-        if modules.game_skills_custom then
-            modules.game_skills_custom.toggleSkills()
-        end
     end)
 end
 

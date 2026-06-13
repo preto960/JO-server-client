@@ -34,7 +34,7 @@ UIWidget
 
   // Battle label
   Label
-    !text: 'Battle'
+    !text: tr('Battle')
     font: verdana-9px-rounded
     color: #FFFFFF60
     text-auto-resize: true
@@ -51,11 +51,11 @@ UIWidget
     anchors.verticalCenter: parent.verticalCenter
     margin-left: 10
 
-  // Equipment button
+  // Equipment button (using inventory icon)
   UIButton
     id: headerEquipBtn
     size: 28 28
-    image-source: /images/options/button_equipment
+    image-source: /images/topbuttons/inventory
     image-color: #FFFFFF60
     image-auto-resize: true
     cursor: pointer
@@ -68,44 +68,10 @@ UIWidget
 
   // Equipment label
   Label
-    !text: 'Equipment'
+    !text: tr('Equipment')
     font: verdana-9px-rounded
     color: #FFFFFF60
     text-auto-resize: true
     anchors.left: headerEquipBtn.right
-    anchors.verticalCenter: parent.verticalCenter
-    margin-left: 4
-
-  // Separator
-  UIWidget
-    width: 1
-    height: 20
-    background-color: #00B4D830
-    anchors.left: prev.right
-    anchors.verticalCenter: parent.verticalCenter
-    margin-left: 10
-
-  // Skills button
-  UIButton
-    id: headerSkillsBtn
-    size: 28 28
-    image-source: /images/topbuttons/skills
-    image-color: #FFFFFF60
-    image-auto-resize: true
-    cursor: pointer
-    anchors.left: prev.right
-    anchors.verticalCenter: parent.verticalCenter
-    margin-left: 10
-    $hover:
-      image-color: #00B4D8
-    @onClick: modules.game_headerbar.toggleSkills()
-
-  // Skills label
-  Label
-    !text: 'Skills'
-    font: verdana-9px-rounded
-    color: #FFFFFF60
-    text-auto-resize: true
-    anchors.left: headerSkillsBtn.right
     anchors.verticalCenter: parent.verticalCenter
     margin-left: 4
