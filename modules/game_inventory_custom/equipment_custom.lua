@@ -260,7 +260,7 @@ function onGameStart()
         end
     end)
 
-    scheduleEvent(function()
+    addEvent(function()
         pcall(function()
             modules.client_topmenu.addRightGameToggleButton(
                 'equipCustomButton',
@@ -269,9 +269,8 @@ function onGameStart()
                 toggleEquipment,
                 false
             )
-            g_logger.warning("[Equipment] Sidebar button added")
         end)
-    end, 3000)
+    end)
 
     g_keyboard.bindKeyDown('Ctrl+E', function()
         if g_game.isOnline() then

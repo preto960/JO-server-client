@@ -1,8 +1,8 @@
 local customWindow = nil
 local contentsPanel = nil
 local origBattlePanelParent = nil
+local origToggleButton = nil
 local isOpen = false
-local sidebarButton = nil
 
 local dragInfo = {
     active = false,
@@ -71,14 +71,14 @@ function terminate()
         restorePanel()
     end
 
+    if origToggleButton then
+        origToggleButton.onClick = nil
+        origToggleButton = nil
+    end
+
     if customWindow then
         customWindow:destroy()
         customWindow = nil
-    end
-
-    if sidebarButton then
-        pcall(function() sidebarButton:destroy() end)
-        sidebarButton = nil
     end
 
     isOpen = false
@@ -87,13 +87,13 @@ end
 function onGameStart()
     addEvent(function()
         pcall(function()
-            sidebarButton = modules.client_topmenu.addRightGameToggleButton(
-                'battleCustomButton',
-                'Battle (Ctrl+B)',
-                '/images/options/button_battlelist',
-                toggleBattle,
-                false
-            )
+            local root = g_ui.getRootWidget()
+            origToggleButton = root:recursiveGetChildById('battleButton')
+            if origToggleButton then
+                origToggleButton.onClick = function()
+                    toggleBattle()
+                end
+            end
         end)
     end)
 
@@ -106,9 +106,9 @@ end
 
 function onGameEnd()
     closeBattle()
-    if sidebarButton then
-        pcall(function() sidebarButton:destroy() end)
-        sidebarButton = nil
+    if origToggleButton then
+        origToggleButton.onClick = nil
+        origToggleButton = nil
     end
 end
 
@@ -145,7 +145,7 @@ function openBattle()
     customWindow:focus()
     isOpen = true
 
-    if sidebarButton then sidebarButton:setOn(true) end
+    if origToggleButton then origToggleButton:setOn(true) end
 end
 
 function closeBattle()
@@ -162,7 +162,7 @@ function closeBattle()
     customWindow:hide()
     isOpen = false
 
-    if sidebarButton then sidebarButton:setOn(false) end
+    if origToggleButton then origToggleButton:setOn(false) end
 end
 
 function moveOriginalPanelToCustom()
@@ -210,16 +210,16 @@ function hideOriginalBattleWindow()
         if origWindow then
             origWindow:hide()
         end
-        local origBtn = root:recursiveGetChildById('battleButton')
-        if origBtn then origBtn:setOn(false) end
     end)
 end
 
 function showOriginalBattleWindow()
     pcall(function()
         local root = g_ui.getRootWidget()
-        local origBtn = root:recursiveGetChildById('battleButton')
-        if origBtn then origBtn:setOn(false) end
+        local origWindow = root:recursiveGetChildById('battleWindow')
+        if origWindow then
+            origWindow:show()
+        end
     end)
 end
 
@@ -232,11 +232,6 @@ function onFilterButtonClick(button)
         local origButton = root:recursiveGetChildById(btnId)
         if origButton and origButton ~= button then
             origButton:setChecked(button:isChecked())
-        end
-
-        local modules_game_battle = modules.game_battle
-        if modules_game_battle and modules_game_battle.toggle then
-            modules_game_battle.toggle()
         end
     end)
 end
