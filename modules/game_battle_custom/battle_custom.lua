@@ -232,20 +232,20 @@ function onFilterButtonClick(button)
 
     pcall(function()
         local battle = modules.game_battle
-        if battle and battle.BattleListManager then
-            local mainInstance = battle.BattleListManager:getMainInstance()
-            if mainInstance then
-                local origHideButtons = mainInstance.hideButtons
-                if origHideButtons then
-                    for id, widget in pairs(origHideButtons) do
-                        local customWidget = customWindow:recursiveGetChildById(id)
-                        if customWidget and widget then
-                            customWidget:setChecked(widget:isChecked())
-                        end
-                    end
-                end
-                mainInstance:checkCreatures()
-            end
+        if not battle or not battle.BattleListManager then return end
+
+        local mainInstance = battle.BattleListManager:getMainInstance()
+        if not mainInstance then return end
+
+        local btnId = button:getId()
+        local origButton = mainInstance.hideButtons and mainInstance.hideButtons[btnId]
+        if origButton then
+            origButton:setChecked(button:isChecked())
+        end
+
+        mainInstance:saveHideButtonStates()
+        for _, instance in pairs(battle.BattleListManager.instances) do
+            instance:checkCreatures()
         end
     end)
 end
