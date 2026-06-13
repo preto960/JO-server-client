@@ -138,4 +138,4 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin: 8
-    margin-top: 6
+    margin-top: 0

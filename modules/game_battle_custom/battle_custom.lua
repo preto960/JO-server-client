@@ -182,6 +182,9 @@ function moveOriginalPanelToCustom()
     parent:removeChild(origBattlePanel)
     contentsPanel:addChild(origBattlePanel)
 
+    -- Remove the 5px margin-top that battlePanel has in its original OTUI
+    origBattlePanel:setMarginTop(0)
+
     g_logger.warning("[BattleCustom] moved battlePanel to custom window, children: " .. #origBattlePanel:getChildren())
 end
 
@@ -196,6 +199,7 @@ function restorePanel()
         local currentParent = origBattlePanel:getParent()
         if currentParent and currentParent ~= origBattlePanelParent then
             currentParent:removeChild(origBattlePanel)
+            origBattlePanel:setMarginTop(5)
             origBattlePanelParent:addChild(origBattlePanel)
         end
     end)
