@@ -1,4 +1,5 @@
 local equipWindow = nil
+local equipButton = nil
 isOpen = false
 
 local SLOT_MAP = {
@@ -12,19 +13,6 @@ local SLOT_MAP = {
     [InventorySlotFeet]   = 'slot_boots',
     [InventorySlotFinger] = 'slot_ring',
     [InventorySlotAmmo]   = 'slot_tools',
-}
-
-local SLOT_TOGGLER = {
-    slot_helmet   = 'helmet',
-    slot_amulet   = 'amulet',
-    slot_backpack = 'backpack',
-    slot_armor    = 'armor',
-    slot_shield   = 'shield',
-    slot_sword    = 'sword',
-    slot_legs     = 'legs',
-    slot_boots    = 'boots',
-    slot_ring     = 'ring',
-    slot_tools    = 'tools',
 }
 
 local dragInfo = {
@@ -44,7 +32,19 @@ function init()
         return
     end
 
-    g_logger.warning("[Equipment] Module loaded")
+    -- Create sidebar button RIGHT AWAY in init() (like original modules do)
+    pcall(function()
+        equipButton = modules.game_mainpanel.addToggleButton('equipCustomButton',
+            tr('Equipment') .. ' (Ctrl+E)',
+            '/images/topbuttons/inventory',
+            function()
+                if isOpen then
+                    closeEquipment()
+                else
+                    openEquipment()
+                end
+            end, false, 2)
+    end)
 
     addEvent(function()
         local root = g_ui.getRootWidget()
@@ -54,6 +54,7 @@ function init()
             root:addChild(equipWindow)
         end
 
+        -- Add cyan accent lines to slot borders
         local slotIds = {'slot_helmet', 'slot_amulet', 'slot_armor', 'slot_backpack', 'slot_sword', 'slot_legs', 'slot_shield', 'slot_ring', 'slot_boots', 'slot_tools'}
         for _, sid in ipairs(slotIds) do
             local slot = equipWindow:recursiveGetChildById(sid)
@@ -71,11 +72,12 @@ function init()
                 bb:setBackgroundColor('#00B4D860')
                 bb:setPhantom(true)
                 bb:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-                bb:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-                bb:addAnchor(AnchorRight, 'parent', AnchorRight)
+                rb:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+                rb:addAnchor(AnchorRight, 'parent', AnchorRight)
             end
         end
 
+        -- Default position
         local savedPos = g_settings.getPoint('equipmentCustomWindow/position')
         if savedPos then
             pcall(function() equipWindow:setPosition(savedPos) end)
@@ -93,6 +95,7 @@ function init()
         end
         equipWindow:hide()
 
+        -- Title bar drag
         local titleBar = equipWindow:getChildById('titleBar')
         if titleBar then
             titleBar.onMousePress = function(widget, mousePos, mouseButton)
@@ -102,6 +105,7 @@ function init()
             end
         end
 
+        -- ESC to close
         equipWindow.onKeyPress = function(widget, keyCode, keyboardModifiers)
             if keyboardModifiers == KeyboardNoModifier and keyCode == KeyEscape then
                 if isOpen then
@@ -117,10 +121,7 @@ function init()
         })
 
         if g_game.isOnline() then
-            g_logger.warning("[Equipment] Already online, calling onGameStart directly")
             onGameStart()
-        else
-            g_logger.warning("[Equipment] Waiting for game to start...")
         end
     end)
 end
@@ -215,7 +216,11 @@ function openEquipment()
     equipWindow:focus()
     isOpen = true
 
-    -- Notify headerbar to update button state
+    -- Sync sidebar button
+    if equipButton then
+        pcall(function() equipButton:setOn(true) end)
+    end
+
     pcall(function()
         if modules.game_headerbar then
             modules.game_headerbar.setEquipmentButtonState(true)
@@ -244,7 +249,11 @@ function closeEquipment()
 
     equipWindow:hide()
 
-    -- Notify headerbar to update button state
+    -- Sync sidebar button
+    if equipButton then
+        pcall(function() equipButton:setOn(false) end)
+    end
+
     pcall(function()
         if modules.game_headerbar then
             modules.game_headerbar.setEquipmentButtonState(false)
@@ -272,6 +281,7 @@ function onGameStart()
         end
     end)
 
+    -- Re-bind Ctrl+E
     g_keyboard.bindKeyDown('Ctrl+E', function()
         if g_game.isOnline() then
             toggleEquipment()
@@ -310,17 +320,9 @@ function onInventoryChange(player, slot, item, oldItem)
                 pcall(function() ItemsDatabase.setTier(itemWidget, item) end)
             end
         end
-
-        local togglerName = SLOT_TOGGLER[widgetId]
-        if togglerName then
-            local toggler = slotWidget:getChildById(togglerName)
-            if toggler then
-                toggler:setEnabled(not item)
-            end
-        end
     end)
 
-    -- Force visual refresh next frame to ensure the item renders
+    -- Force visual refresh
     if isOpen then
         scheduleEvent(function()
             pcall(function()

@@ -1,6 +1,10 @@
 local customWindow = nil
 local contentsPanel = nil
-local origBattlePanelParent = nil
+local titleBar = nil
+local battlePanelRef = nil
+local battlePanelOriginalParent = nil
+local originalBattleHandler = nil
+
 isOpen = false
 
 local dragInfo = {
@@ -20,8 +24,6 @@ function init()
         return
     end
 
-    g_logger.warning("[BattleCustom] Module loaded")
-
     addEvent(function()
         local root = g_ui.getRootWidget()
         if not root then return end
@@ -30,23 +32,51 @@ function init()
             root:addChild(customWindow)
         end
 
-        pcall(function()
-            local rw = root:getWidth()
-            local rh = root:getHeight()
-            customWindow:setX(rw - customWindow:getWidth() - 20)
-            customWindow:setY(math.floor((rh - customWindow:getHeight()) / 2))
-        end)
+        contentsPanel = customWindow:getChildById('contentsPanel')
+        titleBar = customWindow:getChildById('titleBar')
 
+        -- Default position
+        local savedPos = g_settings.getPoint('battleCustomWindow/position')
+        if savedPos then
+            pcall(function() customWindow:setPosition(savedPos) end)
+        else
+            pcall(function()
+                customWindow:setX(10)
+                customWindow:setY(100)
+            end)
+        end
         customWindow:hide()
-        contentsPanel = customWindow:recursiveGetChildById('contentsPanel')
 
-        local titleBar = customWindow:getChildById('titleBar')
+        -- Title bar drag
         if titleBar then
             titleBar.onMousePress = function(widget, mousePos, mouseButton)
                 if mouseButton == MouseLeftButton then
                     startWindowDrag(customWindow, mousePos)
                 end
             end
+        end
+
+        -- ESC to close
+        customWindow.onKeyPress = function(widget, keyCode, keyboardModifiers)
+            if keyboardModifiers == KeyboardNoModifier and keyCode == KeyEscape then
+                if isOpen then
+                    closeBattle()
+                    return true
+                end
+            end
+        end
+
+        -- Hijack the original battleButton in the sidebar (like skills_custom does)
+        local battleBtn = root:recursiveGetChildById('battleButton')
+        if battleBtn then
+            originalBattleHandler = battleBtn.onMouseRelease
+            battleBtn.onMouseRelease = function(widget, mousePos, mouseButton)
+                if widget:containsPoint(mousePos) and mouseButton ~= MouseMidButton then
+                    toggleBattle()
+                    return true
+                end
+            end
+            g_logger.info("[BattleCustom] Hijacked battleButton")
         end
 
         connect(g_game, {
@@ -66,164 +96,31 @@ function terminate()
         onGameEnd = onGameEnd
     })
 
-    if isOpen then
+    -- Restore original battle button handler
+    if originalBattleHandler then
+        local root = g_ui.getRootWidget()
+        if root then
+            local battleBtn = root:recursiveGetChildById('battleButton')
+            if battleBtn then
+                battleBtn.onMouseRelease = originalBattleHandler
+            end
+        end
+    end
+
+    -- Restore battle panel if still moved
+    if isOpen and battlePanelRef and battlePanelOriginalParent then
         restorePanel()
     end
 
     if customWindow then
+        if customWindow:getParent() then
+            local pos = customWindow:getPosition()
+            g_settings.set('battleCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
+        end
         customWindow:destroy()
         customWindow = nil
     end
-
     isOpen = false
-end
-
-function onGameStart()
-    g_keyboard.bindKeyDown('Ctrl+B', function()
-        if g_game.isOnline() then
-            toggleBattle()
-        end
-    end)
-end
-
-function onGameEnd()
-    closeBattle()
-end
-
-function toggleBattle()
-    if isOpen then
-        closeBattle()
-    else
-        openBattle()
-    end
-end
-
-function openBattle()
-    if not customWindow or not g_game.isOnline() then return end
-    if not contentsPanel then return end
-
-    if not customWindow:getParent() then
-        local root = g_ui.getRootWidget()
-        if root then root:addChild(customWindow) end
-    end
-
-    pcall(function()
-        local savedPos = g_settings.getPoint('battleCustomWindow/position')
-        if savedPos and savedPos.x > 0 and savedPos.y > 0 then
-            customWindow:setX(savedPos.x)
-            customWindow:setY(savedPos.y)
-        end
-    end)
-
-    hideOriginalBattleWindow()
-    moveOriginalPanelToCustom()
-
-    customWindow:show()
-    customWindow:raise()
-    customWindow:focus()
-    isOpen = true
-
-    -- Notify headerbar to update button state
-    pcall(function()
-        if modules.game_headerbar then
-            modules.game_headerbar.setBattleButtonState(true)
-        end
-    end)
-end
-
-function closeBattle()
-    if not isOpen then return end
-
-    if dragInfo.active then stopWindowDrag() end
-
-    local pos = customWindow:getPosition()
-    g_settings.set('battleCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
-
-    restorePanel()
-    customWindow:hide()
-    isOpen = false
-
-    -- Notify headerbar to update button state
-    pcall(function()
-        if modules.game_headerbar then
-            modules.game_headerbar.setBattleButtonState(false)
-        end
-    end)
-end
-
-function moveOriginalPanelToCustom()
-    local root = g_ui.getRootWidget()
-    local origBattlePanel = root:recursiveGetChildById('battlePanel')
-    if not origBattlePanel then
-        g_logger.warning("[BattleCustom] orig battlePanel widget not found")
-        return
-    end
-
-    local parent = origBattlePanel:getParent()
-    if not parent then return end
-
-    if parent == contentsPanel then return end
-
-    origBattlePanelParent = parent
-    parent:removeChild(origBattlePanel)
-    contentsPanel:addChild(origBattlePanel)
-
-    -- Remove the 5px margin-top that battlePanel has in its original OTUI
-    origBattlePanel:setMarginTop(0)
-
-    g_logger.warning("[BattleCustom] moved battlePanel to custom window, children: " .. #origBattlePanel:getChildren())
-end
-
-function restorePanel()
-    if not origBattlePanelParent then return end
-
-    pcall(function()
-        local root = g_ui.getRootWidget()
-        local origBattlePanel = root:recursiveGetChildById('battlePanel')
-        if not origBattlePanel then return end
-
-        local currentParent = origBattlePanel:getParent()
-        if currentParent and currentParent ~= origBattlePanelParent then
-            currentParent:removeChild(origBattlePanel)
-            origBattlePanel:setMarginTop(5)
-            origBattlePanelParent:addChild(origBattlePanel)
-        end
-    end)
-
-    origBattlePanelParent = nil
-end
-
-function hideOriginalBattleWindow()
-    pcall(function()
-        local root = g_ui.getRootWidget()
-        local origWindow = root:recursiveGetChildById('battleWindow')
-        if origWindow then
-            origWindow:hide()
-        end
-    end)
-end
-
-function showOriginalBattleWindow()
-    pcall(function()
-        local root = g_ui.getRootWidget()
-        local origWindow = root:recursiveGetChildById('battleWindow')
-        if origWindow then
-            origWindow:show()
-        end
-    end)
-end
-
-function onFilterButtonClick(button)
-    button:setChecked(not button:isChecked())
-
-    pcall(function()
-        local root = g_ui.getRootWidget()
-        local btnId = button:getId()
-        local origButton = root:recursiveGetChildById(btnId)
-        if origButton and origButton ~= button then
-            origButton:setChecked(button:isChecked())
-        end
-    end)
 end
 
 function startWindowDrag(window, mousePos)
@@ -281,4 +178,144 @@ function stopWindowDrag()
     if customWindow and customWindow:isVisible() then
         customWindow:focus()
     end
+end
+
+function moveOriginalPanelToCustom()
+    local root = g_ui.getRootWidget()
+    if not root then return false end
+
+    local origWindow = root:recursiveGetChildById('battleWindow')
+    if not origWindow then return false end
+
+    local battlePanel = origWindow:recursiveGetChildById('battlePanel')
+    if not battlePanel then return false end
+
+    battlePanelOriginalParent = battlePanel:getParent()
+    battlePanelRef = battlePanel
+
+    contentsPanel:addChild(battlePanel)
+    battlePanel:setMarginTop(0)
+
+    return true
+end
+
+function restorePanel()
+    if not battlePanelRef or not battlePanelOriginalParent then return end
+    if battlePanelRef:isDestroyed() then return end
+
+    battlePanelOriginalParent:addChild(battlePanelRef)
+    battlePanelRef:setMarginTop(5)
+
+    battlePanelRef = nil
+    battlePanelOriginalParent = nil
+end
+
+function openBattle()
+    if not customWindow then return end
+    if not g_game.isOnline() then return end
+
+    -- Hide original battle window
+    pcall(function()
+        local root = g_ui.getRootWidget()
+        local origWindow = root:recursiveGetChildById('battleWindow')
+        if origWindow then origWindow:hide() end
+    end)
+
+    -- Move original battle panel into our window
+    if not battlePanelRef or (battlePanelRef and battlePanelRef:isDestroyed()) then
+        moveOriginalPanelToCustom()
+    end
+
+    if not customWindow:getParent() then
+        local root = g_ui.getRootWidget()
+        if root then root:addChild(customWindow) end
+    end
+
+    customWindow:show()
+    customWindow:raise()
+    customWindow:focus()
+    isOpen = true
+
+    -- Sync sidebar button state
+    pcall(function()
+        local root = g_ui.getRootWidget()
+        local btn = root:recursiveGetChildById('battleButton')
+        if btn then btn:setOn(true) end
+    end)
+
+    -- Notify headerbar if loaded
+    pcall(function()
+        if modules.game_headerbar then
+            modules.game_headerbar.setBattleButtonState(true)
+        end
+    end)
+end
+
+function closeBattle()
+    if not isOpen then return end
+    isOpen = false
+
+    if dragInfo.active then
+        stopWindowDrag()
+    end
+
+    restorePanel()
+
+    local pos = customWindow:getPosition()
+    g_settings.set('battleCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
+
+    customWindow:hide()
+
+    -- Sync sidebar button state
+    pcall(function()
+        local root = g_ui.getRootWidget()
+        local btn = root:recursiveGetChildById('battleButton')
+        if btn then btn:setOn(false) end
+    end)
+
+    pcall(function()
+        if modules.game_headerbar then
+            modules.game_headerbar.setBattleButtonState(false)
+        end
+    end)
+end
+
+function toggleBattle()
+    if isOpen then
+        closeBattle()
+    else
+        openBattle()
+    end
+end
+
+function onGameStart()
+    addEvent(function()
+        -- Re-hijack button in case it was recreated
+        local root = g_ui.getRootWidget()
+        if root then
+            local battleBtn = root:recursiveGetChildById('battleButton')
+            if battleBtn then
+                battleBtn.onMouseRelease = function(widget, mousePos, mouseButton)
+                    if widget:containsPoint(mousePos) and mouseButton ~= MouseMidButton then
+                        toggleBattle()
+                        return true
+                    end
+                end
+            end
+
+            -- Hide original battle window
+            local origWindow = root:recursiveGetChildById('battleWindow')
+            if origWindow then
+                origWindow:hide()
+            end
+        end
+    end)
+end
+
+function onGameEnd()
+    if isOpen then
+        restorePanel()
+        customWindow:hide()
+    end
+    isOpen = false
 end
