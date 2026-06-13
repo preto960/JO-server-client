@@ -304,6 +304,11 @@ function onInventoryChange(player, slot, item, oldItem)
         local itemWidget = slotWidget:getChildById('item')
         if itemWidget then
             itemWidget:setItem(item)
+            itemWidget:setWidth(34)
+            itemWidget:setHeight(34)
+            if item then
+                pcall(function() ItemsDatabase.setTier(itemWidget, item) end)
+            end
         end
 
         local togglerName = SLOT_TOGGLER[widgetId]
@@ -314,6 +319,21 @@ function onInventoryChange(player, slot, item, oldItem)
             end
         end
     end)
+
+    -- Force visual refresh next frame to ensure the item renders
+    if isOpen then
+        scheduleEvent(function()
+            pcall(function()
+                local sw = equipWindow:recursiveGetChildById(widgetId)
+                if sw then
+                    local iw = sw:getChildById('item')
+                    if iw then
+                        iw:setVisible(true)
+                    end
+                end
+            end)
+        end, 50)
+    end
 end
 
 function onSoulChange(localPlayer, soul)

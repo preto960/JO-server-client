@@ -157,8 +157,6 @@ function closeBattle()
     g_settings.set('battleCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
 
     restorePanel()
-    showOriginalBattleWindow()
-
     customWindow:hide()
     isOpen = false
 
