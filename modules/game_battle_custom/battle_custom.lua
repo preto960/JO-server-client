@@ -1,8 +1,7 @@
 local customWindow = nil
 local contentsPanel = nil
 local origBattlePanelParent = nil
-local origToggleButton = nil
-local isOpen = false
+isOpen = false
 
 local dragInfo = {
     active = false,
@@ -71,11 +70,6 @@ function terminate()
         restorePanel()
     end
 
-    if origToggleButton then
-        origToggleButton.onClick = nil
-        origToggleButton = nil
-    end
-
     if customWindow then
         customWindow:destroy()
         customWindow = nil
@@ -85,26 +79,6 @@ function terminate()
 end
 
 function onGameStart()
-    addEvent(function()
-        pcall(function()
-            local root = g_ui.getRootWidget()
-
-            -- Hijack original battle button to open our custom window
-            origToggleButton = root:recursiveGetChildById('battleButton')
-            if origToggleButton then
-                origToggleButton.onClick = function()
-                    toggleBattle()
-                end
-            end
-
-            -- Hide original battle window immediately so it never shows
-            local origWindow = root:recursiveGetChildById('battleWindow')
-            if origWindow then
-                origWindow:hide()
-            end
-        end)
-    end)
-
     g_keyboard.bindKeyDown('Ctrl+B', function()
         if g_game.isOnline() then
             toggleBattle()
@@ -114,10 +88,6 @@ end
 
 function onGameEnd()
     closeBattle()
-    if origToggleButton then
-        origToggleButton.onClick = nil
-        origToggleButton = nil
-    end
 end
 
 function toggleBattle()
@@ -153,7 +123,12 @@ function openBattle()
     customWindow:focus()
     isOpen = true
 
-    if origToggleButton then origToggleButton:setOn(true) end
+    -- Notify headerbar to update button state
+    pcall(function()
+        if modules.game_headerbar then
+            modules.game_headerbar.setBattleButtonState(true)
+        end
+    end)
 end
 
 function closeBattle()
@@ -168,7 +143,12 @@ function closeBattle()
     customWindow:hide()
     isOpen = false
 
-    if origToggleButton then origToggleButton:setOn(false) end
+    -- Notify headerbar to update button state
+    pcall(function()
+        if modules.game_headerbar then
+            modules.game_headerbar.setBattleButtonState(false)
+        end
+    end)
 end
 
 function moveOriginalPanelToCustom()

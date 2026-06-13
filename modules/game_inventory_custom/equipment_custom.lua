@@ -1,6 +1,5 @@
 local equipWindow = nil
-local isOpen = false
-local equipButton = nil
+isOpen = false
 
 local SLOT_MAP = {
     [InventorySlotHead]   = 'slot_helmet',
@@ -117,13 +116,6 @@ function init()
             onGameEnd = onGameEnd
         })
 
-        -- Create sidebar button like the original battle module does
-        pcall(function()
-            equipButton = modules.game_mainpanel.addToggleButton('equipCustomButton',
-                'Equipment (Ctrl+E)', '/images/options/button_equipment', toggleEquipment, false)
-            g_logger.warning("[Equipment] Button created: " .. tostring(equipButton ~= nil))
-        end)
-
         if g_game.isOnline() then
             g_logger.warning("[Equipment] Already online, calling onGameStart directly")
             onGameStart()
@@ -143,11 +135,6 @@ function terminate()
         onGameStart = onGameStart,
         onGameEnd = onGameEnd
     })
-
-    if equipButton then
-        equipButton:destroy()
-        equipButton = nil
-    end
 
     if equipWindow then
         equipWindow:destroy()
@@ -174,8 +161,6 @@ function startWindowDrag(window, mousePos)
     dragInfo.overlay = overlay
     dragInfo.startPos = {x = winPos.x, y = winPos.y}
     dragInfo.startMouse = {x = mouseScreen.x, y = mouseScreen.y}
-
-    window:breakAnchors()
 
     overlay.onMouseMove = function(self, pos, moved)
         if dragInfo.active then
@@ -230,7 +215,12 @@ function openEquipment()
     equipWindow:focus()
     isOpen = true
 
-    if equipButton then equipButton:setOn(true) end
+    -- Notify headerbar to update button state
+    pcall(function()
+        if modules.game_headerbar then
+            modules.game_headerbar.setEquipmentButtonState(true)
+        end
+    end)
 
     pcall(function()
         local savedPos = g_settings.getPoint('equipmentCustomWindow/position')
@@ -253,7 +243,13 @@ function closeEquipment()
     g_settings.set('equipmentCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
 
     equipWindow:hide()
-    if equipButton then equipButton:setOn(false) end
+
+    -- Notify headerbar to update button state
+    pcall(function()
+        if modules.game_headerbar then
+            modules.game_headerbar.setEquipmentButtonState(false)
+        end
+    end)
 end
 
 function toggleEquipment()
