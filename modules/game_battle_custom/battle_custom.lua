@@ -211,8 +211,8 @@ function hideOriginalBattleWindow()
     pcall(function()
         local root = g_ui.getRootWidget()
         local origWindow = root:recursiveGetChildById('battleWindow')
-        if origWindow and origWindow:isVisible() then
-            origWindow:close()
+        if origWindow then
+            origWindow:hide()
         end
         local origBtn = root:recursiveGetChildById('battleButton')
         if origBtn then origBtn:setOn(false) end
