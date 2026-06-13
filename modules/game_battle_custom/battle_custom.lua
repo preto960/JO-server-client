@@ -1,5 +1,6 @@
 local customWindow = nil
 local customPanel = nil
+local origPanel = nil
 local isOpen = false
 local sidebarButton = nil
 
@@ -67,7 +68,7 @@ function terminate()
     })
 
     if isOpen then
-        moveButtonsBack()
+        restoreOriginalPanel()
     end
 
     if customWindow then
@@ -136,7 +137,7 @@ function openBattle()
     end)
 
     hideOriginalBattleWindow()
-    moveButtonsToCustom()
+    replacePanel()
 
     customWindow:show()
     customWindow:raise()
@@ -154,13 +155,56 @@ function closeBattle()
     local pos = customWindow:getPosition()
     g_settings.set('battleCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
 
-    moveButtonsBack()
+    restoreOriginalPanel()
     showOriginalBattleWindow()
 
     customWindow:hide()
     isOpen = false
 
     if sidebarButton then sidebarButton:setOn(false) end
+end
+
+function replacePanel()
+    pcall(function()
+        local battle = modules.game_battle
+        if not battle or not battle.BattleListManager then return end
+
+        local mainInstance = battle.BattleListManager:getMainInstance()
+        if not mainInstance or not mainInstance.panel then return end
+
+        origPanel = mainInstance.panel
+
+        local children = origPanel:getChildren()
+        for i = #children, 1, -1 do
+            local child = children[i]
+            origPanel:removeChild(child)
+            customPanel:addChild(child)
+        end
+
+        mainInstance.panel = customPanel
+    end)
+end
+
+function restoreOriginalPanel()
+    pcall(function()
+        local battle = modules.game_battle
+        if not battle or not battle.BattleListManager then return end
+
+        local mainInstance = battle.BattleListManager:getMainInstance()
+        if not mainInstance or not origPanel then return end
+
+        if mainInstance.panel == customPanel then
+            local children = customPanel:getChildren()
+            for i = #children, 1, -1 do
+                local child = children[i]
+                customPanel:removeChild(child)
+                origPanel:addChild(child)
+            end
+            mainInstance.panel = origPanel
+        end
+
+        origPanel = nil
+    end)
 end
 
 function hideOriginalBattleWindow()
@@ -180,50 +224,6 @@ function showOriginalBattleWindow()
         local root = g_ui.getRootWidget()
         local origBtn = root:recursiveGetChildById('battleButton')
         if origBtn then origBtn:setOn(false) end
-    end)
-end
-
-function moveButtonsToCustom()
-    if not customPanel then return end
-
-    pcall(function()
-        local battle = modules.game_battle
-        if not battle or not battle.BattleListManager then return end
-
-        local mainInstance = battle.BattleListManager:getMainInstance()
-        if not mainInstance or not mainInstance.panel then return end
-
-        local origPanel = mainInstance.panel
-        local children = origPanel:getChildren()
-        for i = #children, 1, -1 do
-            local child = children[i]
-            if child:getId():find('CreatureButton') then
-                origPanel:removeChild(child)
-                customPanel:addChild(child)
-            end
-        end
-    end)
-end
-
-function moveButtonsBack()
-    if not customPanel then return end
-
-    pcall(function()
-        local battle = modules.game_battle
-        if not battle or not battle.BattleListManager then return end
-
-        local mainInstance = battle.BattleListManager:getMainInstance()
-        if not mainInstance or not mainInstance.panel then return end
-
-        local origPanel = mainInstance.panel
-        local children = customPanel:getChildren()
-        for i = #children, 1, -1 do
-            local child = children[i]
-            if child:getId():find('CreatureButton') then
-                customPanel:removeChild(child)
-                origPanel:addChild(child)
-            end
-        end
     end)
 end
 
