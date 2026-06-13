@@ -4,6 +4,5 @@ Module
   author: JO Server
   sandboxed: true
   scripts: [ equipment_custom ]
-  dependencies: [ game_interface ]
   @onLoad: init()
   @onUnload: terminate()

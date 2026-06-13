@@ -4,6 +4,5 @@ Module
   author: JO Server
   sandboxed: true
   scripts: [ headerbar ]
-  dependencies: [ game_interface, game_mainpanel ]
   @onLoad: init()
   @onUnload: terminate()

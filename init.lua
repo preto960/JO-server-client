@@ -181,6 +181,8 @@ local function loadModules()
     local SAFE_RELOAD_MODULES = {
         'game_chat_custom',
         'game_inventory_custom',
+        'game_battle_custom',
+        'game_headerbar',
         'game_healthcircle',
         'game_actionbar',
         'game_notifications',
