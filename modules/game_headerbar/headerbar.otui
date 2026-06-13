@@ -7,7 +7,7 @@ UIWidget
   border-width: 0
   anchors.left: parent.left
   anchors.right: parent.right
-  anchors.top: parent.top
+  anchors.top: topMenu.bottom
 
   // Bottom accent line
   UIWidget
@@ -51,7 +51,7 @@ UIWidget
     anchors.verticalCenter: parent.verticalCenter
     margin-left: 10
 
-  // Equipment button (using inventory icon)
+  // Equipment button
   UIButton
     id: headerEquipBtn
     size: 28 28

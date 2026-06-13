@@ -1,14 +1,59 @@
 local headerBar = nil
 local battleBtn = nil
 local equipBtn = nil
-local gameTopPanel = nil
-local savedTopPanelMargin = 0
+local gameRootPanel = nil
+local savedRootMargin = 0
 
 local HEADER_HEIGHT = 36
+local MAX_RETRIES = 10
+local retryCount = 0
 
 local function updateButtonState(btn, isOn)
     if not btn then return end
     btn:setImageColor(isOn and '#00B4D8' or '#FFFFFF60')
+end
+
+local function setupHeaderBar()
+    local root = g_ui.getRootWidget()
+    if not root then
+        retryCount = retryCount + 1
+        if retryCount < MAX_RETRIES then
+            scheduleEvent(setupHeaderBar, 500)
+        end
+        return
+    end
+
+    -- Add header bar to root (topMenu is a sibling, so anchors.top: topMenu.bottom works)
+    if not headerBar:getParent() then
+        root:addChild(headerBar)
+    end
+    headerBar:raise()
+
+    -- Get button references
+    battleBtn = headerBar:getChildById('headerBattleBtn')
+    equipBtn = headerBar:getChildById('headerEquipBtn')
+
+    -- Push gameRootPanel down so it starts below our header bar
+    gameRootPanel = root:getChildById('gameRootPanel')
+    if gameRootPanel then
+        savedRootMargin = gameRootPanel:getMarginTop()
+        gameRootPanel:setMarginTop(savedRootMargin + HEADER_HEIGHT)
+        g_logger.info("[HeaderBar] Pushed gameRootPanel down by " .. HEADER_HEIGHT .. "px")
+    else
+        g_logger.warning("[HeaderBar] gameRootPanel not found")
+    end
+
+    -- Connect game events
+    connect(g_game, {
+        onGameStart = onGameStart,
+        onGameEnd = onGameEnd
+    })
+
+    if g_game.isOnline() then
+        onGameStart()
+    end
+
+    g_logger.info("[HeaderBar] Setup complete, parented to root")
 end
 
 function init()
@@ -16,47 +61,13 @@ function init()
         headerBar = g_ui.loadUI('headerbar')
     end)
     if not ok or not headerBar then
-        g_logger.warning("[HeaderBar] Failed to load headerbar.otui")
+        g_logger.error("[HeaderBar] Failed to load headerbar.otui")
         return
     end
 
-    addEvent(function()
-        local root = g_ui.getRootWidget()
-        if not root then return end
-
-        -- Find gameRootPanel and parent the header bar INSIDE it
-        local gameRootPanel = root:getChildById('gameRootPanel')
-        if not gameRootPanel then
-            g_logger.warning("[HeaderBar] gameRootPanel not found")
-            return
-        end
-
-        -- Add header bar to gameRootPanel (not root!)
-        if not headerBar:getParent() then
-            gameRootPanel:addChild(headerBar)
-        end
-
-        -- Get button references
-        battleBtn = headerBar:getChildById('headerBattleBtn')
-        equipBtn = headerBar:getChildById('headerEquipBtn')
-
-        -- Push gameTopPanel (stats bar) down so it sits below our header bar
-        gameTopPanel = gameRootPanel:getChildById('gameTopPanel')
-        if gameTopPanel then
-            savedTopPanelMargin = gameTopPanel:getMarginTop()
-            gameTopPanel:setMarginTop(savedTopPanelMargin + HEADER_HEIGHT)
-        end
-
-        -- Show/hide bar based on game state
-        connect(g_game, {
-            onGameStart = onGameStart,
-            onGameEnd = onGameEnd
-        })
-
-        if g_game.isOnline() then
-            onGameStart()
-        end
-    end)
+    g_logger.info("[HeaderBar] Module loaded, setting up...")
+    retryCount = 0
+    addEvent(setupHeaderBar)
 end
 
 function terminate()
@@ -65,13 +76,13 @@ function terminate()
         onGameEnd = onGameEnd
     })
 
-    -- Restore gameTopPanel margin
-    if gameTopPanel then
+    -- Restore gameRootPanel margin
+    if gameRootPanel and not gameRootPanel:isDestroyed() then
         pcall(function()
-            gameTopPanel:setMarginTop(savedTopPanelMargin)
+            gameRootPanel:setMarginTop(savedRootMargin)
         end)
-        gameTopPanel = nil
     end
+    gameRootPanel = nil
 
     if headerBar then
         headerBar:destroy()
@@ -81,10 +92,10 @@ end
 
 function onGameStart()
     addEvent(function()
-        if headerBar then
-            headerBar:show()
-            headerBar:raise()
-        end
+        if not headerBar or headerBar:isDestroyed() then return end
+
+        headerBar:show()
+        headerBar:raise()
 
         -- Hide original battle sidebar button
         pcall(function()
@@ -93,36 +104,25 @@ function onGameStart()
             if origBattleBtn then
                 origBattleBtn:hide()
             end
-            -- Hide original battle window
             local origWindow = root:recursiveGetChildById('battleWindow')
             if origWindow then
                 origWindow:hide()
             end
         end)
-    end)
 
-    -- Override original battle button onClick to use our header
-    addEvent(function()
-        pcall(function()
-            local root = g_ui.getRootWidget()
-            local origBattleBtn = root:recursiveGetChildById('battleButton')
-            if origBattleBtn then
-                origBattleBtn.onClick = function()
-                    toggleBattle()
-                end
-            end
-        end)
+        g_logger.info("[HeaderBar] Game started, header bar shown")
     end)
 end
 
 function onGameEnd()
-    if headerBar then
+    if headerBar and not headerBar:isDestroyed() then
         headerBar:hide()
     end
 end
 
 function toggleBattle()
     pcall(function()
+        if not modules.game_battle_custom then return end
         local isOpen = modules.game_battle_custom.isOpen
         if isOpen then
             modules.game_battle_custom.closeBattle()
@@ -135,6 +135,7 @@ end
 
 function toggleEquipment()
     pcall(function()
+        if not modules.game_inventory_custom then return end
         local isOpen = modules.game_inventory_custom.isOpen
         if isOpen then
             modules.game_inventory_custom.closeEquipment()
@@ -145,7 +146,7 @@ function toggleEquipment()
     end)
 end
 
--- Public API: let other modules sync their button state
+-- Public API
 function setBattleButtonState(isOn)
     updateButtonState(battleBtn, isOn)
 end
