@@ -84,7 +84,7 @@ function terminate()
 end
 
 function onGameStart()
-    scheduleEvent(function()
+    addEvent(function()
         pcall(function()
             sidebarButton = modules.client_topmenu.addRightGameToggleButton(
                 'battleCustomButton',
@@ -93,9 +93,8 @@ function onGameStart()
                 toggleBattle,
                 false
             )
-            g_logger.warning("[BattleCustom] Sidebar button added")
         end)
-    end, 3500)
+    end)
 
     g_keyboard.bindKeyDown('Ctrl+B', function()
         if g_game.isOnline() then
