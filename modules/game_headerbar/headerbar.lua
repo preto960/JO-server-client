@@ -2,45 +2,150 @@ local headerBar = nil
 local battleBtn = nil
 local equipBtn = nil
 local gameRootPanel = nil
-local savedRootMargin = 0
+local topMenu = nil
+local savedRootMarginTop = 0
+local bottomLine = nil
 
 local HEADER_HEIGHT = 36
-local MAX_RETRIES = 10
-local retryCount = 0
 
 local function updateButtonState(btn, isOn)
     if not btn then return end
     btn:setImageColor(isOn and '#00B4D8' or '#FFFFFF60')
 end
 
+local function positionHeaderBar()
+    if not headerBar or not topMenu or not gameRootPanel then return end
+
+    local rootW = g_ui.getRootWidget():getWidth()
+
+    -- Position right below topMenu
+    local menuY = topMenu:getY()
+    local menuH = topMenu:getHeight()
+    local barY = menuY + menuH
+
+    headerBar:setX(0)
+    headerBar:setY(barY)
+    headerBar:setWidth(rootW)
+    headerBar:setHeight(HEADER_HEIGHT)
+
+    -- Push gameRootPanel down
+    local currentMargin = gameRootPanel:getMarginTop()
+    if currentMargin < HEADER_HEIGHT then
+        gameRootPanel:setMarginTop(HEADER_HEIGHT)
+    end
+
+    g_logger.info("[HeaderBar] Positioned at Y=" .. barY .. ", rootW=" .. rootW)
+end
+
+local function createButtons()
+    if not headerBar then return end
+
+    -- Bottom accent line
+    bottomLine = g_ui.createWidget('UIWidget', headerBar)
+    bottomLine:setHeight(1)
+    bottomLine:setBackgroundColor('#00B4D840')
+    bottomLine:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    bottomLine:addAnchor(AnchorRight, 'parent', AnchorRight)
+    bottomLine:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+
+    -- Battle button
+    battleBtn = g_ui.createWidget('UIButton', headerBar)
+    battleBtn:setId('headerBattleBtn')
+    battleBtn:setSize(28, 28)
+    battleBtn:setImageColor('#FFFFFF60')
+    pcall(function() battleBtn:setImageSource('/images/topbuttons/battle') end)
+    battleBtn:setCursor('pointer')
+    battleBtn:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    battleBtn:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+    battleBtn:setMarginLeft(12)
+    battleBtn.onClick = function()
+        modules.game_headerbar.toggleBattle()
+    end
+
+    -- Battle label
+    local battleLabel = g_ui.createWidget('Label', headerBar)
+    battleLabel:setText(tr('Battle'))
+    battleLabel:setFont('verdana-9px-rounded')
+    battleLabel:setColor('#FFFFFF60')
+    battleLabel:setId('headerBattleLabel')
+    battleLabel:addAnchor(AnchorLeft, 'headerBattleBtn', AnchorRight)
+    battleLabel:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+    battleLabel:setMarginLeft(4)
+
+    -- Separator
+    local sep1 = g_ui.createWidget('UIWidget', headerBar)
+    sep1:setWidth(1)
+    sep1:setHeight(20)
+    sep1:setBackgroundColor('#00B4D830')
+    sep1:setId('sep1')
+    sep1:addAnchor(AnchorLeft, 'prev', AnchorRight)
+    sep1:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+    sep1:setMarginLeft(10)
+
+    -- Equipment button
+    equipBtn = g_ui.createWidget('UIButton', headerBar)
+    equipBtn:setId('headerEquipBtn')
+    equipBtn:setSize(28, 28)
+    equipBtn:setImageColor('#FFFFFF60')
+    pcall(function() equipBtn:setImageSource('/images/topbuttons/inventory') end)
+    equipBtn:setCursor('pointer')
+    equipBtn:setId('headerEquipBtn')
+    equipBtn:addAnchor(AnchorLeft, 'sep1', AnchorRight)
+    equipBtn:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+    equipBtn:setMarginLeft(10)
+    equipBtn.onClick = function()
+        modules.game_headerbar.toggleEquipment()
+    end
+
+    -- Equipment label
+    local equipLabel = g_ui.createWidget('Label', headerBar)
+    equipLabel:setText(tr('Equipment'))
+    equipLabel:setFont('verdana-9px-rounded')
+    equipLabel:setColor('#FFFFFF60')
+    equipLabel:setId('headerEquipLabel')
+    equipLabel:addAnchor(AnchorLeft, 'headerEquipBtn', AnchorRight)
+    equipLabel:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
+    equipLabel:setMarginLeft(4)
+end
+
 local function setupHeaderBar()
     local root = g_ui.getRootWidget()
     if not root then
-        retryCount = retryCount + 1
-        if retryCount < MAX_RETRIES then
-            scheduleEvent(setupHeaderBar, 500)
-        end
+        g_logger.warning("[HeaderBar] Root not found, retrying...")
+        scheduleEvent(setupHeaderBar, 500)
         return
     end
 
-    -- Add header bar to root (topMenu is a sibling, so anchors.top: topMenu.bottom works)
+    topMenu = root:getChildById('topMenu')
+    gameRootPanel = root:getChildById('gameRootPanel')
+
+    if not topMenu then
+        g_logger.error("[HeaderBar] topMenu not found!")
+        return
+    end
+    if not gameRootPanel then
+        g_logger.warning("[HeaderBar] gameRootPanel not found, retrying...")
+        scheduleEvent(setupHeaderBar, 500)
+        return
+    end
+
+    -- Add to root
     if not headerBar:getParent() then
         root:addChild(headerBar)
     end
+
+    -- Create all buttons programmatically
+    createButtons()
+
+    -- Position it
+    positionHeaderBar()
+
+    -- Raise to top of root's children
     headerBar:raise()
 
-    -- Get button references
-    battleBtn = headerBar:getChildById('headerBattleBtn')
-    equipBtn = headerBar:getChildById('headerEquipBtn')
-
-    -- Push gameRootPanel down so it starts below our header bar
-    gameRootPanel = root:getChildById('gameRootPanel')
-    if gameRootPanel then
-        savedRootMargin = gameRootPanel:getMarginTop()
-        gameRootPanel:setMarginTop(savedRootMargin + HEADER_HEIGHT)
-        g_logger.info("[HeaderBar] Pushed gameRootPanel down by " .. HEADER_HEIGHT .. "px")
-    else
-        g_logger.warning("[HeaderBar] gameRootPanel not found")
+    -- Listen for resize to reposition
+    root.onResize = function()
+        positionHeaderBar()
     end
 
     -- Connect game events
@@ -53,7 +158,7 @@ local function setupHeaderBar()
         onGameStart()
     end
 
-    g_logger.info("[HeaderBar] Setup complete, parented to root")
+    g_logger.info("[HeaderBar] Setup complete!")
 end
 
 function init()
@@ -65,8 +170,7 @@ function init()
         return
     end
 
-    g_logger.info("[HeaderBar] Module loaded, setting up...")
-    retryCount = 0
+    g_logger.info("[HeaderBar] Module init, scheduling setup...")
     addEvent(setupHeaderBar)
 end
 
@@ -79,10 +183,11 @@ function terminate()
     -- Restore gameRootPanel margin
     if gameRootPanel and not gameRootPanel:isDestroyed() then
         pcall(function()
-            gameRootPanel:setMarginTop(savedRootMargin)
+            gameRootPanel:setMarginTop(savedRootMarginTop)
         end)
     end
     gameRootPanel = nil
+    topMenu = nil
 
     if headerBar then
         headerBar:destroy()
@@ -94,6 +199,14 @@ function onGameStart()
     addEvent(function()
         if not headerBar or headerBar:isDestroyed() then return end
 
+        -- Re-find widgets in case they changed
+        local root = g_ui.getRootWidget()
+        if root then
+            topMenu = root:getChildById('topMenu') or topMenu
+            gameRootPanel = root:getChildById('gameRootPanel') or gameRootPanel
+        end
+
+        positionHeaderBar()
         headerBar:show()
         headerBar:raise()
 
@@ -110,7 +223,7 @@ function onGameStart()
             end
         end)
 
-        g_logger.info("[HeaderBar] Game started, header bar shown")
+        g_logger.info("[HeaderBar] onGameStart - bar shown")
     end)
 end
 
@@ -146,7 +259,6 @@ function toggleEquipment()
     end)
 end
 
--- Public API
 function setBattleButtonState(isOn)
     updateButtonState(battleBtn, isOn)
 end
