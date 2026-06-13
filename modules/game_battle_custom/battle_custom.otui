@@ -139,10 +139,3 @@ UIWidget
     anchors.bottom: parent.bottom
     margin: 8
     margin-top: 6
-    layout: verticalBox
-    fit-children: true
-
-    Panel
-      id: battlePanel
-      layout: verticalBox
-      fit-children: true
