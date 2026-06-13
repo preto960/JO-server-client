@@ -88,11 +88,19 @@ function onGameStart()
     addEvent(function()
         pcall(function()
             local root = g_ui.getRootWidget()
+
+            -- Hijack original battle button to open our custom window
             origToggleButton = root:recursiveGetChildById('battleButton')
             if origToggleButton then
                 origToggleButton.onClick = function()
                     toggleBattle()
                 end
+            end
+
+            -- Hide original battle window immediately so it never shows
+            local origWindow = root:recursiveGetChildById('battleWindow')
+            if origWindow then
+                origWindow:hide()
             end
         end)
     end)
@@ -256,8 +264,6 @@ function startWindowDrag(window, mousePos)
     dragInfo.overlay = overlay
     dragInfo.startPos = {x = winPos.x, y = winPos.y}
     dragInfo.startMouse = {x = mouseScreen.x, y = mouseScreen.y}
-
-    window:breakAnchors()
 
     overlay.onMouseMove = function(self, pos, moved)
         if dragInfo.active then

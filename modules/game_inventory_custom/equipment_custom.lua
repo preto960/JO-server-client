@@ -1,5 +1,6 @@
 local equipWindow = nil
 local isOpen = false
+local equipButton = nil
 
 local SLOT_MAP = {
     [InventorySlotHead]   = 'slot_helmet',
@@ -116,6 +117,13 @@ function init()
             onGameEnd = onGameEnd
         })
 
+        -- Create sidebar button like the original battle module does
+        pcall(function()
+            equipButton = modules.game_mainpanel.addToggleButton('equipCustomButton',
+                'Equipment (Ctrl+E)', '/images/options/button_equipment', toggleEquipment, false)
+            g_logger.warning("[Equipment] Button created: " .. tostring(equipButton ~= nil))
+        end)
+
         if g_game.isOnline() then
             g_logger.warning("[Equipment] Already online, calling onGameStart directly")
             onGameStart()
@@ -135,6 +143,11 @@ function terminate()
         onGameStart = onGameStart,
         onGameEnd = onGameEnd
     })
+
+    if equipButton then
+        equipButton:destroy()
+        equipButton = nil
+    end
 
     if equipWindow then
         equipWindow:destroy()
@@ -217,6 +230,8 @@ function openEquipment()
     equipWindow:focus()
     isOpen = true
 
+    if equipButton then equipButton:setOn(true) end
+
     pcall(function()
         local savedPos = g_settings.getPoint('equipmentCustomWindow/position')
         if savedPos and savedPos.x > 0 and savedPos.y > 0 then
@@ -238,6 +253,7 @@ function closeEquipment()
     g_settings.set('equipmentCustomWindow/position', tostring(pos.x) .. ' ' .. tostring(pos.y))
 
     equipWindow:hide()
+    if equipButton then equipButton:setOn(false) end
 end
 
 function toggleEquipment()
@@ -258,18 +274,6 @@ function onGameStart()
                 onFreeCapacityChange = onFreeCapacityChange
             })
         end
-    end)
-
-    addEvent(function()
-        pcall(function()
-            modules.client_topmenu.addRightGameToggleButton(
-                'equipCustomButton',
-                'Equipment (Ctrl+E)',
-                '/images/options/button_equipment',
-                toggleEquipment,
-                false
-            )
-        end)
     end)
 
     g_keyboard.bindKeyDown('Ctrl+E', function()
