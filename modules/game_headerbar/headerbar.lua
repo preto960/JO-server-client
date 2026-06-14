@@ -127,7 +127,8 @@ function terminate()
 end
 
 function onGameStart()
-    addEvent(function()
+    -- Use scheduleEvent with delay to let the game fully stabilize first
+    scheduleEvent(function()
         if not headerBar or headerBar:isDestroyed() then return end
 
         local root = g_ui.getRootWidget()
@@ -148,21 +149,29 @@ function onGameStart()
         -- Create buttons once
         createButtons()
 
-        -- Position headerBar below topMenu using anchors
-        headerBar:breakAnchors()
-        headerBar:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        headerBar:addAnchor(AnchorRight, 'parent', AnchorRight)
-        headerBar:addAnchor(AnchorTop, 'topMenu', AnchorBottom)
-        headerBar:setHeight(HEADER_HEIGHT)
-        headerBar:setMarginTop(0)
+        -- Position headerBar using absolute positioning (safest approach)
+        local menuY = topMenu:getY()
+        local menuH = topMenu:getHeight()
+        local barY = menuY + menuH
+        local rootW = root:getWidth()
 
-        -- Shift gameRootPanel down: just add top margin instead of breaking anchors
-        -- This avoids the crash that breakAnchors causes on a live gameRootPanel
-        gameRootPanel:setMarginTop(HEADER_HEIGHT)
+        pcall(function()
+            headerBar:setX(0)
+            headerBar:setY(barY)
+            headerBar:setWidth(rootW)
+            headerBar:setHeight(HEADER_HEIGHT)
+        end)
+
+        -- Shift gameRootPanel down
+        pcall(function()
+            gameRootPanel:setMarginTop(HEADER_HEIGHT)
+        end)
 
         -- Show and raise
-        headerBar:show()
-        headerBar:raise()
+        pcall(function()
+            headerBar:show()
+            headerBar:raise()
+        end)
 
         -- Hide original battle sidebar button
         pcall(function()
@@ -172,8 +181,8 @@ function onGameStart()
             if origWindow then origWindow:hide() end
         end)
 
-        g_logger.info("[HeaderBar] Shown, gameRootPanel anchored to headerBar.bottom")
-    end)
+        g_logger.info("[HeaderBar] Shown at Y=" .. barY)
+    end, 1000)
 end
 
 function onGameEnd()
