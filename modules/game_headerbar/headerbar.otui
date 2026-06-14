@@ -2,34 +2,37 @@ GameHeaderBar < UIWidget
   visible: false
   focusable: false
   height: 36
-  background-color: #0d0d1a
-  border-width:
-    top: 1
-    bottom: 1
-  border-color: #00ffff40
+  background-color: #080810
+  border-width-bottom: 2
+  border-color-bottom: #00e5ff
+  padding-left: 8
+  padding-right: 8
 
   $on:
-    background-color: #0d0d1a
+    background-color: #080810
 
 HeaderBarButton < UIButton
   font: verdana-11px-rounded
-  color: #cccccc
+  color: #6e7681
   anchors.top: parent.top
   anchors.bottom: parent.bottom
-  margin-top: 4
-  margin-bottom: 4
-  padding-left: 8
-  padding-right: 8
+  margin-top: 5
+  margin-bottom: 5
+  padding-left: 14
+  padding-right: 14
   border-width: 1
-  border-color: #00ffff30
-  background-color: #1a1a2e
-  border-radius: 3
+  border-color: #00e5ff18
+  background-color: #0d1117
+  border-radius: 2
 
   $hover:
-    background-color: #1e1e3a
-    border-color: #00ffff80
-    color: #00ffff
+    background-color: #0d1117
+    border-color: #00e5ff50
+    color: #00e5ff
+    border-width-bottom: 2
+    border-color-bottom: #00e5ff
 
   $pressed:
-    background-color: #00ffff20
-    color: #00ffff
+    background-color: #00e5ff0d
+    border-color: #00e5ff
+    color: #00e5ff

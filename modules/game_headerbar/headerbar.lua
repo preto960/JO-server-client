@@ -136,17 +136,25 @@ end
 function setBattleButtonState(active)
     if not battleButton then return end
     if active then
-        battleButton:setColor('#00ffff')
+        battleButton:setColor('#00e5ff')
+        battleButton:setBorderWidthBottom(2)
+        battleButton:setBorderColorBottom('#00e5ff')
     else
-        battleButton:setColor('#cccccc')
+        battleButton:setColor('#6e7681')
+        battleButton:setBorderWidthBottom(1)
+        battleButton:setBorderColorBottom('#00e5ff18')
     end
 end
 
 function setEquipmentButtonState(active)
     if not equipmentButton then return end
     if active then
-        equipmentButton:setColor('#ff00ff')
+        equipmentButton:setColor('#00e5ff')
+        equipmentButton:setBorderWidthBottom(2)
+        equipmentButton:setBorderColorBottom('#00e5ff')
     else
-        equipmentButton:setColor('#cccccc')
+        equipmentButton:setColor('#6e7681')
+        equipmentButton:setBorderWidthBottom(1)
+        equipmentButton:setBorderColorBottom('#00e5ff18')
     end
 end
