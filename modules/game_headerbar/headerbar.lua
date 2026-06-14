@@ -47,9 +47,9 @@ function setupHeaderBar()
         return
     end
 
-    local topMenu = rootWidget:getChildById('topMenu')
-    if not topMenu then
-        g_logger.error("[HeaderBar] topMenu not found")
+    local gameRootPanel = rootWidget:getChildById('gameRootPanel')
+    if not gameRootPanel then
+        g_logger.error("[HeaderBar] gameRootPanel not found")
         return
     end
 
@@ -57,19 +57,21 @@ function setupHeaderBar()
     headerBar = g_ui.createWidget('GameHeaderBar', rootWidget)
     headerBar:setId('gameHeaderBar')
 
-    -- Position it right below topMenu using absolute positioning
-    -- DO NOT touch gameRootPanel at all
-    local topMenuBottom = topMenu:getY() + topMenu:getHeight()
+    -- Position in the gap: gameRootPanel has margin-top 36 in OTUI,
+    -- so place headerbar 36px above gameRootPanel's top edge.
+    -- Only READ gameRootPanel position, never modify it.
+    local gameRootY = gameRootPanel:getY()
     local rootW = rootWidget:getWidth()
+    local barY = gameRootY - HEADER_HEIGHT
 
     headerBar:setX(0)
-    headerBar:setY(topMenuBottom)
+    headerBar:setY(barY)
     headerBar:setWidth(rootW)
     headerBar:setHeight(HEADER_HEIGHT)
     headerBar:show()
     headerBar:raise()
 
-    g_logger.info("[HeaderBar] Positioned at Y=" .. topMenuBottom .. " W=" .. rootW)
+    g_logger.info("[HeaderBar] gameRootY=" .. gameRootY .. " barY=" .. barY .. " W=" .. rootW)
 
     -- Create Battle button
     battleButton = g_ui.createWidget('HeaderBarButton', headerBar)
