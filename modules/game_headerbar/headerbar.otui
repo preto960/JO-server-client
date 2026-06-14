@@ -1,4 +1,208 @@
-GameHeaderBar < UIWidget
+local HEADER_HEIGHT = 36
+local headerBar = nil
+local isSetup = false
+local headerButtons = {}
+
+function init()
+    g_ui.importStyle('/game_headerbar/headerbar.otui')
+    g_logger.info("[HeaderBar] Module loaded")
+    connect(g_game, {
+        onGameStart = onGameStart,
+        onGameEnd = onGameEnd
+    })
+end
+
+function terminate()
+    disconnect(g_game, {
+        onGameStart = onGameStart,
+        onGameEnd = onGameEnd
+    })
+    if headerBar then
+        headerBar:destroy()
+        headerBar = nil
+    end
+    isSetup = false
+    headerButtons = {}
+end
+
+function onGameStart()
+    g_logger.info("[HeaderBar] onGameStart fired")
+    if isSetup then return end
+    isSetup = true
+    scheduleEvent(function()
+        setupHeaderBar()
+    end, 200)
+end
+
+function onGameEnd()
+    g_logger.info("[HeaderBar] onGameEnd fired")
+    if headerBar then
+        headerBar:hide()
+    end
+    isSetup = false
+    headerButtons = {}
+end
+
+function setupHeaderBar()
+    local rootWidget = g_ui.getRootWidget()
+    if not rootWidget then return end
+
+    local gameRootPanel = rootWidget:getChildById('gameRootPanel')
+    if not gameRootPanel then return end
+
+    headerBar = g_ui.createWidget('GameHeaderBar', rootWidget)
+    headerBar:setId('gameHeaderBar')
+
+    local gameRootY = gameRootPanel:getY()
+    local rootW = rootWidget:getWidth()
+
+    headerBar:setX(0)
+    headerBar:setY(gameRootY - HEADER_HEIGHT)
+    headerBar:setWidth(rootW)
+    headerBar:setHeight(HEADER_HEIGHT)
+    headerBar:show()
+    headerBar:raise()
+
+    g_logger.info("[HeaderBar] gameRootY=" .. gameRootY .. " barY=" .. (gameRootY - HEADER_HEIGHT))
+
+    scheduleEvent(function()
+        addSidebarButtons()
+    end, 300)
+end
+
+function addSidebarButtons()
+    if not headerBar or headerBar:isDestroyed() then return end
+
+    local mainPanel = modules.game_mainpanel
+    if not mainPanel or not mainPanel.optionsController then
+        g_logger.warning("[HeaderBar] mainpanel not ready")
+        return
+    end
+
+    local oc = mainPanel.optionsController
+    if not oc.ui or not oc.ui.onPanel then
+        g_logger.warning("[HeaderBar] optionsController UI not ready")
+        return
+    end
+
+    local optionsPanel = oc.ui.onPanel.options
+    local specialsPanel = oc.ui.onPanel.specials
+
+    -- Collect button info WITHOUT creating any widgets yet
+    local btnDataList = {}
+
+    if optionsPanel then
+        for _, btn in ipairs(optionsPanel:getChildren()) do
+            if btn:isVisible() and btn:getId() then
+                local imgSrc = ''
+                pcall(function() imgSrc = btn:getImageSource() or '' end)
+                if imgSrc ~= '' then
+                    table.insert(btnDataList, {
+                        id = btn:getId(),
+                        tooltip = btn:getTooltip() or btn:getId(),
+                        imageSource = imgSrc,
+                        source = btn
+                    })
+                end
+            end
+        end
+    end
+
+    if specialsPanel then
+        for _, btn in ipairs(specialsPanel:getChildren()) do
+            if btn:isVisible() and btn:getId() then
+                local imgSrc = ''
+                pcall(function() imgSrc = btn:getImageSource() or '' end)
+                if imgSrc ~= '' then
+                    table.insert(btnDataList, {
+                        id = btn:getId(),
+                        tooltip = btn:getTooltip() or btn:getId(),
+                        imageSource = imgSrc,
+                        source = btn
+                    })
+                end
+            end
+        end
+    end
+
+    g_logger.info("[HeaderBar] " .. #btnDataList .. " buttons to add")
+
+    -- Add buttons ONE AT A TIME with scheduleEvent to isolate any crash
+    local index = 0
+    local function addNext()
+        index = index + 1
+        if index > #btnDataList then
+            g_logger.info("[HeaderBar] All buttons added successfully")
+            return
+       
+
+<thinking>
+The user wants to add sidebar buttons to the headerbar. Let me look at the image they uploaded to understand what's on the sidebar and what they want to add.
+
+Wait, looking at the error message more carefully:
+
+```
+[HeaderBar] Found 23 sidebar buttons to mirror
+```
+
+Then the crash happens right after. The pcall didn't help because it's a C++ crash, not a Lua error. The issue might be:
+1. Creating too many widgets at once
+2. The `HeaderBarIconButton` style has some issue
+3. `setImageClip` with a rect object causes C++ crash
+
+I need to look at the uploaded image first to understand what buttons are on the sidebar.
+
+Actually, the user just said "sigue el crash" - it still crashes. The pcall didn't help because it's a C++ level crash. I need to take a different approach.
+
+Let me think about this... The crash happens when creating `HeaderBarIconButton` widgets. Maybe the issue is:
+1. The style `HeaderBarIconButton` has properties that crash the C++ widget creation
+2. Or `setImageClip` with a rect object crashes
+
+Since pcall doesn't catch C++ crashes, I need to:
+1. First try creating the headerbar WITHOUT any mirror buttons to confirm it's the button creation that crashes
+2. Then try creating a single button with minimal properties
+3. Add features one by one
+
+Actually, looking at the previous successful version - it had Battle and Equipment text buttons using `HeaderBarButton` style and those worked fine. So the issue is likely with the `HeaderBarIconButton` style or the way we're setting properties on it.
+
+Let me think about what's different:
+- `HeaderBarButton` worked fine
+- `HeaderBarIconButton` crashes
+
+The differences in the style:
+- `HeaderBarIconButton` has `image-color`, `icon-color`, `image-border` properties
+- `HeaderBarIconButton` uses `$checked` state
+
+Maybe `$checked` is not a valid pseudo-class in OTUI? Or `image-border` without `image-source` on the created widget might crash?
+
+Wait, actually the crash happens when we call `setImageClip`. The `getImageClip()` might return a Rect object (C++ type), not a string. And when we pass it to `setImageClip()`, it might work fine since both are C++ functions. But maybe the issue is something else.
+
+Actually, let me reconsider. The crash is C++ level and happens after "Found 23 sidebar buttons". The loop creates 23 buttons. Maybe it's not the first button that crashes but a later one, or maybe the sheer number of operations triggers something.
+
+Or maybe the issue is simpler - the `scheduleEvent` with 200ms delay fires while the game is still loading widgets, and there's a race condition.
+
+Let me try a completely different approach:
+1. Don't create new widgets at all
+2. Instead, MOVE the existing sidebar buttons into the headerbar
+3. This way we reuse existing widgets without creating new ones
+
+Actually, that might cause issues too since the mainpanel expects those buttons to be in its panel.
+
+Let me try the simplest possible approach: just create ONE test button first to see if the basic creation works, and gradually add more.
+
+Actually wait - let me re-read the log. It says:
+
+```
+[HeaderBar] Found 23 sidebar buttons
+```
+
+And then crashes. But my code should have printed "Created X mirror buttons" after the loop. The fact that it didn't means the crash is IN the loop, during one of the `g_ui.createWidget('HeaderBarIconButton', headerBar)` calls.
+
+The issue might be the `HeaderBarIconButton` style itself. Let me check if maybe `$checked` pseudo-class is causing a C++ issue. In OTClient, the valid pseudo-classes might only be `$hover`, `$pressed`, `$disabled`, `$on`, `$!on`, `$focus`. `$checked` might not be valid and could cause a crash when the style is compiled.
+
+Let me remove `$checked` and see. Also, let me simplify the style to be more minimal.
+
+Actually, a simpler approach: just reuse the `MainToggleButton` style that already works for the sidebar buttons, or create a very minimal style.</think>El crash es C++ y el pcall no lo atrapa. El problema es probablemente el estilo `HeaderBarIconButton` — la pseudoclase `$checked` puede no ser válida en OTUI, o `image-border` sin `image-source` crashea. Voy a simplificar al máximo:<tool_call>Write<arg_key>content</arg_key><arg_value>GameHeaderBar < UIWidget
   visible: false
   focusable: false
   height: 36
@@ -7,9 +211,6 @@ GameHeaderBar < UIWidget
   border-color-bottom: #00e5ff
   padding-left: 8
   padding-right: 8
-
-  $on:
-    background-color: #080810
 
 HeaderBarButton < UIButton
   font: verdana-11px-rounded
@@ -37,28 +238,19 @@ HeaderBarButton < UIButton
     border-color: #00e5ff
     color: #00e5ff
 
-HeaderBarIconButton < UIButton
+HeaderBarIcon < UIButton
   size: 28 28
   image-color: #6e7681
-  image-border: 4
   border-width: 1
-  border-color: transparent
+  border-color: #00e5ff10
+  background-color: #0d1117
   border-radius: 2
-  background-color: transparent
-  icon-color: #6e7681
 
   $hover:
-    border-color: #00e5ff40
+    border-color: #00e5ff50
     image-color: #00e5ff
-    icon-color: #00e5ff
-
-  $checked:
-    image-color: #00e5ff
-    icon-color: #00e5ff
-    border-color: #00e5ff60
 
   $pressed:
     background-color: #00e5ff15
+    border-color: #00e5ff
     image-color: #00e5ff
-    icon-color: #00e5ff
-    border-color: #00e5ff80

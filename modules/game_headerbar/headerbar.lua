@@ -1,7 +1,6 @@
 local HEADER_HEIGHT = 36
 local headerBar = nil
 local isSetup = false
-local headerButtons = {}
 
 function init()
     g_ui.importStyle('/game_headerbar/headerbar.otui')
@@ -18,11 +17,11 @@ function terminate()
         onGameEnd = onGameEnd
     })
     if headerBar then
+        returnButtonsToSidebar()
         headerBar:destroy()
         headerBar = nil
     end
     isSetup = false
-    headerButtons = {}
 end
 
 function onGameStart()
@@ -31,165 +30,143 @@ function onGameStart()
     isSetup = true
     scheduleEvent(function()
         setupHeaderBar()
-    end, 200)
+    end, 500)
 end
 
 function onGameEnd()
     g_logger.info("[HeaderBar] onGameEnd fired")
     if headerBar then
+        returnButtonsToSidebar()
         headerBar:hide()
     end
     isSetup = false
-    headerButtons = {}
 end
 
 function setupHeaderBar()
     local rootWidget = g_ui.getRootWidget()
-    if not rootWidget then
-        g_logger.error("[HeaderBar] rootWidget not found")
-        return
-    end
+    if not rootWidget then return end
 
     local gameRootPanel = rootWidget:getChildById('gameRootPanel')
-    if not gameRootPanel then
-        g_logger.error("[HeaderBar] gameRootPanel not found")
-        return
-    end
+    if not gameRootPanel then return end
 
     headerBar = g_ui.createWidget('GameHeaderBar', rootWidget)
     headerBar:setId('gameHeaderBar')
 
     local gameRootY = gameRootPanel:getY()
     local rootW = rootWidget:getWidth()
-    local barY = gameRootY - HEADER_HEIGHT
 
     headerBar:setX(0)
-    headerBar:setY(barY)
+    headerBar:setY(gameRootY - HEADER_HEIGHT)
     headerBar:setWidth(rootW)
     headerBar:setHeight(HEADER_HEIGHT)
     headerBar:show()
     headerBar:raise()
 
-    g_logger.info("[HeaderBar] gameRootY=" .. gameRootY .. " barY=" .. barY .. " W=" .. rootW)
+    g_logger.info("[HeaderBar] Positioned at Y=" .. (gameRootY - HEADER_HEIGHT))
 
-    mirrorSidebarButtons()
+    moveSidebarButtons()
 end
 
-function mirrorSidebarButtons()
+function moveSidebarButtons()
     if not headerBar then return end
 
-    local ok, err = pcall(function()
-        doMirrorSidebarButtons()
-    end)
-    if not ok then
-        g_logger.error("[HeaderBar] mirrorSidebarButtons error: " .. tostring(err))
-    end
-end
-
-function doMirrorSidebarButtons()
     local mainPanel = modules.game_mainpanel
-    if not mainPanel then
-        g_logger.warning("[HeaderBar] mainpanel not ready, retrying")
-        scheduleEvent(mirrorSidebarButtons, 500)
+    if not mainPanel or not mainPanel.optionsController then
+        g_logger.warning("[HeaderBar] mainpanel not ready")
         return
     end
 
-    local optionsController = mainPanel.optionsController
-    if not optionsController or not optionsController.ui or not optionsController.ui.onPanel then
-        g_logger.warning("[HeaderBar] optionsController not ready, retrying")
-        scheduleEvent(mirrorSidebarButtons, 500)
+    local oc = mainPanel.optionsController
+    if not oc.ui or not oc.ui.onPanel then
+        g_logger.warning("[HeaderBar] optionsController UI not ready")
         return
     end
 
-    local optionsPanel = optionsController.ui.onPanel.options
-    local specialsPanel = optionsController.ui.onPanel.specials
-
-    local allButtons = {}
-
-    if optionsPanel then
-        for _, btn in ipairs(optionsPanel:getChildren()) do
-            if btn:isVisible() and btn:getId() then
-                table.insert(allButtons, btn)
-            end
-        end
-    end
-
-    if specialsPanel then
-        for _, btn in ipairs(specialsPanel:getChildren()) do
-            if btn:isVisible() and btn:getId() then
-                table.insert(allButtons, btn)
-            end
-        end
-    end
-
-    if #allButtons == 0 then
-        g_logger.warning("[HeaderBar] No sidebar buttons found, retrying")
-        scheduleEvent(mirrorSidebarButtons, 500)
-        return
-    end
-
-    g_logger.info("[HeaderBar] Found " .. #allButtons .. " sidebar buttons")
+    local optionsPanel = oc.ui.onPanel.options
+    local specialsPanel = oc.ui.onPanel.specials
 
     local btnSize = 28
     local spacing = 2
     local startX = 8
-    local created = 0
+    local count = 0
 
-    for i, srcBtn in ipairs(allButtons) do
-        local ok, _ = pcall(function()
-            local id = srcBtn:getId()
-            local tooltip = srcBtn:getTooltip() or id
-
-            -- Safely get image source
-            local imageSource = ''
-            local ok1 = pcall(function() imageSource = srcBtn:getImageSource() end)
-
-            -- Skip buttons without a valid image
-            if not ok1 or not imageSource or imageSource == '' then
-                g_logger.warning("[HeaderBar] Skipping button '" .. id .. "' (no image)")
-                return
+    -- Move buttons from options panel to headerbar (reparenting existing widgets)
+    if optionsPanel then
+        for _, btn in ipairs(optionsPanel:getChildren()) do
+            if btn:isVisible() and btn:getId() and btn:getImageSource() and btn:getImageSource() ~= '' then
+                btn:setParent(headerBar)
+                btn:setSize(btnSize, btnSize)
+                btn:setX(startX + (count * (btnSize + spacing)))
+                btn:setY(math.floor((HEADER_HEIGHT - btnSize) / 2))
+                count = count + 1
             end
-
-            local mirrorBtn = g_ui.createWidget('HeaderBarIconButton', headerBar)
-            mirrorBtn:setId('hb_' .. id)
-            mirrorBtn:setTooltip(tooltip)
-            mirrorBtn:setImageSource(imageSource)
-
-            -- Safely copy image clip
-            pcall(function()
-                local clip = srcBtn:getImageClip()
-                if clip then
-                    mirrorBtn:setImageClip(clip)
-                end
-            end)
-
-            local x = startX + (created * (btnSize + spacing))
-            mirrorBtn:setX(x)
-            mirrorBtn:setY(math.floor((HEADER_HEIGHT - btnSize) / 2))
-            mirrorBtn:setSize(btnSize, btnSize)
-
-            -- Store reference
-            headerButtons[id] = {
-                mirror = mirrorBtn,
-                source = srcBtn
-            }
-
-            -- Wire click to trigger original button's callback
-            mirrorBtn.onClick = function()
-                pcall(function()
-                    if not srcBtn or srcBtn:isDestroyed() then return end
-                    if srcBtn.onMouseRelease then
-                        srcBtn.onMouseRelease(srcBtn, { x = 10, y = 10 }, MouseLeftButton)
-                    end
-                end)
-            end
-
-            created = created + 1
-        end)
-        if not ok then
-            g_logger.warning("[HeaderBar] Failed to mirror button #" .. i)
         end
     end
 
-    g_logger.info("[HeaderBar] Created " .. created .. " mirror buttons")
+    -- Move special buttons too
+    if specialsPanel then
+        for _, btn in ipairs(specialsPanel:getChildren()) do
+            if btn:isVisible() and btn:getId() and btn:getImageSource() and btn:getImageSource() ~= '' then
+                btn:setParent(headerBar)
+                btn:setSize(btnSize, btnSize)
+                btn:setX(startX + (count * (btnSize + spacing)))
+                btn:setY(math.floor((HEADER_HEIGHT - btnSize) / 2))
+                count = count + 1
+            end
+        end
+    end
+
+    g_logger.info("[HeaderBar] Moved " .. count .. " buttons to headerbar")
+
+    -- Shrink the now-empty sidebar controller
+    if oc.ui then
+        oc.ui:setHeight(0)
+    end
+end
+
+function returnButtonsToSidebar()
+    if not headerBar then return end
+
+    local mainPanel = modules.game_mainpanel
+    if not mainPanel or not mainPanel.optionsController then return end
+
+    local oc = mainPanel.optionsController
+    if not oc.ui or not oc.ui.onPanel then return end
+
+    local optionsPanel = oc.ui.onPanel.options
+    local specialsPanel = oc.ui.onPanel.specials
+
+    -- Move buttons back to their original panels
+    local optionsBtns = {}
+    local specialBtns = {}
+
+    for _, btn in ipairs(headerBar:getChildren()) do
+        local id = btn:getId()
+        -- Detect which panel they originally came from by ID
+        if id == 'logoutButton' or id == 'optionsMainButton' then
+            table.insert(specialBtns, btn)
+        else
+            table.insert(optionsBtns, btn)
+        end
+    end
+
+    for _, btn in ipairs(optionsBtns) do
+        btn:setParent(optionsPanel)
+        btn:setSize(20, 20)
+        btn:setX(0)
+        btn:setY(0)
+    end
+
+    for _, btn in ipairs(specialBtns) do
+        btn:setParent(specialsPanel)
+        btn:setSize(20, 20)
+        btn:setX(0)
+        btn:setY(0)
+    end
+
+    if oc.ui then
+        oc.ui:setHeight(28)
+    end
+
+    g_logger.info("[HeaderBar] Returned buttons to sidebar")
 end
