@@ -176,7 +176,14 @@ end
 
 function hide()
     topMenu:hide()
-    modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'parent', AnchorTop)
+    -- If headerbar is active, anchor gameRootPanel below it instead
+    local root = g_ui.getRootWidget()
+    local headerBarWidget = root and root:getChildById('gameHeaderBar')
+    if headerBarWidget and headerBarWidget:isVisible() then
+        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'gameHeaderBar', AnchorBottom)
+    else
+        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'parent', AnchorTop)
+    end
 end
 
 function show()
@@ -184,7 +191,14 @@ function show()
     topMenu:raise()
     topMenu:focus()
     if modules.game_interface.currentViewMode == 2 then
-        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+        -- If headerbar is active, chain: topMenu -> headerBar -> gameRootPanel
+        local root = g_ui.getRootWidget()
+        local headerBarWidget = root and root:getChildById('gameHeaderBar')
+        if headerBarWidget and headerBarWidget:isVisible() then
+            modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'gameHeaderBar', AnchorBottom)
+        else
+            modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+        end
     end
 end
 
@@ -504,7 +518,14 @@ function extendedView(extendedView)
         topMenu:show()
         topMenu:addAnchor(AnchorLeft, 'parent', AnchorLeft)
         topMenu:addAnchor(AnchorRight, 'parent', AnchorRight)
-        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+        -- If headerbar is active, chain through it
+        local root = g_ui.getRootWidget()
+        local headerBarWidget = root and root:getChildById('gameHeaderBar')
+        if headerBarWidget and headerBarWidget:isVisible() then
+            modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'gameHeaderBar', AnchorBottom)
+        else
+            modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+        end
         pingLabel:setVisible(false)
         fpsLabel:setVisible(false)
         topMenu.topLeftOnlinePlayers:hide()
@@ -517,7 +538,14 @@ function extendedView(extendedView)
             topMenu:hide()
         end
         topMenu:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
-        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'parent', AnchorTop)
+        -- If headerbar is active, keep gameRootPanel anchored to it
+        local root2 = g_ui.getRootWidget()
+        local headerBarWidget2 = root2 and root2:getChildById('gameHeaderBar')
+        if headerBarWidget2 and headerBarWidget2:isVisible() then
+            modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'gameHeaderBar', AnchorBottom)
+        else
+            modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'parent', AnchorTop)
+        end
         topMenu:setWidth(1020)
         topMenu.topLeftDiscord:setWidth(110)
         topMenu.topLeftYoutube:setWidth(100)

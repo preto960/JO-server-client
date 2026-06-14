@@ -3,7 +3,6 @@ local battleBtn = nil
 local equipBtn = nil
 local gameRootPanel = nil
 local topMenu = nil
-local savedRootMarginTop = 0
 local bottomLine = nil
 
 local HEADER_HEIGHT = 36
@@ -13,28 +12,50 @@ local function updateButtonState(btn, isOn)
     btn:setImageColor(isOn and '#00B4D8' or '#FFFFFF60')
 end
 
+local function anchorGameRootToHeaderBar()
+    if not gameRootPanel or not headerBar then return end
+
+    -- Break the existing top anchor (topMenu.bottom or parent.top)
+    gameRootPanel:breakAnchors()
+
+    -- Re-anchor: fill parent horizontally and vertically, but top follows headerBar bottom
+    gameRootPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    gameRootPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+    gameRootPanel:addAnchor(AnchorTop, 'gameHeaderBar', AnchorBottom)
+    gameRootPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+
+    -- Clear any leftover margin
+    gameRootPanel:setMarginTop(0)
+
+    g_logger.info("[HeaderBar] gameRootPanel anchored to headerBar.bottom")
+end
+
+local function restoreGameRootAnchors()
+    if not gameRootPanel or gameRootPanel:isDestroyed() then return end
+
+    gameRootPanel:breakAnchors()
+    gameRootPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    gameRootPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+    gameRootPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
+    gameRootPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+
+    g_logger.info("[HeaderBar] gameRootPanel anchors restored to parent")
+end
+
 local function positionHeaderBar()
-    if not headerBar or not topMenu or not gameRootPanel then return end
+    if not headerBar or not topMenu then return end
 
     local rootW = g_ui.getRootWidget():getWidth()
 
-    -- Position right below topMenu
-    local menuY = topMenu:getY()
-    local menuH = topMenu:getHeight()
-    local barY = menuY + menuH
-
-    headerBar:setX(0)
-    headerBar:setY(barY)
-    headerBar:setWidth(rootW)
+    -- Anchor headerBar below topMenu
+    headerBar:breakAnchors()
+    headerBar:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+    headerBar:addAnchor(AnchorRight, 'parent', AnchorRight)
+    headerBar:addAnchor(AnchorTop, 'topMenu', AnchorBottom)
     headerBar:setHeight(HEADER_HEIGHT)
+    headerBar:setMarginTop(0)
 
-    -- Push gameRootPanel down
-    local currentMargin = gameRootPanel:getMarginTop()
-    if currentMargin < HEADER_HEIGHT then
-        gameRootPanel:setMarginTop(HEADER_HEIGHT)
-    end
-
-    g_logger.info("[HeaderBar] Positioned at Y=" .. barY .. ", rootW=" .. rootW)
+    g_logger.info("[HeaderBar] Positioned below topMenu, width=" .. rootW)
 end
 
 local function createButtons()
@@ -89,7 +110,6 @@ local function createButtons()
     equipBtn:setImageColor('#FFFFFF60')
     pcall(function() equipBtn:setImageSource('/images/topbuttons/inventory') end)
     equipBtn:setCursor('pointer')
-    equipBtn:setId('headerEquipBtn')
     equipBtn:addAnchor(AnchorLeft, 'sep1', AnchorRight)
     equipBtn:addAnchor(AnchorVerticalCenter, 'parent', AnchorVerticalCenter)
     equipBtn:setMarginLeft(10)
@@ -129,7 +149,7 @@ local function setupHeaderBar()
         return
     end
 
-    -- Add to root
+    -- Add headerBar to root (sibling of topMenu and gameRootPanel)
     if not headerBar:getParent() then
         root:addChild(headerBar)
     end
@@ -137,16 +157,14 @@ local function setupHeaderBar()
     -- Create all buttons programmatically
     createButtons()
 
-    -- Position it
+    -- Anchor headerBar below topMenu using anchors (not absolute positioning)
     positionHeaderBar()
+
+    -- Anchor gameRootPanel below headerBar instead of below topMenu
+    anchorGameRootToHeaderBar()
 
     -- Raise to top of root's children
     headerBar:raise()
-
-    -- Listen for resize to reposition
-    root.onResize = function()
-        positionHeaderBar()
-    end
 
     -- Connect game events
     connect(g_game, {
@@ -180,12 +198,9 @@ function terminate()
         onGameEnd = onGameEnd
     })
 
-    -- Restore gameRootPanel margin
-    if gameRootPanel and not gameRootPanel:isDestroyed() then
-        pcall(function()
-            gameRootPanel:setMarginTop(savedRootMarginTop)
-        end)
-    end
+    -- Restore gameRootPanel anchors to fill parent
+    restoreGameRootAnchors()
+
     gameRootPanel = nil
     topMenu = nil
 
@@ -206,7 +221,10 @@ function onGameStart()
             gameRootPanel = root:getChildById('gameRootPanel') or gameRootPanel
         end
 
+        -- Re-apply anchor chain: topMenu -> headerBar -> gameRootPanel
         positionHeaderBar()
+        anchorGameRootToHeaderBar()
+
         headerBar:show()
         headerBar:raise()
 
