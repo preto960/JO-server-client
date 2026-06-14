@@ -29,7 +29,6 @@ function onGameStart()
     g_logger.info("[HeaderBar] onGameStart fired")
     if isSetup then return end
     isSetup = true
-    -- Small delay to let mainpanel finish creating its buttons
     scheduleEvent(function()
         setupHeaderBar()
     end, 200)
@@ -57,7 +56,6 @@ function setupHeaderBar()
         return
     end
 
-    -- Create headerBar as a child of rootWidget
     headerBar = g_ui.createWidget('GameHeaderBar', rootWidget)
     headerBar:setId('gameHeaderBar')
 
@@ -74,35 +72,40 @@ function setupHeaderBar()
 
     g_logger.info("[HeaderBar] gameRootY=" .. gameRootY .. " barY=" .. barY .. " W=" .. rootW)
 
-    -- Mirror sidebar buttons into the headerbar
     mirrorSidebarButtons()
 end
 
 function mirrorSidebarButtons()
     if not headerBar then return end
 
-    -- Access the mainpanel options panel where all toggle buttons live
+    local ok, err = pcall(function()
+        doMirrorSidebarButtons()
+    end)
+    if not ok then
+        g_logger.error("[HeaderBar] mirrorSidebarButtons error: " .. tostring(err))
+    end
+end
+
+function doMirrorSidebarButtons()
     local mainPanel = modules.game_mainpanel
-    if not mainPanel or not mainPanel.optionsController then
-        g_logger.warning("[HeaderBar] mainpanel not ready, retrying in 500ms")
+    if not mainPanel then
+        g_logger.warning("[HeaderBar] mainpanel not ready, retrying")
         scheduleEvent(mirrorSidebarButtons, 500)
         return
     end
 
     local optionsController = mainPanel.optionsController
-    if not optionsController.ui or not optionsController.ui.onPanel then
-        g_logger.warning("[HeaderBar] optionsController UI not ready, retrying in 500ms")
+    if not optionsController or not optionsController.ui or not optionsController.ui.onPanel then
+        g_logger.warning("[HeaderBar] optionsController not ready, retrying")
         scheduleEvent(mirrorSidebarButtons, 500)
         return
     end
 
     local optionsPanel = optionsController.ui.onPanel.options
     local specialsPanel = optionsController.ui.onPanel.specials
-    local storePanel = optionsController.ui.onPanel.store
 
     local allButtons = {}
 
-    -- Collect all visible buttons from options panel
     if optionsPanel then
         for _, btn in ipairs(optionsPanel:getChildren()) do
             if btn:isVisible() and btn:getId() then
@@ -111,7 +114,6 @@ function mirrorSidebarButtons()
         end
     end
 
-    -- Collect special buttons
     if specialsPanel then
         for _, btn in ipairs(specialsPanel:getChildren()) do
             if btn:isVisible() and btn:getId() then
@@ -121,76 +123,73 @@ function mirrorSidebarButtons()
     end
 
     if #allButtons == 0 then
-        g_logger.warning("[HeaderBar] No sidebar buttons found, retrying in 500ms")
+        g_logger.warning("[HeaderBar] No sidebar buttons found, retrying")
         scheduleEvent(mirrorSidebarButtons, 500)
         return
     end
 
-    g_logger.info("[HeaderBar] Found " .. #allButtons .. " sidebar buttons to mirror")
+    g_logger.info("[HeaderBar] Found " .. #allButtons .. " sidebar buttons")
 
     local btnSize = 28
     local spacing = 2
     local startX = 8
+    local created = 0
 
     for i, srcBtn in ipairs(allButtons) do
-        local id = srcBtn:getId()
-        local tooltip = srcBtn:getTooltip() or id
-        local imageSource = srcBtn:getImageSource()
-        local imageClip = srcBtn:getImageClip()
+        local ok, _ = pcall(function()
+            local id = srcBtn:getId()
+            local tooltip = srcBtn:getTooltip() or id
 
-        -- Create a headerbar-style mirror button
-        local mirrorBtn = g_ui.createWidget('HeaderBarIconButton', headerBar)
-        mirrorBtn:setId('hb_' .. id)
-        mirrorBtn:setTooltip(tooltip)
+            -- Safely get image source
+            local imageSource = ''
+            local ok1 = pcall(function() imageSource = srcBtn:getImageSource() end)
 
-        -- Copy the icon from the source button
-        if imageSource and imageSource ~= '' then
+            -- Skip buttons without a valid image
+            if not ok1 or not imageSource or imageSource == '' then
+                g_logger.warning("[HeaderBar] Skipping button '" .. id .. "' (no image)")
+                return
+            end
+
+            local mirrorBtn = g_ui.createWidget('HeaderBarIconButton', headerBar)
+            mirrorBtn:setId('hb_' .. id)
+            mirrorBtn:setTooltip(tooltip)
             mirrorBtn:setImageSource(imageSource)
-            if imageClip and imageClip ~= '' then
-                mirrorBtn:setImageClip(imageClip)
+
+            -- Safely copy image clip
+            pcall(function()
+                local clip = srcBtn:getImageClip()
+                if clip then
+                    mirrorBtn:setImageClip(clip)
+                end
+            end)
+
+            local x = startX + (created * (btnSize + spacing))
+            mirrorBtn:setX(x)
+            mirrorBtn:setY(math.floor((HEADER_HEIGHT - btnSize) / 2))
+            mirrorBtn:setSize(btnSize, btnSize)
+
+            -- Store reference
+            headerButtons[id] = {
+                mirror = mirrorBtn,
+                source = srcBtn
+            }
+
+            -- Wire click to trigger original button's callback
+            mirrorBtn.onClick = function()
+                pcall(function()
+                    if not srcBtn or srcBtn:isDestroyed() then return end
+                    if srcBtn.onMouseRelease then
+                        srcBtn.onMouseRelease(srcBtn, { x = 10, y = 10 }, MouseLeftButton)
+                    end
+                end)
             end
+
+            created = created + 1
+        end)
+        if not ok then
+            g_logger.warning("[HeaderBar] Failed to mirror button #" .. i)
         end
-
-        local x = startX + ((i - 1) * (btnSize + spacing))
-        mirrorBtn:setX(x)
-        mirrorBtn:setY(math.floor((HEADER_HEIGHT - btnSize) / 2))
-        mirrorBtn:setSize(btnSize, btnSize)
-
-        -- Store reference to source button and wire up click
-        headerButtons[id] = {
-            mirror = mirrorBtn,
-            source = srcBtn
-        }
-
-        mirrorBtn.onClick = function()
-            if not srcBtn or srcBtn:isDestroyed() then return end
-            -- Trigger the same mouse release callback as the original
-            if srcBtn.onMouseRelease then
-                srcBtn.onMouseRelease(srcBtn, { x = 10, y = 10 }, MouseLeftButton)
-            end
-            updateMirrorButtonState(id)
-        end
-
-        -- Sync initial state (on/off)
-        updateMirrorButtonState(id)
-    end
-end
-
-function updateMirrorButtonState(id)
-    local entry = headerButtons[id]
-    if not entry then return end
-
-    local srcBtn = entry.source
-    local mirrorBtn = entry.mirror
-
-    if srcBtn:isDestroyed() then
-        mirrorBtn:setChecked(false)
-        return
     end
 
-    -- Sync checked state with source button's on state
-    if srcBtn.isOn then
-        local isOn = srcBtn:isOn()
-        mirrorBtn:setChecked(isOn)
-    end
+    g_logger.info("[HeaderBar] Created " .. created .. " mirror buttons")
 end
