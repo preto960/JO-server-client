@@ -109,14 +109,10 @@ function terminate()
         onGameEnd = onGameEnd
     })
 
-    -- Restore gameRootPanel anchors
+    -- Restore gameRootPanel margin
     if gameRootPanel and not gameRootPanel:isDestroyed() then
         pcall(function()
-            gameRootPanel:breakAnchors()
-            gameRootPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-            gameRootPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-            gameRootPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
-            gameRootPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+            gameRootPanel:setMarginTop(0)
         end)
     end
 
@@ -160,13 +156,9 @@ function onGameStart()
         headerBar:setHeight(HEADER_HEIGHT)
         headerBar:setMarginTop(0)
 
-        -- Re-anchor gameRootPanel: top follows headerBar bottom
-        gameRootPanel:breakAnchors()
-        gameRootPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-        gameRootPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-        gameRootPanel:addAnchor(AnchorTop, 'gameHeaderBar', AnchorBottom)
-        gameRootPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-        gameRootPanel:setMarginTop(0)
+        -- Shift gameRootPanel down: just add top margin instead of breaking anchors
+        -- This avoids the crash that breakAnchors causes on a live gameRootPanel
+        gameRootPanel:setMarginTop(HEADER_HEIGHT)
 
         -- Show and raise
         headerBar:show()
