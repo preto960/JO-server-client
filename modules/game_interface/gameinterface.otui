@@ -48,6 +48,7 @@ UIWidget
   id: gameRootPanel
   anchors.fill: parent
   anchors.top: topMenu.bottom
+  margin-top: 36
 
   GameMapPanel
     id: gameMapPanel
