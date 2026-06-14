@@ -5,6 +5,7 @@ local equipmentButton = nil
 local isSetup = false
 
 function init()
+    g_ui.importStyle('/game_headerbar/headerbar.otui')
     g_logger.info("[HeaderBar] Module loaded")
     connect(g_game, {
         onGameStart = onGameStart,
@@ -94,7 +95,7 @@ function setupHeaderBar()
         toggleEquipment()
     end
 
-    g_logger.info("[HeaderBar] Setup complete (floating mode - gameRootPanel untouched)")
+    g_logger.info("[HeaderBar] Setup complete (floating mode)")
 end
 
 function toggleBattle()
@@ -114,7 +115,6 @@ end
 
 function toggleEquipment()
     if not equipmentButton then return end
-    -- Try to find the equipment window by common OTClient patterns
     local equipmentWindow = g_ui.getRootWidget():recursiveGetChildById('equipmentWindow')
     if not equipmentWindow then
         equipmentWindow = g_ui.getRootWidget():recursiveGetChildById('equipmentBox')
