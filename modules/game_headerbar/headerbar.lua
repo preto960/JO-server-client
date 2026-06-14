@@ -4,6 +4,7 @@ local equipBtn = nil
 local gameRootPanel = nil
 local topMenu = nil
 local bottomLine = nil
+local buttonsCreated = false
 
 local HEADER_HEIGHT = 36
 
@@ -12,54 +13,9 @@ local function updateButtonState(btn, isOn)
     btn:setImageColor(isOn and '#00B4D8' or '#FFFFFF60')
 end
 
-local function anchorGameRootToHeaderBar()
-    if not gameRootPanel or not headerBar then return end
-
-    -- Break the existing top anchor (topMenu.bottom or parent.top)
-    gameRootPanel:breakAnchors()
-
-    -- Re-anchor: fill parent horizontally and vertically, but top follows headerBar bottom
-    gameRootPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-    gameRootPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-    gameRootPanel:addAnchor(AnchorTop, 'gameHeaderBar', AnchorBottom)
-    gameRootPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-
-    -- Clear any leftover margin
-    gameRootPanel:setMarginTop(0)
-
-    g_logger.info("[HeaderBar] gameRootPanel anchored to headerBar.bottom")
-end
-
-local function restoreGameRootAnchors()
-    if not gameRootPanel or gameRootPanel:isDestroyed() then return end
-
-    gameRootPanel:breakAnchors()
-    gameRootPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-    gameRootPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
-    gameRootPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
-    gameRootPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-
-    g_logger.info("[HeaderBar] gameRootPanel anchors restored to parent")
-end
-
-local function positionHeaderBar()
-    if not headerBar or not topMenu then return end
-
-    local rootW = g_ui.getRootWidget():getWidth()
-
-    -- Anchor headerBar below topMenu
-    headerBar:breakAnchors()
-    headerBar:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-    headerBar:addAnchor(AnchorRight, 'parent', AnchorRight)
-    headerBar:addAnchor(AnchorTop, 'topMenu', AnchorBottom)
-    headerBar:setHeight(HEADER_HEIGHT)
-    headerBar:setMarginTop(0)
-
-    g_logger.info("[HeaderBar] Positioned below topMenu, width=" .. rootW)
-end
-
 local function createButtons()
-    if not headerBar then return end
+    if buttonsCreated or not headerBar then return end
+    buttonsCreated = true
 
     -- Bottom accent line
     bottomLine = g_ui.createWidget('UIWidget', headerBar)
@@ -128,58 +84,8 @@ local function createButtons()
     equipLabel:setMarginLeft(4)
 end
 
-local function setupHeaderBar()
-    local root = g_ui.getRootWidget()
-    if not root then
-        g_logger.warning("[HeaderBar] Root not found, retrying...")
-        scheduleEvent(setupHeaderBar, 500)
-        return
-    end
-
-    topMenu = root:getChildById('topMenu')
-    gameRootPanel = root:getChildById('gameRootPanel')
-
-    if not topMenu then
-        g_logger.error("[HeaderBar] topMenu not found!")
-        return
-    end
-    if not gameRootPanel then
-        g_logger.warning("[HeaderBar] gameRootPanel not found, retrying...")
-        scheduleEvent(setupHeaderBar, 500)
-        return
-    end
-
-    -- Add headerBar to root (sibling of topMenu and gameRootPanel)
-    if not headerBar:getParent() then
-        root:addChild(headerBar)
-    end
-
-    -- Create all buttons programmatically
-    createButtons()
-
-    -- Anchor headerBar below topMenu using anchors (not absolute positioning)
-    positionHeaderBar()
-
-    -- Do NOT anchor gameRootPanel here — it happens only on gameStart
-    -- to avoid breaking the login screen layout
-
-    -- Keep headerBar hidden until game starts
-    headerBar:hide()
-
-    -- Connect game events
-    connect(g_game, {
-        onGameStart = onGameStart,
-        onGameEnd = onGameEnd
-    })
-
-    if g_game.isOnline() then
-        onGameStart()
-    end
-
-    g_logger.info("[HeaderBar] Setup complete!")
-end
-
 function init()
+    -- Load the OTUI widget but don't do anything else yet
     local ok = pcall(function()
         headerBar = g_ui.loadUI('headerbar')
     end)
@@ -188,8 +94,13 @@ function init()
         return
     end
 
-    g_logger.info("[HeaderBar] Module init, scheduling setup...")
-    addEvent(setupHeaderBar)
+    -- Connect game events — everything else happens in onGameStart
+    connect(g_game, {
+        onGameStart = onGameStart,
+        onGameEnd = onGameEnd
+    })
+
+    g_logger.info("[HeaderBar] Module loaded, waiting for game start")
 end
 
 function terminate()
@@ -198,50 +109,78 @@ function terminate()
         onGameEnd = onGameEnd
     })
 
-    -- Restore gameRootPanel anchors to fill parent
-    restoreGameRootAnchors()
+    -- Restore gameRootPanel anchors
+    if gameRootPanel and not gameRootPanel:isDestroyed() then
+        pcall(function()
+            gameRootPanel:breakAnchors()
+            gameRootPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+            gameRootPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+            gameRootPanel:addAnchor(AnchorTop, 'parent', AnchorTop)
+            gameRootPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+        end)
+    end
 
     gameRootPanel = nil
     topMenu = nil
+    buttonsCreated = false
 
-    if headerBar then
+    if headerBar and not headerBar:isDestroyed() then
         headerBar:destroy()
-        headerBar = nil
     end
+    headerBar = nil
 end
 
 function onGameStart()
     addEvent(function()
         if not headerBar or headerBar:isDestroyed() then return end
 
-        -- Re-find widgets in case they changed
         local root = g_ui.getRootWidget()
-        if root then
-            topMenu = root:getChildById('topMenu') or topMenu
-            gameRootPanel = root:getChildById('gameRootPanel') or gameRootPanel
+        if not root then return end
+
+        topMenu = root:getChildById('topMenu')
+        gameRootPanel = root:getChildById('gameRootPanel')
+        if not topMenu or not gameRootPanel then
+            g_logger.warning("[HeaderBar] topMenu or gameRootPanel not found on game start")
+            return
         end
 
-        -- Re-apply anchor chain: topMenu -> headerBar -> gameRootPanel
-        positionHeaderBar()
-        anchorGameRootToHeaderBar()
+        -- Parent headerBar to root if needed
+        if not headerBar:getParent() then
+            root:addChild(headerBar)
+        end
 
+        -- Create buttons once
+        createButtons()
+
+        -- Position headerBar below topMenu using anchors
+        headerBar:breakAnchors()
+        headerBar:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        headerBar:addAnchor(AnchorRight, 'parent', AnchorRight)
+        headerBar:addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+        headerBar:setHeight(HEADER_HEIGHT)
+        headerBar:setMarginTop(0)
+
+        -- Re-anchor gameRootPanel: top follows headerBar bottom
+        gameRootPanel:breakAnchors()
+        gameRootPanel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+        gameRootPanel:addAnchor(AnchorRight, 'parent', AnchorRight)
+        gameRootPanel:addAnchor(AnchorTop, 'gameHeaderBar', AnchorBottom)
+        gameRootPanel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+        gameRootPanel:setMarginTop(0)
+
+        -- Show and raise
         headerBar:show()
         headerBar:raise()
 
         -- Hide original battle sidebar button
         pcall(function()
-            local root = g_ui.getRootWidget()
             local origBattleBtn = root:recursiveGetChildById('battleButton')
-            if origBattleBtn then
-                origBattleBtn:hide()
-            end
+            if origBattleBtn then origBattleBtn:hide() end
             local origWindow = root:recursiveGetChildById('battleWindow')
-            if origWindow then
-                origWindow:hide()
-            end
+            if origWindow then origWindow:hide() end
         end)
 
-        g_logger.info("[HeaderBar] onGameStart - bar shown")
+        g_logger.info("[HeaderBar] Shown, gameRootPanel anchored to headerBar.bottom")
     end)
 end
 
