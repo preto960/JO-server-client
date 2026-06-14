@@ -1,8 +1,7 @@
 local HEADER_HEIGHT = 36
 local headerBar = nil
-local battleButton = nil
-local equipmentButton = nil
 local isSetup = false
+local headerButtons = {}
 
 function init()
     g_ui.importStyle('/game_headerbar/headerbar.otui')
@@ -23,13 +22,17 @@ function terminate()
         headerBar = nil
     end
     isSetup = false
+    headerButtons = {}
 end
 
 function onGameStart()
     g_logger.info("[HeaderBar] onGameStart fired")
     if isSetup then return end
     isSetup = true
-    setupHeaderBar()
+    -- Small delay to let mainpanel finish creating its buttons
+    scheduleEvent(function()
+        setupHeaderBar()
+    end, 200)
 end
 
 function onGameEnd()
@@ -38,6 +41,7 @@ function onGameEnd()
         headerBar:hide()
     end
     isSetup = false
+    headerButtons = {}
 end
 
 function setupHeaderBar()
@@ -53,13 +57,10 @@ function setupHeaderBar()
         return
     end
 
-    -- Create headerBar as a child of rootWidget (same level as topMenu and gameRootPanel)
+    -- Create headerBar as a child of rootWidget
     headerBar = g_ui.createWidget('GameHeaderBar', rootWidget)
     headerBar:setId('gameHeaderBar')
 
-    -- Position in the gap: gameRootPanel has margin-top 36 in OTUI,
-    -- so place headerbar 36px above gameRootPanel's top edge.
-    -- Only READ gameRootPanel position, never modify it.
     local gameRootY = gameRootPanel:getY()
     local rootW = rootWidget:getWidth()
     local barY = gameRootY - HEADER_HEIGHT
@@ -73,88 +74,123 @@ function setupHeaderBar()
 
     g_logger.info("[HeaderBar] gameRootY=" .. gameRootY .. " barY=" .. barY .. " W=" .. rootW)
 
-    -- Create Battle button
-    battleButton = g_ui.createWidget('HeaderBarButton', headerBar)
-    battleButton:setId('headerBattleButton')
-    battleButton:setText('Battle')
-    battleButton:setWidth(100)
-    battleButton:setHeight(HEADER_HEIGHT - 8)
-    battleButton:setX(10)
-    battleButton:setY(4)
-    battleButton.onClick = function()
-        toggleBattle()
-    end
-
-    -- Create Equipment button
-    equipmentButton = g_ui.createWidget('HeaderBarButton', headerBar)
-    equipmentButton:setId('headerEquipmentButton')
-    equipmentButton:setText('Equipment')
-    equipmentButton:setWidth(100)
-    equipmentButton:setHeight(HEADER_HEIGHT - 8)
-    equipmentButton:setX(120)
-    equipmentButton:setY(4)
-    equipmentButton.onClick = function()
-        toggleEquipment()
-    end
-
-    g_logger.info("[HeaderBar] Setup complete (floating mode)")
+    -- Mirror sidebar buttons into the headerbar
+    mirrorSidebarButtons()
 end
 
-function toggleBattle()
-    if not battleButton then return end
-    local battleWindow = modules.game_battlelist and modules.game_battlelist.battleWindow
-    if battleWindow then
-        if battleWindow:isVisible() then
-            battleWindow:hide()
-            setBattleButtonState(false)
-        else
-            battleWindow:show()
-            battleWindow:raise()
-            setBattleButtonState(true)
+function mirrorSidebarButtons()
+    if not headerBar then return end
+
+    -- Access the mainpanel options panel where all toggle buttons live
+    local mainPanel = modules.game_mainpanel
+    if not mainPanel or not mainPanel.optionsController then
+        g_logger.warning("[HeaderBar] mainpanel not ready, retrying in 500ms")
+        scheduleEvent(mirrorSidebarButtons, 500)
+        return
+    end
+
+    local optionsController = mainPanel.optionsController
+    if not optionsController.ui or not optionsController.ui.onPanel then
+        g_logger.warning("[HeaderBar] optionsController UI not ready, retrying in 500ms")
+        scheduleEvent(mirrorSidebarButtons, 500)
+        return
+    end
+
+    local optionsPanel = optionsController.ui.onPanel.options
+    local specialsPanel = optionsController.ui.onPanel.specials
+    local storePanel = optionsController.ui.onPanel.store
+
+    local allButtons = {}
+
+    -- Collect all visible buttons from options panel
+    if optionsPanel then
+        for _, btn in ipairs(optionsPanel:getChildren()) do
+            if btn:isVisible() and btn:getId() then
+                table.insert(allButtons, btn)
+            end
         end
     end
-end
 
-function toggleEquipment()
-    if not equipmentButton then return end
-    local equipmentWindow = g_ui.getRootWidget():recursiveGetChildById('equipmentWindow')
-    if not equipmentWindow then
-        equipmentWindow = g_ui.getRootWidget():recursiveGetChildById('equipmentBox')
-    end
-    if equipmentWindow then
-        if equipmentWindow:isVisible() then
-            equipmentWindow:hide()
-            setEquipmentButtonState(false)
-        else
-            equipmentWindow:show()
-            equipmentWindow:raise()
-            setEquipmentButtonState(true)
+    -- Collect special buttons
+    if specialsPanel then
+        for _, btn in ipairs(specialsPanel:getChildren()) do
+            if btn:isVisible() and btn:getId() then
+                table.insert(allButtons, btn)
+            end
         end
     end
-end
 
-function setBattleButtonState(active)
-    if not battleButton then return end
-    if active then
-        battleButton:setColor('#00e5ff')
-        battleButton:setBorderWidthBottom(2)
-        battleButton:setBorderColorBottom('#00e5ff')
-    else
-        battleButton:setColor('#6e7681')
-        battleButton:setBorderWidthBottom(1)
-        battleButton:setBorderColorBottom('#00e5ff18')
+    if #allButtons == 0 then
+        g_logger.warning("[HeaderBar] No sidebar buttons found, retrying in 500ms")
+        scheduleEvent(mirrorSidebarButtons, 500)
+        return
+    end
+
+    g_logger.info("[HeaderBar] Found " .. #allButtons .. " sidebar buttons to mirror")
+
+    local btnSize = 28
+    local spacing = 2
+    local startX = 8
+
+    for i, srcBtn in ipairs(allButtons) do
+        local id = srcBtn:getId()
+        local tooltip = srcBtn:getTooltip() or id
+        local imageSource = srcBtn:getImageSource()
+        local imageClip = srcBtn:getImageClip()
+
+        -- Create a headerbar-style mirror button
+        local mirrorBtn = g_ui.createWidget('HeaderBarIconButton', headerBar)
+        mirrorBtn:setId('hb_' .. id)
+        mirrorBtn:setTooltip(tooltip)
+
+        -- Copy the icon from the source button
+        if imageSource and imageSource ~= '' then
+            mirrorBtn:setImageSource(imageSource)
+            if imageClip and imageClip ~= '' then
+                mirrorBtn:setImageClip(imageClip)
+            end
+        end
+
+        local x = startX + ((i - 1) * (btnSize + spacing))
+        mirrorBtn:setX(x)
+        mirrorBtn:setY(math.floor((HEADER_HEIGHT - btnSize) / 2))
+        mirrorBtn:setSize(btnSize, btnSize)
+
+        -- Store reference to source button and wire up click
+        headerButtons[id] = {
+            mirror = mirrorBtn,
+            source = srcBtn
+        }
+
+        mirrorBtn.onClick = function()
+            if not srcBtn or srcBtn:isDestroyed() then return end
+            -- Trigger the same mouse release callback as the original
+            if srcBtn.onMouseRelease then
+                srcBtn.onMouseRelease(srcBtn, { x = 10, y = 10 }, MouseLeftButton)
+            end
+            updateMirrorButtonState(id)
+        end
+
+        -- Sync initial state (on/off)
+        updateMirrorButtonState(id)
     end
 end
 
-function setEquipmentButtonState(active)
-    if not equipmentButton then return end
-    if active then
-        equipmentButton:setColor('#00e5ff')
-        equipmentButton:setBorderWidthBottom(2)
-        equipmentButton:setBorderColorBottom('#00e5ff')
-    else
-        equipmentButton:setColor('#6e7681')
-        equipmentButton:setBorderWidthBottom(1)
-        equipmentButton:setBorderColorBottom('#00e5ff18')
+function updateMirrorButtonState(id)
+    local entry = headerButtons[id]
+    if not entry then return end
+
+    local srcBtn = entry.source
+    local mirrorBtn = entry.mirror
+
+    if srcBtn:isDestroyed() then
+        mirrorBtn:setChecked(false)
+        return
+    end
+
+    -- Sync checked state with source button's on state
+    if srcBtn.isOn then
+        local isOn = srcBtn:isOn()
+        mirrorBtn:setChecked(isOn)
     end
 end

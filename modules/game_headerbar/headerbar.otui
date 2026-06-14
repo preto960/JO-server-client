@@ -36,3 +36,29 @@ HeaderBarButton < UIButton
     background-color: #00e5ff0d
     border-color: #00e5ff
     color: #00e5ff
+
+HeaderBarIconButton < UIButton
+  size: 28 28
+  image-color: #6e7681
+  image-border: 4
+  border-width: 1
+  border-color: transparent
+  border-radius: 2
+  background-color: transparent
+  icon-color: #6e7681
+
+  $hover:
+    border-color: #00e5ff40
+    image-color: #00e5ff
+    icon-color: #00e5ff
+
+  $checked:
+    image-color: #00e5ff
+    icon-color: #00e5ff
+    border-color: #00e5ff60
+
+  $pressed:
+    background-color: #00e5ff15
+    image-color: #00e5ff
+    icon-color: #00e5ff
+    border-color: #00e5ff80
