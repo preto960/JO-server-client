@@ -1,7 +1,35 @@
-UIWidget
-  id: gameHeaderBar
+GameHeaderBar < UIWidget
   visible: false
   focusable: false
   height: 36
-  background-color: #000000CC
-  border-width: 0
+  background-color: #0d0d1a
+  border-width:
+    top: 1
+    bottom: 1
+  border-color: #00ffff40
+
+  $on:
+    background-color: #0d0d1a
+
+HeaderBarButton < UIButton
+  font: verdana-11px-rounded
+  color: #cccccc
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
+  margin-top: 4
+  margin-bottom: 4
+  padding-left: 8
+  padding-right: 8
+  border-width: 1
+  border-color: #00ffff30
+  background-color: #1a1a2e
+  border-radius: 3
+
+  $hover:
+    background-color: #1e1e3a
+    border-color: #00ffff80
+    color: #00ffff
+
+  $pressed:
+    background-color: #00ffff20
+    color: #00ffff
