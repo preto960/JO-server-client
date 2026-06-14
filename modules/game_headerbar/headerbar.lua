@@ -160,11 +160,11 @@ local function setupHeaderBar()
     -- Anchor headerBar below topMenu using anchors (not absolute positioning)
     positionHeaderBar()
 
-    -- Anchor gameRootPanel below headerBar instead of below topMenu
-    anchorGameRootToHeaderBar()
+    -- Do NOT anchor gameRootPanel here — it happens only on gameStart
+    -- to avoid breaking the login screen layout
 
-    -- Raise to top of root's children
-    headerBar:raise()
+    -- Keep headerBar hidden until game starts
+    headerBar:hide()
 
     -- Connect game events
     connect(g_game, {
